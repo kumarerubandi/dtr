@@ -1,0 +1,903 @@
+
+> dtr@0.0.1 start /home/ubuntu/dtr
+> webpack-dev-server --config ./webpack.config.dev.js  --host 0.0.0.0  --public localhost
+
+[HPM] Proxy created: [ '/fetchFhirUri', '/getfile' ]  ->  http://54.227.218.17:8090/
+[34mℹ[39m [90m｢wds｣[39m: Project is running at http://localhost/
+[34mℹ[39m [90m｢wds｣[39m: webpack output is served from /
+[34mℹ[39m [90m｢wds｣[39m: Content not from webpack is served from /home/ubuntu/dtr/public
+[34mℹ[39m [90m｢wds｣[39m: 404s will fallback to /index.html
+[34mℹ[39m [90m｢wdm｣[39m: wait until bundle finished: /launch?launch=35097&iss=http://cdex.mettles.com:8280/ehr-server/stu3
+[34mℹ[39m [90m｢wdm｣[39m: wait until bundle finished: /launch?launch=35097&iss=http://cdex.mettles.com:8280/ehr-server/stu3
+[BABEL] Note: The code generator has deoptimised the styling of /home/ubuntu/dtr/node_modules/cql-exec-fhir/lib/modelInfos/fhir-modelinfo-3.0.0.xml.js as it exceeds the max of 500KB.
+[BABEL] Note: The code generator has deoptimised the styling of /home/ubuntu/dtr/node_modules/react-dom/cjs/react-dom.development.js as it exceeds the max of 500KB.
+[BABEL] Note: The code generator has deoptimised the styling of /home/ubuntu/dtr/node_modules/fhirclient/fhir-client.js as it exceeds the max of 500KB.
+[BABEL] Note: The code generator has deoptimised the styling of /home/ubuntu/dtr/node_modules/cql-exec-fhir/lib/modelInfos/fhir-modelinfo-4.0.0.xml.js as it exceeds the max of 500KB.
+[34mℹ[39m [90m｢wdm｣[39m: Hash: f60ed7934f38e33d2619
+Version: webpack 4.39.1
+Time: 17492ms
+Built at: 09/04/2019 10:36:42 AM
+             Asset      Size    Chunks             Chunk Names
+   index.bundle.js  7.13 MiB     index  [emitted]  index
+  launch.bundle.js   424 KiB    launch  [emitted]  launch
+register.bundle.js  1.45 MiB  register  [emitted]  register
+Entrypoint launch = launch.bundle.js
+Entrypoint index = index.bundle.js
+Entrypoint register = register.bundle.js
+[0] multi (webpack)-dev-server/client?http://localhost (webpack)/hot/only-dev-server.js ./src/launch.js 52 bytes {launch} [built]
+[1] multi (webpack)-dev-server/client?http://localhost (webpack)/hot/only-dev-server.js ./src/index.js 52 bytes {index} [built]
+[4] multi (webpack)-dev-server/client?http://localhost (webpack)/hot/only-dev-server.js ./src/register.js 52 bytes {register} [built]
+[./node_modules/fhirclient/fhir-client.js] 836 KiB {index} [built]
+[./node_modules/loglevel/lib/loglevel.js] 7.58 KiB {launch} {index} {register} [built]
+[./node_modules/querystring-es3/index.js] 126 bytes {launch} {index} {register} [built]
+[./node_modules/react-dom/index.js] 1.32 KiB {index} {register} [built]
+[./node_modules/react/index.js] 189 bytes {index} {register} [built]
+[./node_modules/strip-ansi/index.js] 162 bytes {launch} {index} {register} [built]
+[./node_modules/url/url.js] 22.6 KiB {launch} {index} {register} [built]
+[./node_modules/webpack-dev-server/client/index.js?http://localhost] (webpack)-dev-server/client?http://localhost 8.1 KiB {launch} {index} {register} [built]
+[./node_modules/webpack/hot/only-dev-server.js] (webpack)/hot/only-dev-server.js 2.47 KiB {launch} {index} {register} [built]
+[./src/index.js] 9.98 KiB {index} [built]
+[./src/launch.js] 3.95 KiB {launch} [built]
+[./src/register.js] 193 bytes {register} [built]
+    + 616 hidden modules
+[34mℹ[39m [90m｢wdm｣[39m: Compiled successfully.
+[34mℹ[39m [90m｢wdm｣[39m: Compiling...
+[34mℹ[39m [90m｢wdm｣[39m: Hash: c5bf0e0f2666d1b69c36
+Version: webpack 4.39.1
+Time: 608ms
+Built at: 09/04/2019 10:48:11 AM
+                                   Asset      Size    Chunks             Chunk Names
+    f60ed7934f38e33d2619.hot-update.json  47 bytes            [emitted]  
+                         index.bundle.js  7.13 MiB     index  [emitted]  index
+index.f60ed7934f38e33d2619.hot-update.js  37.1 KiB     index  [emitted]  index
+                        launch.bundle.js   424 KiB    launch  [emitted]  launch
+                      register.bundle.js  1.45 MiB  register  [emitted]  register
+Entrypoint launch = launch.bundle.js
+Entrypoint index = index.bundle.js index.f60ed7934f38e33d2619.hot-update.js
+Entrypoint register = register.bundle.js
+[./src/components/QuestionnaireForm/QuestionnaireForm.jsx] 31.4 KiB {index} [built]
+    + 630 hidden modules
+[34mℹ[39m [90m｢wdm｣[39m: Compiled successfully.
+[34mℹ[39m [90m｢wdm｣[39m: Compiling...
+
+> dtr@0.0.1 start /home/ubuntu/dtr
+> webpack-dev-server --config ./webpack.config.dev.js  --host 0.0.0.0  --public localhost
+
+[BABEL] Note: The code generator has deoptimised the styling of /home/ubuntu/dtr/node_modules/@fortawesome/free-solid-svg-icons/index.es.js as it exceeds the max of 500KB.
+[34mℹ[39m [90m｢wdm｣[39m: Hash: f63484a2cb9e23b6f3d1
+Version: webpack 4.39.1
+Time: 2582ms
+Built at: 09/04/2019 10:49:27 AM
+                                   Asset      Size    Chunks             Chunk Names
+    c5bf0e0f2666d1b69c36.hot-update.json  47 bytes            [emitted]  
+                         index.bundle.js  8.05 MiB     index  [emitted]  index
+index.c5bf0e0f2666d1b69c36.hot-update.js   982 KiB     index  [emitted]  index
+                        launch.bundle.js   424 KiB    launch  [emitted]  launch
+                      register.bundle.js  1.45 MiB  register  [emitted]  register
+Entrypoint launch = launch.bundle.js
+Entrypoint index = index.bundle.js index.c5bf0e0f2666d1b69c36.hot-update.js
+Entrypoint register = register.bundle.js
+[./node_modules/@fortawesome/fontawesome-svg-core/index.es.js] 73.9 KiB {index} [built]
+[./node_modules/@fortawesome/free-solid-svg-icons/index.es.js] 632 KiB {index} [built]
+[./node_modules/@fortawesome/react-fontawesome/index.es.js] 12.8 KiB {index} [built]
+[./node_modules/attr-accept/dist/index.js] 10.4 KiB {index} [built]
+[./node_modules/css-loader/dist/cjs.js!./src/components/Inputs/DocumentInput/DocumentInput.css] 1.21 KiB {index} [built]
+[./node_modules/file-selector/dist/es5/file-selector.js] 6.28 KiB {index} [built]
+[./node_modules/file-selector/dist/es5/file.js] 1.55 KiB {index} [built]
+[./node_modules/file-selector/dist/es5/index.js] 44 bytes {index} [built]
+[./node_modules/react-dropzone/dist/es/index.js] 30.5 KiB {index} [built]
+[./node_modules/react-dropzone/dist/es/utils/index.js] 3.7 KiB {index} [built]
+[./node_modules/tslib/tslib.es6.js] 9.91 KiB {index} [built]
+[./src/components/Inputs/DocumentInput/DocumentInput.css] 1.11 KiB {index} [built]
+[./src/components/Inputs/DocumentInput/DocumentInput.jsx] 7.67 KiB {index} [built]
+[./src/components/QuestionnaireForm/QuestionnaireForm.jsx] 31.4 KiB {index} [built]
+    + 630 hidden modules
+[34mℹ[39m [90m｢wdm｣[39m: Compiled successfully.
+[HPM] Proxy created: [ '/fetchFhirUri', '/getfile' ]  ->  http://54.227.218.17:8090/
+events.js:170
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: listen EADDRINUSE: address already in use 0.0.0.0:3005
+    at Server.setupListenHandle [as _listen2] (net.js:1259:14)
+    at listenInCluster (net.js:1307:12)
+    at doListen (net.js:1446:7)
+    at processTicksAndRejections (internal/process/task_queues.js:81:17)
+    at process.runNextTicks [as _tickCallback] (internal/process/task_queues.js:56:3)
+    at Function.Module.runMain (internal/modules/cjs/loader.js:880:11)
+    at internal/main/run_main_module.js:21:11
+Emitted 'error' event at:
+    at emitErrorNT (net.js:1286:8)
+    at processTicksAndRejections (internal/process/task_queues.js:81:17)
+    [... lines matching original stack trace ...]
+    at internal/main/run_main_module.js:21:11
+npm ERR! code ELIFECYCLE
+npm ERR! errno 1
+npm ERR! dtr@0.0.1 start: `webpack-dev-server --config ./webpack.config.dev.js  --host 0.0.0.0  --public localhost`
+npm ERR! Exit status 1
+npm ERR! 
+npm ERR! Failed at the dtr@0.0.1 start script.
+npm ERR! This is probably not a problem with npm. There is likely additional logging output above.
+[34mℹ[39m [90m｢wdm｣[39m: Compiling...
+[31m✖[39m [90m｢wdm｣[39m: Hash: e17403eed376d68e193e
+Version: webpack 4.39.1
+Time: 206ms
+Built at: 09/04/2019 10:57:06 AM
+                                   Asset       Size    Chunks             Chunk Names
+    f63484a2cb9e23b6f3d1.hot-update.json   47 bytes            [emitted]  
+                         index.bundle.js   8.05 MiB     index  [emitted]  index
+index.f63484a2cb9e23b6f3d1.hot-update.js  808 bytes     index  [emitted]  index
+                        launch.bundle.js    424 KiB    launch  [emitted]  launch
+                      register.bundle.js   1.45 MiB  register  [emitted]  register
+Entrypoint launch = launch.bundle.js
+Entrypoint index = index.bundle.js index.f63484a2cb9e23b6f3d1.hot-update.js
+Entrypoint register = register.bundle.js
+[./src/components/Inputs/TextInput/TextInput.jsx] 201 bytes {index} [built] [failed] [1 error]
+    + 641 hidden modules
+
+ERROR in ./src/components/Inputs/TextInput/TextInput.jsx
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+Error: ENOENT: no such file or directory, open '/home/ubuntu/dtr/src/components/Inputs/TextInput/TextInput.jsx'
+ @ ./src/components/QuestionnaireForm/QuestionnaireForm.jsx 27:0-54 311:39-48 322:39-48 352:39-48 363:39-48 374:39-48 385:39-48 396:39-48 407:39-48 418:39-48 451:39-48
+ @ ./src/App.js
+ @ ./src/index.js
+ @ multi (webpack)-dev-server/client?http://localhost (webpack)/hot/only-dev-server.js ./src/index.js
+[34mℹ[39m [90m｢wdm｣[39m: Failed to compile.
+[34mℹ[39m [90m｢wdm｣[39m: Compiling...
+[BABEL] Note: The code generator has deoptimised the styling of /home/ubuntu/dtr/node_modules/react-datepicker/es/index.js as it exceeds the max of 500KB.
+[34mℹ[39m [90m｢wdm｣[39m: Hash: d831ddd58d99ad4e54d8
+Version: webpack 4.39.1
+Time: 2830ms
+Built at: 09/04/2019 10:57:45 AM
+                                   Asset      Size    Chunks             Chunk Names
+    e17403eed376d68e193e.hot-update.json  47 bytes            [emitted]  
+                         index.bundle.js  8.98 MiB     index  [emitted]  index
+index.e17403eed376d68e193e.hot-update.js   956 KiB     index  [emitted]  index
+                        launch.bundle.js   424 KiB    launch  [emitted]  launch
+                      register.bundle.js  1.45 MiB  register  [emitted]  register
+Entrypoint launch = launch.bundle.js
+Entrypoint index = index.bundle.js index.e17403eed376d68e193e.hot-update.js
+Entrypoint register = register.bundle.js
+[./node_modules/@babel/runtime/helpers/assertThisInitialized.js] 219 bytes {index} [built]
+[./node_modules/@babel/runtime/helpers/defineProperty.js] 289 bytes {index} [built]
+[./node_modules/@babel/runtime/helpers/extends.js] 427 bytes {index} [built]
+[./node_modules/@babel/runtime/helpers/inheritsLoose.js] 223 bytes {index} [built]
+[./node_modules/@babel/runtime/helpers/objectWithoutPropertiesLoose.js] 384 bytes {index} [built]
+[./node_modules/classnames/index.js] 1.61 KiB {index} [built]
+[./node_modules/css-loader/dist/cjs.js!./node_modules/react-datepicker/dist/react-datepicker.css] 21 KiB {index} [built]
+[./node_modules/react-datepicker/dist/react-datepicker.css] 1.05 KiB {index} [built]
+[./node_modules/react-datepicker/es/index.js] 737 KiB {index} [built]
+[./node_modules/react-onclickoutside/dist/react-onclickoutside.es.js] 10.5 KiB {index} [built]
+[./node_modules/react-popper/lib/esm/Manager.js] 1.49 KiB {index} [built]
+[./node_modules/react-popper/lib/esm/Popper.js] 6.99 KiB {index} [built]
+[./node_modules/react-popper/lib/esm/Reference.js] 1.65 KiB {index} [built]
+[./node_modules/react-popper/lib/esm/index.js] 204 bytes {index} [built]
+[./src/components/Inputs/TextInput/TextInput.jsx] 5.07 KiB {index} [built]
+    + 651 hidden modules
+[34mℹ[39m [90m｢wdm｣[39m: Compiled successfully.
+[34mℹ[39m [90m｢wdm｣[39m: Compiling...
+[34mℹ[39m [90m｢wdm｣[39m: Hash: 446b83387e9bcfc0c9f6
+Version: webpack 4.39.1
+Time: 287ms
+Built at: 09/04/2019 11:02:31 AM
+                                   Asset      Size    Chunks             Chunk Names
+    d831ddd58d99ad4e54d8.hot-update.json  47 bytes            [emitted]  
+                         index.bundle.js  8.05 MiB     index  [emitted]  index
+index.d831ddd58d99ad4e54d8.hot-update.js  8.05 KiB     index  [emitted]  index
+                        launch.bundle.js   424 KiB    launch  [emitted]  launch
+                      register.bundle.js  1.45 MiB  register  [emitted]  register
+Entrypoint launch = launch.bundle.js
+Entrypoint index = index.bundle.js index.d831ddd58d99ad4e54d8.hot-update.js
+Entrypoint register = register.bundle.js
+[./src/components/Inputs/TextInput/TextInput.jsx] 4.69 KiB {index} [built]
+    + 643 hidden modules
+[34mℹ[39m [90m｢wdm｣[39m: Compiled successfully.
+[34mℹ[39m [90m｢wdm｣[39m: Compiling...
+[BABEL] Note: The code generator has deoptimised the styling of /home/ubuntu/dtr/node_modules/react-datepicker/es/index.js as it exceeds the max of 500KB.
+[34mℹ[39m [90m｢wdm｣[39m: Hash: 7c83ceae7ad9d0f60a52
+Version: webpack 4.39.1
+Time: 2763ms
+Built at: 09/04/2019 11:06:47 AM
+                                   Asset      Size    Chunks             Chunk Names
+    446b83387e9bcfc0c9f6.hot-update.json  47 bytes            [emitted]  
+index.446b83387e9bcfc0c9f6.hot-update.js   953 KiB     index  [emitted]  index
+                         index.bundle.js  8.98 MiB     index  [emitted]  index
+                        launch.bundle.js   424 KiB    launch  [emitted]  launch
+                      register.bundle.js  1.45 MiB  register  [emitted]  register
+Entrypoint launch = launch.bundle.js
+Entrypoint index = index.bundle.js index.446b83387e9bcfc0c9f6.hot-update.js
+Entrypoint register = register.bundle.js
+[./node_modules/@babel/runtime/helpers/assertThisInitialized.js] 219 bytes {index} [built]
+[./node_modules/@babel/runtime/helpers/defineProperty.js] 289 bytes {index} [built]
+[./node_modules/@babel/runtime/helpers/extends.js] 427 bytes {index} [built]
+[./node_modules/@babel/runtime/helpers/inheritsLoose.js] 223 bytes {index} [built]
+[./node_modules/@babel/runtime/helpers/objectWithoutPropertiesLoose.js] 384 bytes {index} [built]
+[./node_modules/classnames/index.js] 1.61 KiB {index} [built]
+[./node_modules/css-loader/dist/cjs.js!./node_modules/react-datepicker/dist/react-datepicker.css] 21 KiB {index} [built]
+[./node_modules/popper.js/dist/esm/popper.js] 85.9 KiB {index} [built]
+[./node_modules/react-datepicker/es/index.js] 737 KiB {index} [built]
+[./node_modules/react-onclickoutside/dist/react-onclickoutside.es.js] 10.5 KiB {index} [built]
+[./node_modules/react-popper/lib/esm/Manager.js] 1.49 KiB {index} [built]
+[./node_modules/react-popper/lib/esm/Popper.js] 6.99 KiB {index} [built]
+[./node_modules/react-popper/lib/esm/Reference.js] 1.65 KiB {index} [built]
+[./node_modules/react-popper/lib/esm/index.js] 204 bytes {index} [built]
+[./src/components/Inputs/TextInput/TextInput.jsx] 5.33 KiB {index} [built]
+    + 651 hidden modules
+[34mℹ[39m [90m｢wdm｣[39m: Compiled successfully.
+[34mℹ[39m [90m｢wdm｣[39m: Compiling...
+[34mℹ[39m [90m｢wdm｣[39m: Hash: e37572a833be7af3bf73
+Version: webpack 4.39.1
+Time: 336ms
+Built at: 09/04/2019 11:10:28 AM
+                                   Asset      Size    Chunks             Chunk Names
+    7c83ceae7ad9d0f60a52.hot-update.json  47 bytes            [emitted]  
+index.7c83ceae7ad9d0f60a52.hot-update.js  7.52 KiB     index  [emitted]  index
+                         index.bundle.js  8.98 MiB     index  [emitted]  index
+                        launch.bundle.js   424 KiB    launch  [emitted]  launch
+                      register.bundle.js  1.45 MiB  register  [emitted]  register
+Entrypoint launch = launch.bundle.js
+Entrypoint index = index.bundle.js index.7c83ceae7ad9d0f60a52.hot-update.js
+Entrypoint register = register.bundle.js
+[./src/components/Inputs/TextInput/TextInput.jsx] 5.14 KiB {index} [built]
+    + 665 hidden modules
+[34mℹ[39m [90m｢wdm｣[39m: Compiled successfully.
+[34mℹ[39m [90m｢wdm｣[39m: Compiling...
+[34mℹ[39m [90m｢wdm｣[39m: Hash: 81c244a55c787099e44d
+Version: webpack 4.39.1
+Time: 178ms
+Built at: 09/04/2019 11:15:38 AM
+                                   Asset      Size    Chunks             Chunk Names
+    e37572a833be7af3bf73.hot-update.json  47 bytes            [emitted]  
+                         index.bundle.js  8.98 MiB     index  [emitted]  index
+index.e37572a833be7af3bf73.hot-update.js  2.94 KiB     index  [emitted]  index
+                        launch.bundle.js   424 KiB    launch  [emitted]  launch
+                      register.bundle.js  1.45 MiB  register  [emitted]  register
+Entrypoint launch = launch.bundle.js
+Entrypoint index = index.bundle.js index.e37572a833be7af3bf73.hot-update.js
+Entrypoint register = register.bundle.js
+[./node_modules/css-loader/dist/cjs.js!./src/components/QuestionnaireForm/QuestionnaireForm.css] 2.08 KiB {index} [built]
+    + 665 hidden modules
+[34mℹ[39m [90m｢wdm｣[39m: Compiled successfully.
+[34mℹ[39m [90m｢wdm｣[39m: Compiling...
+[34mℹ[39m [90m｢wdm｣[39m: Hash: 652da9d5f4300d9bf5ac
+Version: webpack 4.39.1
+Time: 220ms
+Built at: 09/04/2019 11:18:20 AM
+                                   Asset      Size    Chunks             Chunk Names
+    81c244a55c787099e44d.hot-update.json  47 bytes            [emitted]  
+index.81c244a55c787099e44d.hot-update.js  1.84 KiB     index  [emitted]  index
+                         index.bundle.js  8.98 MiB     index  [emitted]  index
+                        launch.bundle.js   424 KiB    launch  [emitted]  launch
+                      register.bundle.js  1.45 MiB  register  [emitted]  register
+Entrypoint launch = launch.bundle.js
+Entrypoint index = index.bundle.js index.81c244a55c787099e44d.hot-update.js
+Entrypoint register = register.bundle.js
+[./node_modules/css-loader/dist/cjs.js!./src/components/Inputs/TextInput/TextInput.css] 1.08 KiB {index} [built]
+    + 665 hidden modules
+[34mℹ[39m [90m｢wdm｣[39m: Compiled successfully.
+[34mℹ[39m [90m｢wdm｣[39m: Compiling...
+[34mℹ[39m [90m｢wdm｣[39m: Hash: 583d3babd65995ede3d7
+Version: webpack 4.39.1
+Time: 205ms
+Built at: 09/04/2019 11:20:05 AM
+                                   Asset      Size    Chunks             Chunk Names
+    652da9d5f4300d9bf5ac.hot-update.json  47 bytes            [emitted]  
+index.652da9d5f4300d9bf5ac.hot-update.js  2.21 KiB     index  [emitted]  index
+                         index.bundle.js  8.98 MiB     index  [emitted]  index
+                        launch.bundle.js   424 KiB    launch  [emitted]  launch
+                      register.bundle.js  1.45 MiB  register  [emitted]  register
+Entrypoint launch = launch.bundle.js
+Entrypoint index = index.bundle.js index.652da9d5f4300d9bf5ac.hot-update.js
+Entrypoint register = register.bundle.js
+[./node_modules/css-loader/dist/cjs.js!./src/components/Inputs/DropdownInput/DropdownInput.css] 1.41 KiB {index} [built]
+    + 665 hidden modules
+[34mℹ[39m [90m｢wdm｣[39m: Compiled successfully.
+[34mℹ[39m [90m｢wdm｣[39m: Compiling...
+[34mℹ[39m [90m｢wdm｣[39m: Hash: e12af383fa89c5f2706a
+Version: webpack 4.39.1
+Time: 172ms
+Built at: 09/04/2019 11:27:38 AM
+                                   Asset      Size    Chunks             Chunk Names
+    583d3babd65995ede3d7.hot-update.json  47 bytes            [emitted]  
+index.583d3babd65995ede3d7.hot-update.js  2.22 KiB     index  [emitted]  index
+                         index.bundle.js  8.98 MiB     index  [emitted]  index
+                        launch.bundle.js   424 KiB    launch  [emitted]  launch
+                      register.bundle.js  1.45 MiB  register  [emitted]  register
+Entrypoint launch = launch.bundle.js
+Entrypoint index = index.bundle.js index.583d3babd65995ede3d7.hot-update.js
+Entrypoint register = register.bundle.js
+[./node_modules/css-loader/dist/cjs.js!./src/components/Inputs/DropdownInput/DropdownInput.css] 1.41 KiB {index} [built]
+    + 665 hidden modules
+[34mℹ[39m [90m｢wdm｣[39m: Compiled successfully.
+[34mℹ[39m [90m｢wdm｣[39m: Compiling...
+[34mℹ[39m [90m｢wdm｣[39m: Hash: 1aa632d64e07ce6c42d7
+Version: webpack 4.39.1
+Time: 160ms
+Built at: 09/04/2019 11:44:53 AM
+                                   Asset      Size    Chunks             Chunk Names
+    e12af383fa89c5f2706a.hot-update.json  47 bytes            [emitted]  
+                         index.bundle.js  8.98 MiB     index  [emitted]  index
+index.e12af383fa89c5f2706a.hot-update.js  2.61 KiB     index  [emitted]  index
+                        launch.bundle.js   424 KiB    launch  [emitted]  launch
+                      register.bundle.js  1.45 MiB  register  [emitted]  register
+Entrypoint launch = launch.bundle.js
+Entrypoint index = index.bundle.js index.e12af383fa89c5f2706a.hot-update.js
+Entrypoint register = register.bundle.js
+[./node_modules/css-loader/dist/cjs.js!./src/components/Inputs/DropdownInput/DropdownInput.css] 1.79 KiB {index} [built]
+    + 665 hidden modules
+[34mℹ[39m [90m｢wdm｣[39m: Compiled successfully.
+[34mℹ[39m [90m｢wdm｣[39m: Compiling...
+[34mℹ[39m [90m｢wdm｣[39m: Hash: 16a21e21b07e3f66864a
+Version: webpack 4.39.1
+Time: 186ms
+Built at: 09/04/2019 11:47:58 AM
+                                   Asset      Size    Chunks             Chunk Names
+    1aa632d64e07ce6c42d7.hot-update.json  47 bytes            [emitted]  
+index.1aa632d64e07ce6c42d7.hot-update.js  1.54 KiB     index  [emitted]  index
+                         index.bundle.js  8.98 MiB     index  [emitted]  index
+                        launch.bundle.js   424 KiB    launch  [emitted]  launch
+                      register.bundle.js  1.45 MiB  register  [emitted]  register
+Entrypoint launch = launch.bundle.js
+Entrypoint index = index.bundle.js index.1aa632d64e07ce6c42d7.hot-update.js
+Entrypoint register = register.bundle.js
+[./node_modules/css-loader/dist/cjs.js!./src/components/Section/Section.css] 868 bytes {index} [built]
+    + 665 hidden modules
+[34mℹ[39m [90m｢wdm｣[39m: Compiled successfully.
+[34mℹ[39m [90m｢wdm｣[39m: Compiling...
+[34mℹ[39m [90m｢wdm｣[39m: Hash: aad99ed9046200e2d15d
+Version: webpack 4.39.1
+Time: 176ms
+Built at: 09/04/2019 11:58:13 AM
+                                   Asset      Size    Chunks             Chunk Names
+    16a21e21b07e3f66864a.hot-update.json  47 bytes            [emitted]  
+index.16a21e21b07e3f66864a.hot-update.js  1.14 KiB     index  [emitted]  index
+                         index.bundle.js  8.98 MiB     index  [emitted]  index
+                        launch.bundle.js   424 KiB    launch  [emitted]  launch
+                      register.bundle.js  1.45 MiB  register  [emitted]  register
+Entrypoint launch = launch.bundle.js
+Entrypoint index = index.bundle.js index.16a21e21b07e3f66864a.hot-update.js
+Entrypoint register = register.bundle.js
+[./node_modules/css-loader/dist/cjs.js!./src/App.css] 598 bytes {index} [built]
+    + 665 hidden modules
+[34mℹ[39m [90m｢wdm｣[39m: Compiled successfully.
+[34mℹ[39m [90m｢wdm｣[39m: Compiling...
+[34mℹ[39m [90m｢wdm｣[39m: Hash: 537524c887b2fee7040e
+Version: webpack 4.39.1
+Time: 180ms
+Built at: 09/04/2019 12:01:17 PM
+                                   Asset      Size    Chunks             Chunk Names
+    aad99ed9046200e2d15d.hot-update.json  47 bytes            [emitted]  
+index.aad99ed9046200e2d15d.hot-update.js  3.21 KiB     index  [emitted]  index
+                         index.bundle.js  8.98 MiB     index  [emitted]  index
+                        launch.bundle.js   424 KiB    launch  [emitted]  launch
+                      register.bundle.js  1.45 MiB  register  [emitted]  register
+Entrypoint launch = launch.bundle.js
+Entrypoint index = index.bundle.js index.aad99ed9046200e2d15d.hot-update.js
+Entrypoint register = register.bundle.js
+[./node_modules/css-loader/dist/cjs.js!./src/components/Inputs/OpenChoiceInput/OpenChoice.css] 2.37 KiB {index} [built]
+    + 665 hidden modules
+[34mℹ[39m [90m｢wdm｣[39m: Compiled successfully.
+[34mℹ[39m [90m｢wdm｣[39m: Compiling...
+[34mℹ[39m [90m｢wdm｣[39m: Hash: d922241a9ee3d2e75e2f
+Version: webpack 4.39.1
+Time: 189ms
+Built at: 09/04/2019 12:03:22 PM
+                                   Asset      Size    Chunks             Chunk Names
+    537524c887b2fee7040e.hot-update.json  47 bytes            [emitted]  
+index.537524c887b2fee7040e.hot-update.js  3.22 KiB     index  [emitted]  index
+                         index.bundle.js  8.98 MiB     index  [emitted]  index
+                        launch.bundle.js   424 KiB    launch  [emitted]  launch
+                      register.bundle.js  1.45 MiB  register  [emitted]  register
+Entrypoint launch = launch.bundle.js
+Entrypoint index = index.bundle.js index.537524c887b2fee7040e.hot-update.js
+Entrypoint register = register.bundle.js
+[./node_modules/css-loader/dist/cjs.js!./src/components/Inputs/OpenChoiceInput/OpenChoice.css] 2.37 KiB {index} [built]
+    + 665 hidden modules
+[34mℹ[39m [90m｢wdm｣[39m: Compiled successfully.
+[34mℹ[39m [90m｢wdm｣[39m: Compiling...
+[34mℹ[39m [90m｢wdm｣[39m: Hash: b74ac492af8ade766504
+Version: webpack 4.39.1
+Time: 182ms
+Built at: 09/04/2019 12:06:48 PM
+                                   Asset      Size    Chunks             Chunk Names
+    d922241a9ee3d2e75e2f.hot-update.json  47 bytes            [emitted]  
+                         index.bundle.js  8.98 MiB     index  [emitted]  index
+index.d922241a9ee3d2e75e2f.hot-update.js  2.89 KiB     index  [emitted]  index
+                        launch.bundle.js   424 KiB    launch  [emitted]  launch
+                      register.bundle.js  1.45 MiB  register  [emitted]  register
+Entrypoint launch = launch.bundle.js
+Entrypoint index = index.bundle.js index.d922241a9ee3d2e75e2f.hot-update.js
+Entrypoint register = register.bundle.js
+[./node_modules/css-loader/dist/cjs.js!./src/components/QuestionnaireForm/QuestionnaireForm.css] 2.03 KiB {index} [built]
+    + 665 hidden modules
+[34mℹ[39m [90m｢wdm｣[39m: Compiled successfully.
+[34mℹ[39m [90m｢wdm｣[39m: Compiling...
+[34mℹ[39m [90m｢wdm｣[39m: Hash: c266996bff3134d1089e
+Version: webpack 4.39.1
+Time: 174ms
+Built at: 09/04/2019 12:08:42 PM
+                                   Asset      Size    Chunks             Chunk Names
+    b74ac492af8ade766504.hot-update.json  47 bytes            [emitted]  
+index.b74ac492af8ade766504.hot-update.js  3.36 KiB     index  [emitted]  index
+                         index.bundle.js  8.98 MiB     index  [emitted]  index
+                        launch.bundle.js   424 KiB    launch  [emitted]  launch
+                      register.bundle.js  1.45 MiB  register  [emitted]  register
+Entrypoint launch = launch.bundle.js
+Entrypoint index = index.bundle.js index.b74ac492af8ade766504.hot-update.js
+Entrypoint register = register.bundle.js
+[./node_modules/css-loader/dist/cjs.js!./src/components/QuestionnaireForm/QuestionnaireForm.css] 2.47 KiB {index} [built]
+    + 665 hidden modules
+[34mℹ[39m [90m｢wdm｣[39m: Compiled successfully.
+[34mℹ[39m [90m｢wdm｣[39m: Compiling...
+[34mℹ[39m [90m｢wdm｣[39m: Hash: 6917a6814930f9a70d1c
+Version: webpack 4.39.1
+Time: 178ms
+Built at: 09/04/2019 12:12:57 PM
+                                   Asset      Size    Chunks             Chunk Names
+    c266996bff3134d1089e.hot-update.json  47 bytes            [emitted]  
+                         index.bundle.js  8.98 MiB     index  [emitted]  index
+index.c266996bff3134d1089e.hot-update.js  3.36 KiB     index  [emitted]  index
+                        launch.bundle.js   424 KiB    launch  [emitted]  launch
+                      register.bundle.js  1.45 MiB  register  [emitted]  register
+Entrypoint launch = launch.bundle.js
+Entrypoint index = index.bundle.js index.c266996bff3134d1089e.hot-update.js
+Entrypoint register = register.bundle.js
+[./node_modules/css-loader/dist/cjs.js!./src/components/QuestionnaireForm/QuestionnaireForm.css] 2.47 KiB {index} [built]
+    + 665 hidden modules
+[34mℹ[39m [90m｢wdm｣[39m: Compiled successfully.
+[34mℹ[39m [90m｢wdm｣[39m: Compiling...
+[34mℹ[39m [90m｢wdm｣[39m: Hash: 5fe3d9463d8e1b8be53a
+Version: webpack 4.39.1
+Time: 605ms
+Built at: 09/04/2019 1:14:51 PM
+                                   Asset      Size    Chunks             Chunk Names
+    6917a6814930f9a70d1c.hot-update.json  47 bytes            [emitted]  
+index.6917a6814930f9a70d1c.hot-update.js  47.3 KiB     index  [emitted]  index
+                         index.bundle.js  8.99 MiB     index  [emitted]  index
+                        launch.bundle.js   424 KiB    launch  [emitted]  launch
+                      register.bundle.js  1.45 MiB  register  [emitted]  register
+Entrypoint launch = launch.bundle.js
+Entrypoint index = index.bundle.js index.6917a6814930f9a70d1c.hot-update.js
+Entrypoint register = register.bundle.js
+[./src/components/QuestionnaireForm/QuestionnaireForm.jsx] 40.6 KiB {index} [built]
+    + 665 hidden modules
+[34mℹ[39m [90m｢wdm｣[39m: Compiled successfully.
+[34mℹ[39m [90m｢wdm｣[39m: Compiling...
+[34mℹ[39m [90m｢wdm｣[39m: Hash: 917b47c1421c2323667b
+Version: webpack 4.39.1
+Time: 616ms
+Built at: 09/04/2019 1:23:04 PM
+                                   Asset      Size    Chunks             Chunk Names
+    5fe3d9463d8e1b8be53a.hot-update.json  47 bytes            [emitted]  
+index.5fe3d9463d8e1b8be53a.hot-update.js  47.4 KiB     index  [emitted]  index
+                         index.bundle.js  8.99 MiB     index  [emitted]  index
+                        launch.bundle.js   424 KiB    launch  [emitted]  launch
+                      register.bundle.js  1.45 MiB  register  [emitted]  register
+Entrypoint launch = launch.bundle.js
+Entrypoint index = index.bundle.js index.5fe3d9463d8e1b8be53a.hot-update.js
+Entrypoint register = register.bundle.js
+[./src/components/QuestionnaireForm/QuestionnaireForm.jsx] 40.6 KiB {index} [built]
+    + 665 hidden modules
+[34mℹ[39m [90m｢wdm｣[39m: Compiled successfully.
+[34mℹ[39m [90m｢wdm｣[39m: Compiling...
+[34mℹ[39m [90m｢wdm｣[39m: Hash: 7668f4c98cebae6e5140
+Version: webpack 4.39.1
+Time: 580ms
+Built at: 09/04/2019 1:27:46 PM
+                                   Asset      Size    Chunks             Chunk Names
+    917b47c1421c2323667b.hot-update.json  47 bytes            [emitted]  
+index.917b47c1421c2323667b.hot-update.js  47.6 KiB     index  [emitted]  index
+                         index.bundle.js  8.99 MiB     index  [emitted]  index
+                        launch.bundle.js   424 KiB    launch  [emitted]  launch
+                      register.bundle.js  1.45 MiB  register  [emitted]  register
+Entrypoint launch = launch.bundle.js
+Entrypoint index = index.bundle.js index.917b47c1421c2323667b.hot-update.js
+Entrypoint register = register.bundle.js
+[./src/components/QuestionnaireForm/QuestionnaireForm.jsx] 40.8 KiB {index} [built]
+    + 665 hidden modules
+[34mℹ[39m [90m｢wdm｣[39m: Compiled successfully.
+[34mℹ[39m [90m｢wdm｣[39m: Compiling...
+[34mℹ[39m [90m｢wdm｣[39m: Hash: c50c6003cb572b1bde82
+Version: webpack 4.39.1
+Time: 582ms
+Built at: 09/04/2019 1:32:22 PM
+                                   Asset      Size    Chunks             Chunk Names
+    7668f4c98cebae6e5140.hot-update.json  47 bytes            [emitted]  
+index.7668f4c98cebae6e5140.hot-update.js  47.6 KiB     index  [emitted]  index
+                         index.bundle.js  8.99 MiB     index  [emitted]  index
+                        launch.bundle.js   424 KiB    launch  [emitted]  launch
+                      register.bundle.js  1.45 MiB  register  [emitted]  register
+Entrypoint launch = launch.bundle.js
+Entrypoint index = index.bundle.js index.7668f4c98cebae6e5140.hot-update.js
+Entrypoint register = register.bundle.js
+[./src/components/QuestionnaireForm/QuestionnaireForm.jsx] 40.8 KiB {index} [built]
+    + 665 hidden modules
+[34mℹ[39m [90m｢wdm｣[39m: Compiled successfully.
+[34mℹ[39m [90m｢wdm｣[39m: Compiling...
+[34mℹ[39m [90m｢wdm｣[39m: Hash: c5a35f07937526178040
+Version: webpack 4.39.1
+Time: 170ms
+Built at: 09/04/2019 1:47:07 PM
+                                   Asset      Size    Chunks             Chunk Names
+    c50c6003cb572b1bde82.hot-update.json  47 bytes            [emitted]  
+                         index.bundle.js  8.99 MiB     index  [emitted]  index
+index.c50c6003cb572b1bde82.hot-update.js  3.38 KiB     index  [emitted]  index
+                        launch.bundle.js   424 KiB    launch  [emitted]  launch
+                      register.bundle.js  1.45 MiB  register  [emitted]  register
+Entrypoint launch = launch.bundle.js
+Entrypoint index = index.bundle.js index.c50c6003cb572b1bde82.hot-update.js
+Entrypoint register = register.bundle.js
+[./node_modules/css-loader/dist/cjs.js!./src/components/QuestionnaireForm/QuestionnaireForm.css] 2.49 KiB {index} [built]
+    + 665 hidden modules
+[34mℹ[39m [90m｢wdm｣[39m: Compiled successfully.
+[34mℹ[39m [90m｢wdm｣[39m: Compiling...
+[34mℹ[39m [90m｢wdm｣[39m: Hash: c2a46af74d36c2d5e932
+Version: webpack 4.39.1
+Time: 173ms
+Built at: 09/04/2019 1:47:29 PM
+                                   Asset      Size    Chunks             Chunk Names
+    c5a35f07937526178040.hot-update.json  47 bytes            [emitted]  
+                         index.bundle.js  8.99 MiB     index  [emitted]  index
+index.c5a35f07937526178040.hot-update.js  3.38 KiB     index  [emitted]  index
+                        launch.bundle.js   424 KiB    launch  [emitted]  launch
+                      register.bundle.js  1.45 MiB  register  [emitted]  register
+Entrypoint launch = launch.bundle.js
+Entrypoint index = index.bundle.js index.c5a35f07937526178040.hot-update.js
+Entrypoint register = register.bundle.js
+[./node_modules/css-loader/dist/cjs.js!./src/components/QuestionnaireForm/QuestionnaireForm.css] 2.5 KiB {index} [built]
+    + 665 hidden modules
+[34mℹ[39m [90m｢wdm｣[39m: Compiled successfully.
+[34mℹ[39m [90m｢wdm｣[39m: Compiling...
+[34mℹ[39m [90m｢wdm｣[39m: Hash: 116877312da653dbc4e2
+Version: webpack 4.39.1
+Time: 172ms
+Built at: 09/04/2019 1:49:52 PM
+                                   Asset      Size    Chunks             Chunk Names
+    c2a46af74d36c2d5e932.hot-update.json  47 bytes            [emitted]  
+                         index.bundle.js  8.99 MiB     index  [emitted]  index
+index.c2a46af74d36c2d5e932.hot-update.js   3.4 KiB     index  [emitted]  index
+                        launch.bundle.js   424 KiB    launch  [emitted]  launch
+                      register.bundle.js  1.45 MiB  register  [emitted]  register
+Entrypoint launch = launch.bundle.js
+Entrypoint index = index.bundle.js index.c2a46af74d36c2d5e932.hot-update.js
+Entrypoint register = register.bundle.js
+[./node_modules/css-loader/dist/cjs.js!./src/components/QuestionnaireForm/QuestionnaireForm.css] 2.51 KiB {index} [built]
+    + 665 hidden modules
+[34mℹ[39m [90m｢wdm｣[39m: Compiled successfully.
+[34mℹ[39m [90m｢wdm｣[39m: Compiling...
+[31m✖[39m [90m｢wdm｣[39m: Hash: b0f62f68c80762258132
+Version: webpack 4.39.1
+Time: 216ms
+Built at: 09/04/2019 1:55:07 PM
+                                   Asset      Size    Chunks             Chunk Names
+    116877312da653dbc4e2.hot-update.json  47 bytes            [emitted]  
+index.116877312da653dbc4e2.hot-update.js  6.42 KiB     index  [emitted]  index
+                         index.bundle.js     7 MiB     index  [emitted]  index
+                        launch.bundle.js   424 KiB    launch  [emitted]  launch
+                      register.bundle.js  1.45 MiB  register  [emitted]  register
+Entrypoint launch = launch.bundle.js
+Entrypoint index = index.bundle.js index.116877312da653dbc4e2.hot-update.js
+Entrypoint register = register.bundle.js
+[./src/components/QuestionnaireForm/QuestionnaireForm.jsx] 1.49 KiB {index} [built] [failed] [1 error]
+    + 604 hidden modules
+
+ERROR in ./src/components/QuestionnaireForm/QuestionnaireForm.jsx
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+SyntaxError: /home/ubuntu/dtr/src/components/QuestionnaireForm/QuestionnaireForm.jsx: Expected corresponding JSX closing tag for <h3> (1097:45)
+
+  1095 |                     }
+  1096 | 		   <div>
+> 1097 | 			<h3>Please attach the following documents.</p>
+       | 			                                          ^
+  1098 | 			<ol> 
+  1099 | 			   <li>OASIS Evaluation form</li>
+  1100 | 			   <li>Face to face discussion details</li>
+    at Object.raise (/home/ubuntu/dtr/node_modules/@babel/parser/lib/index.js:6322:17)
+    at Object.jsxParseElementAt (/home/ubuntu/dtr/node_modules/@babel/parser/lib/index.js:3558:16)
+    at Object.jsxParseElementAt (/home/ubuntu/dtr/node_modules/@babel/parser/lib/index.js:3531:32)
+    at Object.jsxParseElementAt (/home/ubuntu/dtr/node_modules/@babel/parser/lib/index.js:3531:32)
+    at Object.jsxParseElementAt (/home/ubuntu/dtr/node_modules/@babel/parser/lib/index.js:3531:32)
+    at Object.jsxParseElement (/home/ubuntu/dtr/node_modules/@babel/parser/lib/index.js:3584:17)
+    at Object.parseExprAtom (/home/ubuntu/dtr/node_modules/@babel/parser/lib/index.js:3591:19)
+    at Object.parseExprSubscripts (/home/ubuntu/dtr/node_modules/@babel/parser/lib/index.js:8385:23)
+    at Object.parseMaybeUnary (/home/ubuntu/dtr/node_modules/@babel/parser/lib/index.js:8365:21)
+    at Object.parseExprOps (/home/ubuntu/dtr/node_modules/@babel/parser/lib/index.js:8252:23)
+ @ ./src/App.js 114:0-81 199:31-48
+ @ ./src/index.js
+ @ multi (webpack)-dev-server/client?http://localhost (webpack)/hot/only-dev-server.js ./src/index.js
+[34mℹ[39m [90m｢wdm｣[39m: Failed to compile.
+[34mℹ[39m [90m｢wdm｣[39m: Compiling...
+[BABEL] Note: The code generator has deoptimised the styling of /home/ubuntu/dtr/node_modules/@fortawesome/free-solid-svg-icons/index.es.js as it exceeds the max of 500KB.
+[BABEL] Note: The code generator has deoptimised the styling of /home/ubuntu/dtr/node_modules/react-datepicker/es/index.js as it exceeds the max of 500KB.
+[34mℹ[39m [90m｢wdm｣[39m: Hash: 13a75c51de0ce8df8b59
+Version: webpack 4.39.1
+Time: 4664ms
+Built at: 09/04/2019 1:57:04 PM
+                                   Asset      Size    Chunks             Chunk Names
+    b0f62f68c80762258132.hot-update.json  47 bytes            [emitted]  
+index.b0f62f68c80762258132.hot-update.js  1.99 MiB     index  [emitted]  index
+                         index.bundle.js  8.99 MiB     index  [emitted]  index
+                        launch.bundle.js   424 KiB    launch  [emitted]  launch
+                      register.bundle.js  1.45 MiB  register  [emitted]  register
+Entrypoint launch = launch.bundle.js
+Entrypoint index = index.bundle.js index.b0f62f68c80762258132.hot-update.js
+Entrypoint register = register.bundle.js
+[./node_modules/@fortawesome/fontawesome-svg-core/index.es.js] 73.9 KiB {index} [built]
+[./node_modules/@fortawesome/free-solid-svg-icons/index.es.js] 632 KiB {index} [built]
+[./node_modules/@fortawesome/react-fontawesome/index.es.js] 12.8 KiB {index} [built]
+[./node_modules/classnames/index.js] 1.61 KiB {index} [built]
+[./node_modules/react-datepicker/es/index.js] 737 KiB {index} [built]
+[./node_modules/react-dropzone/dist/es/index.js] 30.5 KiB {index} [built]
+[./src/components/Inputs/BooleanInput/BooleanInput.jsx] 4.64 KiB {index} [built]
+[./src/components/Inputs/ChoiceInput/ChoiceInput.jsx] 6.7 KiB {index} [built]
+[./src/components/Inputs/DocumentInput/DocumentInput.jsx] 7.67 KiB {index} [built]
+[./src/components/Inputs/DropdownInput/DropdownInput.jsx] 5.14 KiB {index} [built]
+[./src/components/Inputs/OpenChoiceInput/OpenChoice.jsx] 11.5 KiB {index} [built]
+[./src/components/Inputs/QuantityInput/QuantityInput.jsx] 6.04 KiB {index} [built]
+[./src/components/Inputs/TextInput/TextInput.jsx] 5.14 KiB {index} [built]
+[./src/components/QuestionnaireForm/QuestionnaireForm.jsx] 41.1 KiB {index} [built]
+[./src/components/Section/Section.jsx] 5.5 KiB {index} [built]
+    + 651 hidden modules
+[34mℹ[39m [90m｢wdm｣[39m: Compiled successfully.
+[34mℹ[39m [90m｢wdm｣[39m: Compiling...
+[34mℹ[39m [90m｢wdm｣[39m: Hash: 095e236d3d2d17e5b7ee
+Version: webpack 4.39.1
+Time: 638ms
+Built at: 09/04/2019 1:59:08 PM
+                                   Asset      Size    Chunks             Chunk Names
+    13a75c51de0ce8df8b59.hot-update.json  47 bytes            [emitted]  
+index.13a75c51de0ce8df8b59.hot-update.js  48.1 KiB     index  [emitted]  index
+                         index.bundle.js  8.99 MiB     index  [emitted]  index
+                        launch.bundle.js   424 KiB    launch  [emitted]  launch
+                      register.bundle.js  1.45 MiB  register  [emitted]  register
+Entrypoint launch = launch.bundle.js
+Entrypoint index = index.bundle.js index.13a75c51de0ce8df8b59.hot-update.js
+Entrypoint register = register.bundle.js
+[./src/components/QuestionnaireForm/QuestionnaireForm.jsx] 41.2 KiB {index} [built]
+    + 665 hidden modules
+[34mℹ[39m [90m｢wdm｣[39m: Compiled successfully.
+[34mℹ[39m [90m｢wdm｣[39m: Compiling...
+[34mℹ[39m [90m｢wdm｣[39m: Hash: b715104d2fb4475ca598
+Version: webpack 4.39.1
+Time: 578ms
+Built at: 09/04/2019 2:01:11 PM
+                                   Asset      Size    Chunks             Chunk Names
+    095e236d3d2d17e5b7ee.hot-update.json  47 bytes            [emitted]  
+index.095e236d3d2d17e5b7ee.hot-update.js  48.2 KiB     index  [emitted]  index
+                         index.bundle.js  8.99 MiB     index  [emitted]  index
+                        launch.bundle.js   424 KiB    launch  [emitted]  launch
+                      register.bundle.js  1.45 MiB  register  [emitted]  register
+Entrypoint launch = launch.bundle.js
+Entrypoint index = index.bundle.js index.095e236d3d2d17e5b7ee.hot-update.js
+Entrypoint register = register.bundle.js
+[./src/components/QuestionnaireForm/QuestionnaireForm.jsx] 41.2 KiB {index} [built]
+    + 665 hidden modules
+[34mℹ[39m [90m｢wdm｣[39m: Compiled successfully.
+[34mℹ[39m [90m｢wdm｣[39m: Compiling...
+[31m✖[39m [90m｢wdm｣[39m: Hash: 70017838155f24373be9
+Version: webpack 4.39.1
+Time: 205ms
+Built at: 09/04/2019 2:22:48 PM
+                                   Asset      Size    Chunks             Chunk Names
+    b715104d2fb4475ca598.hot-update.json  47 bytes            [emitted]  
+index.b715104d2fb4475ca598.hot-update.js   6.4 KiB     index  [emitted]  index
+                         index.bundle.js     7 MiB     index  [emitted]  index
+                        launch.bundle.js   424 KiB    launch  [emitted]  launch
+                      register.bundle.js  1.45 MiB  register  [emitted]  register
+Entrypoint launch = launch.bundle.js
+Entrypoint index = index.bundle.js index.b715104d2fb4475ca598.hot-update.js
+Entrypoint register = register.bundle.js
+[./src/components/QuestionnaireForm/QuestionnaireForm.jsx] 1.48 KiB {index} [built] [failed] [1 error]
+    + 604 hidden modules
+
+ERROR in ./src/components/QuestionnaireForm/QuestionnaireForm.jsx
+Module build failed (from ./node_modules/babel-loader/lib/index.js):
+SyntaxError: /home/ubuntu/dtr/src/components/QuestionnaireForm/QuestionnaireForm.jsx: Adjacent JSX elements must be wrapped in an enclosing tag. Did you want a JSX fragment <>...</>? (1053:16)
+
+  1051 |                     }}></input></p>
+  1052 |                 </div>
+> 1053 |                 <h2 className="document-header">{this.props.qform.title}
+       |                 ^
+  1054 | 
+  1055 |                 </h2>
+  1056 | 
+    at Object.raise (/home/ubuntu/dtr/node_modules/@babel/parser/lib/index.js:6322:17)
+    at Object.jsxParseElementAt (/home/ubuntu/dtr/node_modules/@babel/parser/lib/index.js:3574:12)
+    at Object.jsxParseElement (/home/ubuntu/dtr/node_modules/@babel/parser/lib/index.js:3584:17)
+    at Object.parseExprAtom (/home/ubuntu/dtr/node_modules/@babel/parser/lib/index.js:3591:19)
+    at Object.parseExprSubscripts (/home/ubuntu/dtr/node_modules/@babel/parser/lib/index.js:8385:23)
+    at Object.parseMaybeUnary (/home/ubuntu/dtr/node_modules/@babel/parser/lib/index.js:8365:21)
+    at Object.parseExprOpBaseRightExpr (/home/ubuntu/dtr/node_modules/@babel/parser/lib/index.js:8325:34)
+    at Object.parseExprOpRightExpr (/home/ubuntu/dtr/node_modules/@babel/parser/lib/index.js:8318:21)
+    at Object.parseExprOp (/home/ubuntu/dtr/node_modules/@babel/parser/lib/index.js:8297:27)
+    at Object.parseExprOps (/home/ubuntu/dtr/node_modules/@babel/parser/lib/index.js:8262:17)
+ @ ./src/App.js 114:0-81 199:31-48
+ @ ./src/index.js
+ @ multi (webpack)-dev-server/client?http://localhost (webpack)/hot/only-dev-server.js ./src/index.js
+[34mℹ[39m [90m｢wdm｣[39m: Failed to compile.
+[34mℹ[39m [90m｢wdm｣[39m: Compiling...
+[BABEL] Note: The code generator has deoptimised the styling of /home/ubuntu/dtr/node_modules/@fortawesome/free-solid-svg-icons/index.es.js as it exceeds the max of 500KB.
+[BABEL] Note: The code generator has deoptimised the styling of /home/ubuntu/dtr/node_modules/react-datepicker/es/index.js as it exceeds the max of 500KB.
+[34mℹ[39m [90m｢wdm｣[39m: Hash: 2e8bea4100a1cd4a6ac7
+Version: webpack 4.39.1
+Time: 4456ms
+Built at: 09/04/2019 2:25:02 PM
+                                   Asset      Size    Chunks             Chunk Names
+    70017838155f24373be9.hot-update.json  47 bytes            [emitted]  
+index.70017838155f24373be9.hot-update.js  1.99 MiB     index  [emitted]  index
+                         index.bundle.js  8.99 MiB     index  [emitted]  index
+                        launch.bundle.js   424 KiB    launch  [emitted]  launch
+                      register.bundle.js  1.45 MiB  register  [emitted]  register
+Entrypoint launch = launch.bundle.js
+Entrypoint index = index.bundle.js index.70017838155f24373be9.hot-update.js
+Entrypoint register = register.bundle.js
+[./node_modules/@fortawesome/fontawesome-svg-core/index.es.js] 73.9 KiB {index} [built]
+[./node_modules/@fortawesome/free-solid-svg-icons/index.es.js] 632 KiB {index} [built]
+[./node_modules/@fortawesome/react-fontawesome/index.es.js] 12.8 KiB {index} [built]
+[./node_modules/classnames/index.js] 1.61 KiB {index} [built]
+[./node_modules/react-datepicker/es/index.js] 737 KiB {index} [built]
+[./node_modules/react-dropzone/dist/es/index.js] 30.5 KiB {index} [built]
+[./src/components/Inputs/BooleanInput/BooleanInput.jsx] 4.64 KiB {index} [built]
+[./src/components/Inputs/ChoiceInput/ChoiceInput.jsx] 6.7 KiB {index} [built]
+[./src/components/Inputs/DocumentInput/DocumentInput.jsx] 7.67 KiB {index} [built]
+[./src/components/Inputs/DropdownInput/DropdownInput.jsx] 5.14 KiB {index} [built]
+[./src/components/Inputs/OpenChoiceInput/OpenChoice.jsx] 11.5 KiB {index} [built]
+[./src/components/Inputs/QuantityInput/QuantityInput.jsx] 6.04 KiB {index} [built]
+[./src/components/Inputs/TextInput/TextInput.jsx] 5.14 KiB {index} [built]
+[./src/components/QuestionnaireForm/QuestionnaireForm.jsx] 42 KiB {index} [built]
+[./src/components/Section/Section.jsx] 5.5 KiB {index} [built]
+    + 651 hidden modules
+[34mℹ[39m [90m｢wdm｣[39m: Compiled successfully.
+[34mℹ[39m [90m｢wdm｣[39m: Compiling...
+[34mℹ[39m [90m｢wdm｣[39m: Hash: 4f14f3e4a01012e43694
+Version: webpack 4.39.1
+Time: 647ms
+Built at: 09/04/2019 2:29:06 PM
+                                   Asset      Size    Chunks             Chunk Names
+    2e8bea4100a1cd4a6ac7.hot-update.json  47 bytes            [emitted]  
+index.2e8bea4100a1cd4a6ac7.hot-update.js  49.2 KiB     index  [emitted]  index
+                         index.bundle.js  8.99 MiB     index  [emitted]  index
+                        launch.bundle.js   424 KiB    launch  [emitted]  launch
+                      register.bundle.js  1.45 MiB  register  [emitted]  register
+Entrypoint launch = launch.bundle.js
+Entrypoint index = index.bundle.js index.2e8bea4100a1cd4a6ac7.hot-update.js
+Entrypoint register = register.bundle.js
+[./src/components/QuestionnaireForm/QuestionnaireForm.jsx] 42 KiB {index} [built]
+    + 665 hidden modules
+[34mℹ[39m [90m｢wdm｣[39m: Compiled successfully.
+[34mℹ[39m [90m｢wdm｣[39m: Compiling...
+[34mℹ[39m [90m｢wdm｣[39m: Hash: bb569ff9f7dab7e1216b
+Version: webpack 4.39.1
+Time: 587ms
+Built at: 09/04/2019 2:32:55 PM
+                                   Asset      Size    Chunks             Chunk Names
+    4f14f3e4a01012e43694.hot-update.json  47 bytes            [emitted]  
+index.4f14f3e4a01012e43694.hot-update.js  49.2 KiB     index  [emitted]  index
+                         index.bundle.js  8.99 MiB     index  [emitted]  index
+                        launch.bundle.js   424 KiB    launch  [emitted]  launch
+                      register.bundle.js  1.45 MiB  register  [emitted]  register
+Entrypoint launch = launch.bundle.js
+Entrypoint index = index.bundle.js index.4f14f3e4a01012e43694.hot-update.js
+Entrypoint register = register.bundle.js
+[./src/components/QuestionnaireForm/QuestionnaireForm.jsx] 42 KiB {index} [built]
+    + 665 hidden modules
+[34mℹ[39m [90m｢wdm｣[39m: Compiled successfully.
+[34mℹ[39m [90m｢wdm｣[39m: Compiling...
+[34mℹ[39m [90m｢wdm｣[39m: Hash: bf98008e93f1e3d68d57
+Version: webpack 4.39.1
+Time: 652ms
+Built at: 09/04/2019 2:43:58 PM
+                                   Asset      Size    Chunks             Chunk Names
+    bb569ff9f7dab7e1216b.hot-update.json  47 bytes            [emitted]  
+index.bb569ff9f7dab7e1216b.hot-update.js    51 KiB     index  [emitted]  index
+                         index.bundle.js  8.99 MiB     index  [emitted]  index
+                        launch.bundle.js   424 KiB    launch  [emitted]  launch
+                      register.bundle.js  1.45 MiB  register  [emitted]  register
+Entrypoint launch = launch.bundle.js
+Entrypoint index = index.bundle.js index.bb569ff9f7dab7e1216b.hot-update.js
+Entrypoint register = register.bundle.js
+[./src/components/QuestionnaireForm/QuestionnaireForm.jsx] 43.6 KiB {index} [built]
+    + 665 hidden modules
+[34mℹ[39m [90m｢wdm｣[39m: Compiled successfully.
+[34mℹ[39m [90m｢wdm｣[39m: Compiling...
+[34mℹ[39m [90m｢wdm｣[39m: Hash: 5870557a7f7139640a22
+Version: webpack 4.39.1
+Time: 642ms
+Built at: 09/04/2019 2:46:18 PM
+                                   Asset      Size    Chunks             Chunk Names
+    bf98008e93f1e3d68d57.hot-update.json  47 bytes            [emitted]  
+index.bf98008e93f1e3d68d57.hot-update.js    51 KiB     index  [emitted]  index
+                         index.bundle.js  8.99 MiB     index  [emitted]  index
+                        launch.bundle.js   424 KiB    launch  [emitted]  launch
+                      register.bundle.js  1.45 MiB  register  [emitted]  register
+Entrypoint launch = launch.bundle.js
+Entrypoint index = index.bundle.js index.bf98008e93f1e3d68d57.hot-update.js
+Entrypoint register = register.bundle.js
+[./src/components/QuestionnaireForm/QuestionnaireForm.jsx] 43.6 KiB {index} [built]
+    + 665 hidden modules
+[34mℹ[39m [90m｢wdm｣[39m: Compiled successfully.
+[34mℹ[39m [90m｢wdm｣[39m: Compiling...
+[34mℹ[39m [90m｢wdm｣[39m: Hash: 848e93234b3fde60fc46
+Version: webpack 4.39.1
+Time: 638ms
+Built at: 09/04/2019 2:49:35 PM
+                                   Asset      Size    Chunks             Chunk Names
+    5870557a7f7139640a22.hot-update.json  47 bytes            [emitted]  
+index.5870557a7f7139640a22.hot-update.js    51 KiB     index  [emitted]  index
+                         index.bundle.js  8.99 MiB     index  [emitted]  index
+                        launch.bundle.js   424 KiB    launch  [emitted]  launch
+                      register.bundle.js  1.45 MiB  register  [emitted]  register
+Entrypoint launch = launch.bundle.js
+Entrypoint index = index.bundle.js index.5870557a7f7139640a22.hot-update.js
+Entrypoint register = register.bundle.js
+[./src/components/QuestionnaireForm/QuestionnaireForm.jsx] 43.7 KiB {index} [built]
+    + 665 hidden modules
+[34mℹ[39m [90m｢wdm｣[39m: Compiled successfully.
+[34mℹ[39m [90m｢wdm｣[39m: Compiling...
+[34mℹ[39m [90m｢wdm｣[39m: Hash: 17f546fac95a601522a7
+Version: webpack 4.39.1
+Time: 659ms
+Built at: 09/04/2019 2:51:31 PM
+                                   Asset      Size    Chunks             Chunk Names
+    848e93234b3fde60fc46.hot-update.json  47 bytes            [emitted]  
+index.848e93234b3fde60fc46.hot-update.js    51 KiB     index  [emitted]  index
+                         index.bundle.js  8.99 MiB     index  [emitted]  index
+                        launch.bundle.js   424 KiB    launch  [emitted]  launch
+                      register.bundle.js  1.45 MiB  register  [emitted]  register
+Entrypoint launch = launch.bundle.js
+Entrypoint index = index.bundle.js index.848e93234b3fde60fc46.hot-update.js
+Entrypoint register = register.bundle.js
+[./src/components/QuestionnaireForm/QuestionnaireForm.jsx] 43.7 KiB {index} [built]
+    + 665 hidden modules
+[34mℹ[39m [90m｢wdm｣[39m: Compiled successfully.
+[34mℹ[39m [90m｢wdm｣[39m: Compiling...
+[34mℹ[39m [90m｢wdm｣[39m: Hash: d624f099ce0dde11f495
+Version: webpack 4.39.1
+Time: 607ms
+Built at: 09/04/2019 2:54:05 PM
+                                   Asset      Size    Chunks             Chunk Names
+    17f546fac95a601522a7.hot-update.json  47 bytes            [emitted]  
+index.17f546fac95a601522a7.hot-update.js  51.1 KiB     index  [emitted]  index
+                         index.bundle.js  8.99 MiB     index  [emitted]  index
+                        launch.bundle.js   424 KiB    launch  [emitted]  launch
+                      register.bundle.js  1.45 MiB  register  [emitted]  register
+Entrypoint launch = launch.bundle.js
+Entrypoint index = index.bundle.js index.17f546fac95a601522a7.hot-update.js
+Entrypoint register = register.bundle.js
+[./src/components/QuestionnaireForm/QuestionnaireForm.jsx] 43.7 KiB {index} [built]
+    + 665 hidden modules
+[34mℹ[39m [90m｢wdm｣[39m: Compiled successfully.
+[34mℹ[39m [90m｢wdm｣[39m: Compiling...
+[34mℹ[39m [90m｢wdm｣[39m: Hash: 4128363d756458c3cb53
+Version: webpack 4.39.1
+Time: 606ms
+Built at: 09/04/2019 2:57:53 PM
+                                   Asset      Size    Chunks             Chunk Names
+    d624f099ce0dde11f495.hot-update.json  47 bytes            [emitted]  
+                         index.bundle.js  8.99 MiB     index  [emitted]  index
+index.d624f099ce0dde11f495.hot-update.js  51.2 KiB     index  [emitted]  index
+                        launch.bundle.js   424 KiB    launch  [emitted]  launch
+                      register.bundle.js  1.45 MiB  register  [emitted]  register
+Entrypoint launch = launch.bundle.js
+Entrypoint index = index.bundle.js index.d624f099ce0dde11f495.hot-update.js
+Entrypoint register = register.bundle.js
+[./src/components/QuestionnaireForm/QuestionnaireForm.jsx] 43.8 KiB {index} [built]
+    + 665 hidden modules
+[34mℹ[39m [90m｢wdm｣[39m: Compiled successfully.
+[34mℹ[39m [90m｢wdm｣[39m: Compiling...
+[34mℹ[39m [90m｢wdm｣[39m: Hash: 18a404f550cbe491bcb2
+Version: webpack 4.39.1
+Time: 639ms
+Built at: 09/04/2019 3:06:03 PM
+                                   Asset      Size    Chunks             Chunk Names
+    4128363d756458c3cb53.hot-update.json  47 bytes            [emitted]  
+index.4128363d756458c3cb53.hot-update.js  51.3 KiB     index  [emitted]  index
+                         index.bundle.js  8.99 MiB     index  [emitted]  index
+                        launch.bundle.js   424 KiB    launch  [emitted]  launch
+                      register.bundle.js  1.45 MiB  register  [emitted]  register
+Entrypoint launch = launch.bundle.js
+Entrypoint index = index.bundle.js index.4128363d756458c3cb53.hot-update.js
+Entrypoint register = register.bundle.js
+[./src/components/QuestionnaireForm/QuestionnaireForm.jsx] 44 KiB {index} [built]
+    + 665 hidden modules
+[34mℹ[39m [90m｢wdm｣[39m: Compiled successfully.

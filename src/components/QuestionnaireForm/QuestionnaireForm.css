@@ -1,0 +1,145 @@
+/* .wrapper{
+  display:block;
+  margin-left:15px;
+} */
+
+.section-header {
+    margin-top: 20px;
+    color: #8a6d3b;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.document-header {
+/*    margin-left: 55px;
+  */  background-color: #3FB1CF;
+    padding: 10px;
+    color: white;
+}
+
+.header-input {
+    text-align: left;
+    margin-bottom: 5px;
+    margin-left: 15px;
+    margin-top: 15px;
+    min-width: 100px;
+    /* font-weight: bold; */
+}
+
+.wrapper1{
+  width: 50%;
+  float: left;
+  display: block;
+  margin-left: 15px;
+  border-right: 1px solid #ccc;
+}
+.wrapper2{
+  width:50%;
+  float:left;
+  display:block;
+  margin-left:-20px;
+}
+html {
+  scroll-behavior: smooth;
+}
+
+/*
+.sidenav { 
+  height:100%;
+  width:55px;
+  position: fixed;
+  z-index: 1;
+  top:0;
+  left: 0;
+  background-color:#111;
+  padding-top:60px;
+  overflow-wrap: break-word;
+}
+
+.sidenav-box {
+  color:#fff;
+  width:100%;
+  border-top:1px solid #555;
+  padding-left: 3px;
+  padding-right:3px;
+  font-size:13px;
+  font-family: 'Courier New', Courier, monospace
+}
+*/
+
+.sidenav {
+    height: 100%;
+    width: 55px;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    color: black;
+    display:none;
+    background-color: #8a6d3b;
+    padding-top: 60px;
+    overflow-wrap: break-word;
+}
+
+.sidenav-box {
+    color: white;
+    width: 100%;
+    border-top: 1px solid #555;
+    padding-left: 3px;
+    padding-right: 3px;
+    font-size: 13px;
+    font-family: 'Courier New', Courier, monospace;
+}
+.sidenav-box:not(.sidenav-manually-disabled):not(.sidenav-disabled):hover {
+  background-color:#333;
+}
+
+.sidenav-active {
+  color:white;
+}
+.sidenav-disabled {
+    background-color: #666;
+    color: #444;
+}
+.sidenav-manually-disabled {
+    background-color:#336;
+    color:white;
+}
+
+.submit-button {
+  margin-left: 55px;
+  border-width: 1px 1px 1px 5px;
+  border-style:solid;
+  border-color:#333;
+}
+
+.submit-button:hover {
+  background-color: #f3f3f3;
+  border-color:#000;
+}
+
+.filled {
+    color:white;
+
+}
+
+.filter-filled { 
+    font-family: monospace;
+    margin:0;
+    padding:5px;
+
+}
+
+.floating-tools {
+    right:10px;
+    top:0;
+    width: 100px;
+    border-width: 0px 1px 1px 1px;
+    border-style: solid;
+    border-color:black;
+    position:fixed;
+    background-color:white;
+    z-index: 5;
+    display:none
+}
+
