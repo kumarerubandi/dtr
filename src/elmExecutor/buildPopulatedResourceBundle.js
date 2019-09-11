@@ -34,8 +34,9 @@ function doSearch(smart, type, callback) {
       //nothing
     }
   }
+  console.log("query0-------",type,q)
   smart.patient.api
-    .search({ type, query: q })
+    .search({ type , q})
     .then(processSuccess(smart, [], callback), processError(smart, callback));
 }
 
@@ -89,6 +90,7 @@ function buildPopulatedResourceBundle(smart, neededResources, consoleLog) {
           } else if (r === "Patient") {
             readResources(neededResources, callback);
           } else {
+
             doSearch(smart, r, (results, error) => {
               if (results) {
                 entryResources.push(...results);

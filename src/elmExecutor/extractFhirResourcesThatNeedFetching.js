@@ -3,7 +3,10 @@ function extractFhirResourcesThatNeedFetching(elm) {
   //TODO: why was this elm.source?! and how was it working?
   if ((((elm || {}).library || {}).statements || {}).def) {
       Object.keys(elm.library.statements.def).forEach((e)=>{
-        extractResourcesFromExpression(resources, elm.library.statements.def[e].expression);
+        console.log("statements--------------",e)
+        if (elm.library.statements.def[e].name === "FHIRQueries"){
+          extractResourcesFromExpression(resources, elm.library.statements.def[e].expression);
+        }
       });
     // for (const expDef of Object.keys(elm.library.statements.def)) {
     //   extractResourcesFromExpression(resources, elm.library.statements.def[expDef].expression);
@@ -25,7 +28,13 @@ function extractResourcesFromExpression(resources, expression) {
       } else {
         console.error("Cannot find resource for Retrieve w/ dataType: ", expression.dataType);
       }
-    } else {
+    } if (expression.type === "List") {
+      Object.keys(expression.element).forEach((e)=>{
+        if (expression.element[e].value !== undefined){
+          resources.add(expression.element[e].value);
+        }
+      });
+    }else {
         Object.keys(expression).forEach((e)=>{
             extractResourcesFromExpression(resources, expression[e]);
         });

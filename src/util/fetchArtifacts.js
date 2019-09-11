@@ -16,7 +16,8 @@ function fetchArtifacts(fhirUriPrefix, questionnaireUri, smart, filepath, consol
     const retVal = {
       questionnaire: null,
       mainLibraryElm: null,
-      dependentElms: []
+      dependentElms: [],
+      dataRequirement: []
     }
 
     function resolveIfDone(){
@@ -77,15 +78,22 @@ function fetchArtifacts(fhirUriPrefix, questionnaireUri, smart, filepath, consol
       pendingFetches += 1;
       fetch(libraryUrl).then(handleFetchErrors).then(r => r.json())
       .then(libraryResource => {
+        console.log("library resource---",libraryResource);
         fetchedUris.add(libraryUri);
         fetchRelatedElms(libraryResource);
         fetchElmFile(libraryResource, isMain);
+        fetchDataRequirements(libraryResource);
         consoleLog("fetched Elm","infoClass");
         pendingFetches -= 1;
       })
       .catch(err => reject(err));
     }
 
+    function fetchDataRequirements(libraryResource){
+      if (libraryResource.dataRequirement == null) return
+      console.log(libraryResource.dataRequirement);
+      retval.dataRequirement = libraryResource.dataRequirement
+    }
     function fetchRelatedElms(libraryResource){
       if (libraryResource.relatedArtifact == null) return
       const libUris = libraryResource.relatedArtifact.filter(a => a.type == "depends-on").map(a => a.resource.reference);

@@ -30,6 +30,7 @@ class App extends Component {
       this.setState({questionnaire: artifacts.questionnaire})
       this.setState({deviceRequest: this.props.deviceRequest})
       const executionInputs = {
+        dataRequirement: artifacts.dataRequirement,
         elm: artifacts.mainLibraryElm,
         elmDependencies: artifacts.dependentElms,
         valueSetDB: {},
