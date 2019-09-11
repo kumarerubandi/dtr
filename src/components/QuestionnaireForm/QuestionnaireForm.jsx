@@ -1140,7 +1140,7 @@ export default class QuestionnaireForm extends Component {
                                 }
                             })
                         }
-                        <div className="section">
+                        {/* <div className="section">
                             <h3 className="section-header" style={{ marginLeft: "-15px" }}>Please attach the following documents</h3>
                             <ol>
                                 <li>OASIS Evaluation form</li>
@@ -1149,7 +1149,7 @@ export default class QuestionnaireForm extends Component {
                         </div>
                         <DocumentInput
                             updateCallback={this.updateDocuments}
-                        />
+                        /> */}
                     </div>
                     <div className="wrapper2">
                         <div>

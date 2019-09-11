@@ -1,5 +1,5 @@
-function doSearch(smart, type, callback) {
-  const q = {};
+function doSearch(smart, type, q, callback) {
+  // const q = {};
 
   // If this is for Epic, there are some specific modifications needed for the queries to work properly
   if (
@@ -34,9 +34,8 @@ function doSearch(smart, type, callback) {
       //nothing
     }
   }
-  console.log("query0-------",type,q)
   smart.patient.api
-    .search({ type , q})
+    .search({type: type, query: q})
     .then(processSuccess(smart, [], callback), processError(smart, callback));
 }
 
@@ -75,8 +74,6 @@ function buildPopulatedResourceBundle(smart, neededResources, consoleLog) {
   return new Promise(function(resolve, reject){
     console.log("waiting for patient");
     consoleLog("waiting for patient","infoClass");
-
-    console.log(smart);
     consoleLog(smart.patient.id, "infoClass");
     smart.patient.read().then(
       pt => {
@@ -84,14 +81,20 @@ function buildPopulatedResourceBundle(smart, neededResources, consoleLog) {
         consoleLog("got pt:" + pt, "infoClass");
         const entryResources = [pt];
         const readResources = (neededResources, callback) => {
-          const r = neededResources.pop();
-          if (r == null) {
+          const rq = neededResources.pop();
+          let r = "";
+          let q = {};
+          if (rq !== undefined ) {
+            r = rq.type;
+            q = rq.query;
+          } 
+          if (r === "") {
             callback();
           } else if (r === "Patient") {
             readResources(neededResources, callback);
           } else {
 
-            doSearch(smart, r, (results, error) => {
+            doSearch(smart, r, q, (results, error) => {
               if (results) {
                 entryResources.push(...results);
               }

@@ -78,7 +78,6 @@ function fetchArtifacts(fhirUriPrefix, questionnaireUri, smart, filepath, consol
       pendingFetches += 1;
       fetch(libraryUrl).then(handleFetchErrors).then(r => r.json())
       .then(libraryResource => {
-        console.log("library resource---",libraryResource);
         fetchedUris.add(libraryUri);
         fetchRelatedElms(libraryResource);
         fetchElmFile(libraryResource, isMain);
@@ -91,8 +90,7 @@ function fetchArtifacts(fhirUriPrefix, questionnaireUri, smart, filepath, consol
 
     function fetchDataRequirements(libraryResource){
       if (libraryResource.dataRequirement == null) return
-      console.log(libraryResource.dataRequirement);
-      retval.dataRequirement = libraryResource.dataRequirement
+      retVal.dataRequirement = libraryResource.dataRequirement
     }
     function fetchRelatedElms(libraryResource){
       if (libraryResource.relatedArtifact == null) return

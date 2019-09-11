@@ -1,16 +1,28 @@
 function extractFhirResourcesThatNeedFetching(elm) {
   const resources = new Set();
   //TODO: why was this elm.source?! and how was it working?
-  if ((((elm || {}).library || {}).statements || {}).def) {
-      Object.keys(elm.library.statements.def).forEach((e)=>{
-        console.log("statements--------------",e)
-        if (elm.library.statements.def[e].name === "FHIRQueries"){
-          extractResourcesFromExpression(resources, elm.library.statements.def[e].expression);
+  // if ((((elm || {}).library || {}).statements || {}).def) {
+  //     // Object.keys(elm.library.statements.def).forEach((e)=>{
+  //     //     extractResourcesFromExpression(resources, elm.library.statements.def[e].expression);
+  //     // });
+  //   for (const expDef of Object.keys(elm.library.statements.def)) {
+  //     extractResourcesFromExpression(resources, elm.library.statements.def[expDef].expression);
+  //   }
+  // }
+  if (elm || []){
+    for (const query of Object.keys(elm)) {
+      const resource = {type:"",query:{}}
+      if (elm[query].type !== undefined){
+        resource.type = elm[query].type;
+      }
+      if (elm[query].codeFilter !== undefined){
+        if ((elm[query].codeFilter || [])){
+          const key = elm[query].codeFilter[0].path;
+          resource.query[key] = elm[query].codeFilter[0].valueSetString;
         }
-      });
-    // for (const expDef of Object.keys(elm.library.statements.def)) {
-    //   extractResourcesFromExpression(resources, elm.library.statements.def[expDef].expression);
-    // }
+      }
+      resources.add(resource);
+    }
   }
   return Array.from(resources);
 }

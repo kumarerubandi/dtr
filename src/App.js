@@ -43,7 +43,7 @@ class App extends Component {
    .then(cqlResults => {
       this.consoleLog("executed cql, result:"+JSON.stringify(cqlResults),"infoClass");
       this.setState({bundle: cqlResults.bundle})
-      /this.setState({cqlPrepoulationResults: cqlResults.elmResults})
+      this.setState({cqlPrepoulationResults: cqlResults.elmResults})
     });
   }
 

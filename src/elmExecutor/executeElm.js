@@ -7,9 +7,7 @@ import buildPopulatedResourceBundle from "./buildPopulatedResourceBundle";
 function executeElm(smart, fhirVersion, executionInputs, consoleLog) {
   return new Promise(function(resolve, reject){
     const patientSource = getPatientSource(fhirVersion)
-    console.log("execution inputs--",executionInputs.dataRequirement);
-    // const neededResources = extractFhirResourcesThatNeedFetching(executionInputs.elm);
-    const neededResources = ["Coverage","Practitioner","Procedure","Observation"];
+    const neededResources = extractFhirResourcesThatNeedFetching(executionInputs.dataRequirement);
     consoleLog("need to fetch resources","infoClass");
     console.log("We need to fetch these resources:", neededResources);
     
