@@ -16,6 +16,7 @@ import { isTSEnumMember } from '@babel/types';
 
 import Select from "react-dropdown-select";
 import providerOptions from "../../providerOptions.json";
+import { faCarrot } from '@fortawesome/free-solid-svg-icons';
 
 
 const state = urlUtils.getUrlParameter("state"); // session key
@@ -47,7 +48,8 @@ export default class QuestionnaireForm extends Component {
             claimMessage: "",
             otherProvider: false,
             providerQueries: [],
-            providerSource: 1
+            providerSource: 1,
+            communicationRequestId:''
         };
         this.updateQuestionValue = this.updateQuestionValue.bind(this);
         this.updateNestedQuestionValue = this.updateNestedQuestionValue.bind(this);
@@ -1189,182 +1191,334 @@ export default class QuestionnaireForm extends Component {
     }
     submitCommunicationRequest(){
                
-                console.log(JSON.parse(sessionStorage['patientObject']),'queries',this.state.items)
-                var patient = JSON.parse(sessionStorage['patientObject'])
-                let json = {
-                    "resourceType": "Bundle",
-                    "id": "bundle-transaction",
-                    "type": "transaction",
-                    "entry": [
-                      {
-                        "resource": {
-                          "resourceType": "Endpoint",
-                          "id": "Payer-Endpoint-Id",
-                          "identifier": [
-                            {
-                              "system": "http://www.jurisdiction.com/insurer/123456",
-                              "value": 795960864
-                            }
-                          ],
-                          "connectionType": {
-                            "system": "http://terminology.hl7.org/CodeSystem/endpoint-connection-type",
-                            "code": "hl7-fhir-rest"
-                          },
-                          "address": "http://auth.mettles.com:8180/hapi-fhir-jpaserver/fhir/Communication"
-                        },
-                        "request": {
-                          "method": "POST",
-                          "url": "Endpoint",
-                          "ifNoneExist": {
-                            "_value": "identifier=http://www.jurisdiction.com/insurer/123456|795960864"
-                          }
-                        }
-                      },
-                      {
-                        "resource": {
-                          "resourceType": "Organization",
-                          "identifier": [
-                            {
-                              "system": "https://www.maxmddirect.com/fhir/identifier",
-                              "value": "6677829"
-                            }
-                          ],
-                          "id": "Payer-Organization-Id",
-                          "name": "Endocrinology Group of Chicago",
-                          "telecom": [
-                            {
-                              "id": "1",
-                              "system": "phone",
-                              "value": "666444-5555",
-                              "use": "work"
-                            }
-                          ],
-                          "address": [
-                            {
-                              "line": [
-                                "123 Healthcare Ave."
-                              ],
-                              "city": "Chicago",
-                              "state": "IL",
-                              "postalCode": "60643",
-                              "country": "US"
-                            }
-                          ],
-                          "endpoint": [
-                            {
-                              "reference": "Endpoint/Payer-Endpoint-Id"
-                            }
-                          ]
-                        },
-                        "request": {
-                          "method": "POST",
-                          "url": "Organization",
-                          "ifNoneExist": {
-                            "_value": "identifier%3Dhttps%3A%2F%2Fwww.maxmddirect.com%2Ffhir%2Fidentifier%7C6677829"
-                          }
-                        }
-                      },
-                      {
-                        "resource": {
-                          "resourceType": "CommunicationRequest",
-                          "identifier": [
-                            {
-                              "system": "http://www.jurisdiction.com/insurer/123456",
-                              "value": 901382527
-                            }
-                          ],
-                          "contained": [
-                            {
-                              "resourceType": "Organization",
-                              "id": "Provider-organization-id",
-                              "identifier": [
-                                {
-                                  "system": "http://www.Anthem.com/edi",
-                                  "value": "DemoPayer"
-                                },
-                                {
-                                  "system": "https://www.maxmddirect.com/fhir/identifier",
-                                  "value": "MaxMDDemoPayerOrganizationeval"
-                                }
-                              ],
-                              "name": "MaxMD Demo Payer Solutions",
-                              "endpoint": [
-                                {
-                                  "reference": "#END123"
-                                }
-                              ]
-                            }
-                          ],
-                          "category": [
-                            {
-                              "coding": [
-                                {
-                                  "system": "http://acme.org/messagetypes",
-                                  "code": "SolicitedAttachmentRequest"
-                                }
-                              ]
-                            }
-                          ],
-                          "priority": "routine",
-                          "medium": [
-                            {
-                              "coding": [
-                                {
-                                  "system": "http://terminology.hl7.org/CodeSystem/v3ParticipationMode",
-                                  "code": "WRITTEN",
-                                  "display": "written"
-                                }
-                              ],
-                              "text": "written"
-                            }
-                          ],
-                          "subject": {
-                            // "reference": "Patient?given="+patient.name[0].given[0]+"&family="+&patient.name[0].family+"&address-postalcode="+07003&birthdate=1946-12-16"
-                          },
-                          "requester": {
-                            "reference": "Organization/Payer-Organization-Id"
-                          },
-                          "status": "active",
-                          "recipient": [
-                            {
-                              "reference": "Organization/Payer-Organization-Id"
-                            }
-                          ],
-                          "sender": {
-                            "reference": "#Provider-organization-id"
-                          },
-                          "occurrencePeriod": {
-                            "start": "2019-09-13T05:30:00.000Z",
-                            "end": "2019-09-21T05:29:59.000Z"
-                          },
-                          "authoredOn": "2019-09-13T10:49:27.581Z",
-                          "payload": [
-                            {
-                              "extension": [
-                                {
-                                  "url": "http://hl7.org/fhir/us/davinci-cdex/StructureDefinition/cdex-payload-clinical-note-type",
-                                  "valueCodeableConcept": {
-                                    "coding": [
-                                      {
-                                        "system": "http://loinc.org",
-                                        "code": "11506-3"
-                                      }
-                                    ]
-                                  }
-                                }
-                              ],
-                              "contentString": "Please provide Progress Note recorded during 2019-09-05 - 2019-09-13"
-                            }
-                          ]
-                        },
-                        "request": {
-                          "method": "POST",
-                          "url": "CommunicationRequest"
-                        }
-                      }
-                    ]
-                  }
+        console.log(JSON.parse(sessionStorage['patientObject']),'queries',this.state.providerQueries)
+        var patient = JSON.parse(sessionStorage['patientObject'])
+        var providerQueries = this.state.providerQueries
+        var valueCodeableConcept = {
+            "coding": [
+                {
+                "system": "http://loinc.org",
+                }
+            ]
             }
+        var value
+        var contentStringJson = {
+            "extension": [
+                {
+                    "url": "http://hl7.org/fhir/us/davinci-cdex/StructureDefinition/cdex-payload-clinical-note-type",
+                }
+                ],
+        }
+        var contentString =  "Please provide Progress Note recorded during 2018-09-05 - 2019-09-13"
+        var arr=[]
+        for(var i = 0; i<providerQueries.length;i++){
+            if(providerQueries[i].checked=== true){
+                if(providerQueries[i].type=== 'attachment'){
+                    for(var j =0;j<providerQueries[i].code.coding.length;j++){
+                        arr.push({
+                            "extension": [
+                            {
+                                "url": "http://hl7.org/fhir/us/davinci-cdex/StructureDefinition/cdex-payload-clinical-note-type",
+                            "valueCodeableConcept" :{
+                                    "coding": [
+                                        {
+                                        "system": "http://loinc.org",
+                                         "code":providerQueries[i].code.coding[j].code
+                                        }
+                                    ]
+                            }
+                            }
+                        ],
+                        "contentString" :  "Please provide "+ providerQueries[i].code.coding[j].display+" recorded during 2018-09-05 - 2019-09-13"
+                        }
+                        )
+                    }
+                }
+                else if(providerQueries[i].type=== "query"){
+                    if(providerQueries[i].code !== "" ){
+                        arr.push({
+                            "extension": [
+                                {
+                                    "url": "http://hl7.org/fhir/us/davinci-cdex/StructureDefinition/cdex-payload-clinical-note-type",
+                                    "valueString": providerQueries[i].name+"?patient="+patient.id+"&"+providerQueries[i].code
+                                }
+                            ],
+                            "contentString" :  "Please provide "+ providerQueries[i].name+" recorded during 2018-09-05 - 2019-09-13"
+                            }
+                        )
+                    }
+                    else{
+                        arr.push({
+                            "extension": [
+                                {
+                                    "url": "http://hl7.org/fhir/us/davinci-cdex/StructureDefinition/cdex-payload-clinical-note-type",
+                                    "valueString": providerQueries[i].name
+                                }
+                            ],
+                            "contentString" :  "Please provide "+ providerQueries[i].name+" recorded during 2018-09-05 - 2019-09-13"
+                            }
+                        )
+
+                    }
+                    
+                }
+
+            }
+        }
+        console.log(arr,'please')
+        let json = {
+            "resourceType": "Bundle",
+            "id": "bundle-transaction",
+            "type": "transaction",
+            "entry": [
+                {
+                "resource": {
+                    "resourceType": "Endpoint",
+                    "id": "Payer-Endpoint-Id",
+                    "identifier": [
+                    {
+                        "system": "http://www.jurisdiction.com/insurer/123456",
+                        "value": 795960864
+                    }
+                    ],
+                    "connectionType": {
+                    "system": "http://terminology.hl7.org/CodeSystem/endpoint-connection-type",
+                    "code": "hl7-fhir-rest"
+                    },
+                    "address": "http://auth.mettles.com:8180/hapi-fhir-jpaserver/fhir/Communication"
+                },
+                "request": {
+                    "method": "POST",
+                    "url": "Endpoint",
+                    "ifNoneExist": {
+                    "_value": "identifier=http://www.jurisdiction.com/insurer/123456|795960864"
+                    }
+                }
+                },
+                {
+                "resource": {
+                    "resourceType": "Organization",
+                    "identifier": [
+                    {
+                        "system": "https://www.maxmddirect.com/fhir/identifier",
+                        "value": "6677829"
+                    }
+                    ],
+                    "id": "Payer-Organization-Id",
+                    "name": "Endocrinology Group of Chicago",
+                    "telecom": [
+                    {
+                        "id": "1",
+                        "system": "phone",
+                        "value": "666444-5555",
+                        "use": "work"
+                    }
+                    ],
+                    "address": [
+                    {
+                        "line": [
+                        "123 Healthcare Ave."
+                        ],
+                        "city": "Chicago",
+                        "state": "IL",
+                        "postalCode": "60643",
+                        "country": "US"
+                    }
+                    ],
+                    "endpoint": [
+                    {
+                        "reference": "Endpoint/Payer-Endpoint-Id"
+                    }
+                    ]
+                },
+                "request": {
+                    "method": "POST",
+                    "url": "Organization",
+                    "ifNoneExist": {
+                    "_value": "identifier%3Dhttps%3A%2F%2Fwww.maxmddirect.com%2Ffhir%2Fidentifier%7C6677829"
+                    }
+                }
+                },
+                {
+                "resource": {
+                    "resourceType": "CommunicationRequest",
+                    "identifier": [
+                    {
+                        "system": "http://www.jurisdiction.com/insurer/123456",
+                        "value": 901382527
+                    }
+                    ],
+                    "contained": [
+                    {
+                        "resourceType": "Organization",
+                        "id": "Provider-organization-id",
+                        "identifier": [
+                        {
+                            "system": "http://www.Anthem.com/edi",
+                            "value": "DemoPayer"
+                        },
+                        {
+                            "system": "https://www.maxmddirect.com/fhir/identifier",
+                            "value": "MaxMDDemoPayerOrganizationeval"
+                        }
+                        ],
+                        "name": "MaxMD Demo Payer Solutions",
+                        "endpoint": [
+                        {
+                            "reference": "#END123"
+                        }
+                        ]
+                    }
+                    ],
+                    "category": [
+                    {
+                        "coding": [
+                        {
+                            "system": "http://acme.org/messagetypes",
+                            "code": "SolicitedAttachmentRequest"
+                        }
+                        ]
+                    }
+                    ],
+                    "priority": "routine",
+                    "medium": [
+                    {
+                        "coding": [
+                        {
+                            "system": "http://terminology.hl7.org/CodeSystem/v3ParticipationMode",
+                            "code": "WRITTEN",
+                            "display": "written"
+                        }
+                        ],
+                        "text": "written"
+                    }
+                    ],
+                    "subject": {
+                    "reference": "Patient?given="+patient.name[0].given[0]+"&family="+patient.name[0].family+"&address-postalcode="+patient.address[0].postalCode+"&birthdate="+patient.birthDate
+                    },
+                    "requester": {
+                    "reference": "Organization/Payer-Organization-Id"
+                    },
+                    "status": "active",
+                    "recipient": [
+                    {
+                        "reference": "Organization/Payer-Organization-Id"
+                    }
+                    ],
+                    "sender": {
+                    "reference": "#Provider-organization-id"
+                    },
+                    "occurrencePeriod": {
+                    "start": "2018-09-13T05:30:00.000Z",
+                    "end": "2019-09-21T05:29:59.000Z"
+                    },
+                    "authoredOn": "2019-09-13T10:49:27.581Z",
+                    "payload": arr
+                },
+                "request": {
+                    "method": "POST",
+                    "url": "CommunicationRequest"
+                }
+                }
+            ]
+            }
+            let selectedSource = this.state.providerSource
+            let url;
+            for(var k=0;k<providerOptions.length;k++){
+                if(providerOptions[k].value === selectedSource){
+                    url = providerOptions[k].url
+                }
+            }
+            var self = this;
+            const tokenPost = new XMLHttpRequest();
+            var auth_response;
+            tokenPost.open("POST", tokenUri);
+            tokenPost.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            var data = `client_id=${clientId}&grant_type=password&username=john&password=john123`
+            tokenPost.onload = function () {
+                if (tokenPost.status === 200) {
+                    try {
+                        auth_response = JSON.parse(tokenPost.responseText);
+                        console.log("auth res--1243-", auth_response);
+                    } catch (e) {
+                        const errorMsg = "Failed to parse auth response";
+                        document.body.innerText = errorMsg;
+                        console.error(errorMsg);
+                        return;
+                    }
+                    /** creating cliam  */
+                    const Http = new XMLHttpRequest();
+                    // const priorAuthUrl = "https://davinci-prior-auth.logicahealth.org/fhir/Claim/$submit";
+                    // const priorAuthUrl = "http://cmsfhir.mettles.com:8080/drfp/fhir/Claim/$submit";
+                    Http.open("POST", url);
+                    Http.setRequestHeader("Content-Type", "application/fhir+json");
+                    Http.setRequestHeader("Authorization", "Bearer " + auth_response.access_token);
+                    // Http.send(JSON.stringify(pBundle));
+                    Http.send(JSON.stringify(json));
+                    Http.onreadystatechange = function () {
+                        if (this.readyState === XMLHttpRequest.DONE) {
+                            var message = "";
+                            // self.setState({ displayQuestionnaire: false })
+                            if (this.status === 200) {
+                                var BundleResponse = JSON.parse(this.responseText);
+                                // console.log("lllllll",BundleResponse)
+                                for(var i =0;i<BundleResponse.entry.length;i++){
+                                    var resource = BundleResponse.entry[i].response.location.split('/')
+                                    console.log(resource[1],'resource1234')
+                                    if(resource[0]==="CommunicationRequest"){
+                                        self.setState({ communicationRequestId: resource[1] })
+                                        sessionStorage['communicationRequest'] = resource[1]
+                                    }
+                                }
+                                console.log(sessionStorage['communicationRequest'],self.state.communicationRequestId,'yes wroking')
+                                // console.log(this.state.communicationRequestId,'ress')
+                                // self.setState({ claimResponse: claimResponse })
+                                // self.setState({ claimMessage: "Prior Authorization has been submitted successfully" })
+                                // message = "Prior Authorization " + claimResponse.disposition + "\n";
+                                // message += "Prior Authorization Number: " + claimResponse.preAuthRef;
+                            } else {
+                                // self.setState({ "CommunicationRequestMessage": "Communication Request Failed." })
+                                message = "Communication Request Failed."
+                            }
+                            console.log(message);
+                            //alert(message);
+                            console.log(this.responseText);
+                        }
+                    }
+                } else {
+                    const errorMsg = "Token post request failed. Returned status: " + tokenPost.status;
+                    document.body.innerText = errorMsg;
+                    console.error(errorMsg);
+                    // return;
+                }
+            };
+            tokenPost.send(data)
+            // const Http = new XMLHttpRequest();
+            // // const priorAuthUrl = "http://cmsfhir.mettles.com:8080/drfp/fhir/ClaimResponse/" + this.state.claimResponse.id;
+            // const priorAuthUrl = providerSource;
+            // Http.open("POST", url);
+            // Http.setRequestHeader("Content-Type", "application/fhir+json");
+            // // Http.setRequestHeader("Authorization", "Bearer "+token);
+            // Http.send();
+            // Http.onreadystatechange = function () {
+            //     if (this.readyState === XMLHttpRequest.DONE) {
+            //         var message = "";
+            //         self.setState({ displayQuestionnaire: false })
+            //         if (this.status === 200) {
+            //             var claimResponse = JSON.parse(this.responseText);
+            //             self.setState({ claimResponse: claimResponse })
+            //             self.setState({ claimMessage: "Prior Authorization has been submitted successfully" })
+            //             message = "Prior Authoriza  tion " + claimResponse.disposition + "\n";
+            //             message += "Prior Authorization Number: " + claimResponse.preAuthRef;
+            //         } else {
+            //             this.setState({ "claimMessage": "Prior Authorization Request Failed." })
+            //             message = "Prior Authorization Request Failed."
+            //         }
+            //     }
+            // }
+    }
+
+
         
     render() {
         return (
