@@ -79,6 +79,7 @@ function buildPopulatedResourceBundle(smart, neededResources, consoleLog) {
       pt => {
         console.log("got pt", pt);
         consoleLog("got pt:" + pt, "infoClass");
+        sessionStorage['patientObject'] = JSON.stringify(pt)
         const entryResources = [pt];
         const readResources = (neededResources, callback) => {
           const rq = neededResources.pop();

@@ -62,7 +62,7 @@ export default class QuestionnaireForm extends Component {
         this.renderQueries = this.renderQueries.bind(this);
         this.onChangeProviderQuery = this.onChangeProviderQuery.bind(this);
         this.setProviderSource = this.setProviderSource.bind(this);
-
+        this.submitCommunicationRequest = this.submitCommunicationRequest.bind(this);
     }
 
     componentWillMount() {
@@ -310,6 +310,7 @@ export default class QuestionnaireForm extends Component {
                     results.push(this.evaluateOperator(rule.operator, question, answer));
                 }
             });
+            console.log(results,'results')
             return !checkAny ? results.some((i) => { return i }) : results.every((i) => { return i });
         } else {
             // default to showing the item
@@ -1182,6 +1183,184 @@ export default class QuestionnaireForm extends Component {
             this.setState({ turnOffValues: returnArray });
         }
     }
+    submitCommunicationRequest(){
+        
+        console.log(JSON.parse(sessionStorage['patientObject']),'queries',this.state.items)
+        var patient = JSON.parse(sessionStorage['patientObject'])
+        let json = {
+            "resourceType": "Bundle",
+            "id": "bundle-transaction",
+            "type": "transaction",
+            "entry": [
+              {
+                "resource": {
+                  "resourceType": "Endpoint",
+                  "id": "Payer-Endpoint-Id",
+                  "identifier": [
+                    {
+                      "system": "http://www.jurisdiction.com/insurer/123456",
+                      "value": 795960864
+                    }
+                  ],
+                  "connectionType": {
+                    "system": "http://terminology.hl7.org/CodeSystem/endpoint-connection-type",
+                    "code": "hl7-fhir-rest"
+                  },
+                  "address": "http://auth.mettles.com:8180/hapi-fhir-jpaserver/fhir/Communication"
+                },
+                "request": {
+                  "method": "POST",
+                  "url": "Endpoint",
+                  "ifNoneExist": {
+                    "_value": "identifier=http://www.jurisdiction.com/insurer/123456|795960864"
+                  }
+                }
+              },
+              {
+                "resource": {
+                  "resourceType": "Organization",
+                  "identifier": [
+                    {
+                      "system": "https://www.maxmddirect.com/fhir/identifier",
+                      "value": "6677829"
+                    }
+                  ],
+                  "id": "Payer-Organization-Id",
+                  "name": "Endocrinology Group of Chicago",
+                  "telecom": [
+                    {
+                      "id": "1",
+                      "system": "phone",
+                      "value": "666-444-5555",
+                      "use": "work"
+                    }
+                  ],
+                  "address": [
+                    {
+                      "line": [
+                        "123 Healthcare Ave."
+                      ],
+                      "city": "Chicago",
+                      "state": "IL",
+                      "postalCode": "60643",
+                      "country": "US"
+                    }
+                  ],
+                  "endpoint": [
+                    {
+                      "reference": "Endpoint/Payer-Endpoint-Id"
+                    }
+                  ]
+                },
+                "request": {
+                  "method": "POST",
+                  "url": "Organization",
+                  "ifNoneExist": {
+                    "_value": "identifier%3Dhttps%3A%2F%2Fwww.maxmddirect.com%2Ffhir%2Fidentifier%7C6677829"
+                  }
+                }
+              },
+              {
+                "resource": {
+                  "resourceType": "CommunicationRequest",
+                  "identifier": [
+                    {
+                      "system": "http://www.jurisdiction.com/insurer/123456",
+                      "value": 901382527
+                    }
+                  ],
+                  "contained": [
+                    {
+                      "resourceType": "Organization",
+                      "id": "Provider-organization-id",
+                      "identifier": [
+                        {
+                          "system": "http://www.Anthem.com/edi",
+                          "value": "DemoPayer"
+                        },
+                        {
+                          "system": "https://www.maxmddirect.com/fhir/identifier",
+                          "value": "MaxMDDemoPayerOrganization-eval"
+                        }
+                      ],
+                      "name": "MaxMD Demo Payer Solutions",
+                      "endpoint": [
+                        {
+                          "reference": "#END123"
+                        }
+                      ]
+                    }
+                  ],
+                  "category": [
+                    {
+                      "coding": [
+                        {
+                          "system": "http://acme.org/messagetypes",
+                          "code": "SolicitedAttachmentRequest"
+                        }
+                      ]
+                    }
+                  ],
+                  "priority": "routine",
+                  "medium": [
+                    {
+                      "coding": [
+                        {
+                          "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationMode",
+                          "code": "WRITTEN",
+                          "display": "written"
+                        }
+                      ],
+                      "text": "written"
+                    }
+                  ],
+                  "subject": {
+                    // "reference": "Patient?given="+patient.name[0].given[0]+"&family="+&patient.name[0].family+"&address-postalcode="+07003&birthdate=1946-12-16"
+                  },
+                  "requester": {
+                    "reference": "Organization/Payer-Organization-Id"
+                  },
+                  "status": "active",
+                  "recipient": [
+                    {
+                      "reference": "Organization/Payer-Organization-Id"
+                    }
+                  ],
+                  "sender": {
+                    "reference": "#Provider-organization-id"
+                  },
+                  "occurrencePeriod": {
+                    "start": "2019-09-13T05:30:00.000Z",
+                    "end": "2019-09-21T05:29:59.000Z"
+                  },
+                  "authoredOn": "2019-09-13T10:49:27.581Z",
+                  "payload": [
+                    {
+                      "extension": [
+                        {
+                          "url": "http://hl7.org/fhir/us/davinci-cdex/StructureDefinition/cdex-payload-clinical-note-type",
+                          "valueCodeableConcept": {
+                            "coding": [
+                              {
+                                "system": "http://loinc.org",
+                                "code": "11506-3"
+                              }
+                            ]
+                          }
+                        }
+                      ],
+                      "contentString": "Please provide Progress Note recorded during 2019-09-05 - 2019-09-13"
+                    }
+                  ]
+                },
+                "request": {
+                  "method": "POST",
+                  "url": "CommunicationRequest"
+                }
+              }
+            ]
+          }
+    }
     render() {
         return (
             <div>{this.state.displayQuestionnaire &&
@@ -1258,6 +1437,7 @@ export default class QuestionnaireForm extends Component {
 
                             </div>
                             <div>
+                            <button className="btn " onClick={this.submitCommunicationRequest}>Submit Communication Request</button>
 
                             </div>
                         </div>
