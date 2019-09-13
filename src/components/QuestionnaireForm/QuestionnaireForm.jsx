@@ -43,7 +43,7 @@ export default class QuestionnaireForm extends Component {
             displayQuestionnaire: true,
             claimResponse: {},
             claimMessage: "",
-            otherProvider: true,
+            otherProvider: false,
             providerQueries: []
         };
         this.updateQuestionValue = this.updateQuestionValue.bind(this);
@@ -102,11 +102,16 @@ export default class QuestionnaireForm extends Component {
 
     onChangeOtherProvider(event) {
         console.log("other provider----", event.target.value);
-        this.setState({ otherProvider: event.target.value });
+        let otherProvider = this.state.otherProvider;
+        otherProvider = !otherProvider;
+        this.setState({ otherProvider: otherProvider });
     }
 
-    onChangeProviderQuery(event,key){
-        // this.setState({ otherProvider: event.target.value });
+    onChangeProviderQuery(key){
+        let queries = this.state.providerQueries;
+        queries[key].checked = !queries[key].checked;
+        // this.setState({ providerQueries: queries });
+        console.log("key, queries--",key , queries);
     }
 
     reloadClaimResponse() {
@@ -317,7 +322,7 @@ export default class QuestionnaireForm extends Component {
             <div key={key}>
                 <label>
                 <input type="checkbox" name={item.id} value={this.state.providerQueries[key].checked}
-                   onChange={this.onChangeProviderQuery}/>
+                   onChange={this.onChangeProviderQuery(key)}/>
                 </label>
                 {item.name} &nbsp; (LONIC Code - {item.code.coding[0].code})
             </div>
@@ -1199,9 +1204,8 @@ export default class QuestionnaireForm extends Component {
                         }
                         <div>
                             <div>
-                                <input type="checkbox" onChange={this.onChangeOtherProvider} />Request from Other Provider
+                                <input type="checkbox" name="otherProvider" value={this.state.otherProvider} onChange={this.onChangeOtherProvider} />Request from Other Provider
                             </div>
-
                             {this.state.otherProvider &&
                                 this.state.providerQueries.map((item, key) => {
                                     return this.renderQueries(item, key );
