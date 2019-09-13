@@ -43,7 +43,8 @@ export default class QuestionnaireForm extends Component {
             displayQuestionnaire: true,
             claimResponse: {},
             claimMessage: "",
-            otherProvider: true
+            otherProvider: true,
+            providerQueries: []
         };
         this.updateQuestionValue = this.updateQuestionValue.bind(this);
         this.updateNestedQuestionValue = this.updateNestedQuestionValue.bind(this);
@@ -53,6 +54,9 @@ export default class QuestionnaireForm extends Component {
         this.outputResponse = this.outputResponse.bind(this);
         this.reloadClaimResponse = this.reloadClaimResponse.bind(this);
         this.onChangeOtherProvider = this.onChangeOtherProvider.bind(this);
+        this.getProviderQueries = this.getProviderQueries.bind(this);
+        this.renderQueries = this.renderQueries.bind(this);
+        this.onChangeProviderQuery = this.onChangeProviderQuery.bind(this);
     }
 
     componentWillMount() {
@@ -65,8 +69,33 @@ export default class QuestionnaireForm extends Component {
         this.setState({ items });
         const links = this.prepopulate(items, []);
         this.setState({ orderedLinks: links });
+        this.getProviderQueries(items);
     }
+    getProviderQueries(questions) {
+        console.log("In get queries------", questions);
+        let queries = this.state.providerQueries;
+        // let questions = this.state.items;
+        questions.forEach((group) => {
+            if (group.type === "group") {
+                group.item.forEach((link) => {
+                    if (link.type === "attachment" && link.code !== undefined) {
+                        console.log("Intype attachemnt---", link);
+                        let eachQuery = {
+                            "id": link.linkId,
+                            "name": link.text,
+                            "type": "attachment",
+                            "code": link.code,
+                            "checked": false
+                        }
+                        queries.push(eachQuery);
+                    }
+                })
+            }
+        })
+        this.setState({ providerQueries: queries });
+        console.log("Final queries---", this.state.providerQueries);
 
+    }
     componentDidMount() {
 
     }
@@ -74,6 +103,10 @@ export default class QuestionnaireForm extends Component {
     onChangeOtherProvider(event) {
         console.log("other provider----", event.target.value);
         this.setState({ otherProvider: event.target.value });
+    }
+
+    onChangeProviderQuery(event,key){
+        // this.setState({ otherProvider: event.target.value });
     }
 
     reloadClaimResponse() {
@@ -279,20 +312,17 @@ export default class QuestionnaireForm extends Component {
         return (value !== undefined && value !== null && value !== "" && (Array.isArray(value) ? value.length > 0 : true));
     }
 
-    renderDocuments(item) {
-        return (<div> 
-            {item.item.map((link) => {
-                console.log("In if-----------------", link);
-                if (link.type === 'attachment') {
-                    <div key={link.linkId}>
-                        <input type="checkbox" />
-                        <div className="text-input-label">test </div>
-                    </div>
-                }
-            })
-            }
+    renderQueries(item,key) {
+        return (<div>
+            <div key={key}>
+                <label>
+                <input type="checkbox" name={item.id} value={this.state.providerQueries[key].checked}
+                   onChange={this.onChangeProviderQuery}/>
+                </label>
+                {item.name} &nbsp; (LONIC Code - {item.code.coding[0].code})
             </div>
-            )
+        </div>
+        )
     }
 
 
@@ -1171,15 +1201,10 @@ export default class QuestionnaireForm extends Component {
                             <div>
                                 <input type="checkbox" onChange={this.onChangeOtherProvider} />Request from Other Provider
                             </div>
-                            
+
                             {this.state.otherProvider &&
-
-                                this.state.items.map((item) => {
-
-                                    if (item.type === 'group') {
-
-                                        return this.renderDocuments(item);
-                                    }
+                                this.state.providerQueries.map((item, key) => {
+                                    return this.renderQueries(item, key );
                                 })
                             }
                             <div>
