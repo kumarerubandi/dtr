@@ -727,7 +727,13 @@ export default class QuestionnaireForm extends Component {
         })
         console.log(priorAuthClaim, 'HEREEE', tokenUri);
         console.log(JSON.stringify(priorAuthClaim));
-
+        if(sessionStorage.hasOwnProperty("docResources") ){
+            if(sessionStorage["docResources"] ){
+                JSON.parse(sessionStorage["docResources"]).forEach((doc)=>{
+                    priorAuthBundle.entry.push({"resource":doc})
+                })
+            }
+        }
         priorAuthBundle.entry.unshift({ resource: priorAuthClaim })
 
         /*creating token */
@@ -1186,10 +1192,14 @@ export default class QuestionnaireForm extends Component {
     }
 
     makeReference(bundle, resourceType) {
+
         var entry = bundle.entry.find(function (entry) {
             return (entry.resource.resourceType == resourceType);
         });
-        return resourceType + "/" + entry.resource.id;
+        if(entry.resource.hasOwnProperty("id")){
+            return resourceType + "/" + entry.resource.id;
+        }
+        return null
     }
 
     removeFilledFields() {
@@ -1625,7 +1635,7 @@ export default class QuestionnaireForm extends Component {
                         /> */}
                         <div>
                         <div>
-                            <button className="btn submit-button" onClick={this.outputResponse}>Submit</button>
+                            <button className="btn submit-button" onClick={this.outputResponse}>Submit Prior Authorization</button>
                         </div>
                         <div className="section">
                             <button className="btn btn-primary refreshButton" onClick={this.relaunch}>Refresh</button>

@@ -26,10 +26,10 @@ function executeElm(smart, fhirVersion, executionInputs, consoleLog) {
     const patientSource = getPatientSource(fhirVersion)
     console.log("SssnStorage",sessionStorage)
     if(sessionStorage.hasOwnProperty("CommunicationRequest")){
-      smart.patient.api.read({type: "CommunicationRequest", id: sessionStorage["CommunicationRequest"]})
+      smart.patient.api.search({type: "Communication", query:{"based-on":sessionStorage["CommunicationRequest"]}})
       .then(response => {
         console.log("response",response)
-        let communication = response;
+        let communication = response.data;
         if (communication.total > 0){
           buildResourceBundleFromCommunication(smart, communication.entry[0].resource)
           .then(function(resourceBundle){
@@ -45,25 +45,28 @@ function executeElm(smart, fhirVersion, executionInputs, consoleLog) {
         }
       }, err => reject(err))
     }
-    const neededResources = extractFhirResourcesThatNeedFetching(executionInputs.dataRequirement);
-    consoleLog("need to fetch resources","infoClass");
-    console.log("We need to fetch these resources:", neededResources);
-    sessionStorage['fhir_queries'] = JSON.stringify(neededResources);
-  
-  
-    buildPopulatedResourceBundle(smart, neededResources, consoleLog)
-    .then(function(resourceBundle) {
-      console.log("Fetched resources are in this bundle:", resourceBundle);
-      console.log(JSON.stringify(resourceBundle));
-      patientSource.loadBundles([resourceBundle]);
-      const elmResults = executeElmAgainstPatientSource(executionInputs, patientSource);
-      const results = {
-        bundle: resourceBundle,
-        elmResults: elmResults
-      }
-      resolve(results);
-    })
-    .catch(function(err){reject(err)});
+    else{
+      const neededResources = extractFhirResourcesThatNeedFetching(executionInputs.dataRequirement);
+      consoleLog("need to fetch resources","infoClass");
+      console.log("We need to fetch these resources:", neededResources);
+      sessionStorage['fhir_queries'] = JSON.stringify(neededResources);
+    
+    
+      buildPopulatedResourceBundle(smart, neededResources, consoleLog)
+      .then(function(resourceBundle) {
+        console.log("Fetched resources are in this bundle:", resourceBundle);
+        console.log(JSON.stringify(resourceBundle));
+        patientSource.loadBundles([resourceBundle]);
+        const elmResults = executeElmAgainstPatientSource(executionInputs, patientSource);
+        const results = {
+          bundle: resourceBundle,
+          elmResults: elmResults
+        }
+        resolve(results);
+      })
+      .catch(function(err){reject(err)});
+    }
+
   });
 }
 
@@ -74,19 +77,52 @@ function buildResourceBundleFromCommunication(smart, communicationResource) {
       smart.patient.read().then(
         pt => {
           console.log("got pt", pt);
-          consoleLog("got pt:" + pt, "infoClass");
           sessionStorage['patientObject'] = JSON.stringify(pt)
           const entryResources = [pt];
+          const docResources = [];
           communicationResource.payload.forEach((item)=>{
-            if(item.extension[0].valueCodeableConcept !== undefined){
+            if(item.extension[0].hasOwnProperty("valueCodeableConcept")){
               console.log("payload---attachment--- ",item.contentAttachment)
-
+              let docRef =       {
+                        "resourceType": "DocumentReference",
+                        "identifier": [
+                          {
+                            "system": "urn:ietf:rfc:3986",
+                            "value": "urn:oid:1.3.6.1.4.1.21367.2005.3.7.1234"
+                          }
+                        ],
+                        "status": "current",
+                        "docStatus": "preliminary",
+                        "type": item.extension[0].valueCodeableConcept,
+                        "subject": {
+                          "reference": "Patient/"+pt.id
+                        },
+                        "date": "2005-12-24T09:43:41+11:00",
+                        "description": "Physical",
+                        "content": [
+                          {
+                            "attachment": item.contentAttachment
+                          }
+                        ]
+                      }
+              docResources.push(docRef);
             }
-            if(item.extension[0].valueString !== undefined){
-              console.log("payload---resource--- ",item.contentAttachment.data)
-              let resourceBundle = base64.decode(item.contentAttachment.data)
+
+            // console.log("ITEMMM", item ,item.extension[0].hasOwnProperty("valueString"));
+            if(item.extension[0].hasOwnProperty("valueString")){
+              // console.log("payload---resource--- ",item.contentAttachment.data)
+              let resourceBundle = JSON.parse(base64.decode(item.contentAttachment.data))
+              console.log("BUNdle!!!!",resourceBundle)
+              if(resourceBundle.total > 0){
+                let entryArray = resourceBundle.entry
+                for (var i = entryArray.length - 1; i >= 0; i--) {
+                  entryResources.push(entryArray[i].resource);
+                }
+              }
             }
           })
+          sessionStorage['docResources'] = JSON.stringify(docResources);
+          console.log("entryResources",entryResources)
           const bundle = {
             resourceType: "Bundle",
             type: "collection",
