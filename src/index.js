@@ -84,6 +84,7 @@ tokenPost.onload =   function (){
   if (tokenPost.status === 200) {
     try { 
       auth_response = JSON.parse(tokenPost.responseText);
+      sessionStorage["token"] = auth_response.access_token;
       console.log("auth res---", auth_response);
     } catch (e) {
       const errorMsg = "Failed to parse auth response";

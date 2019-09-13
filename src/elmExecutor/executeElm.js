@@ -3,14 +3,38 @@ import cqlfhir from "cql-exec-fhir";
 // import fhirhelpersElm from "./FHIRHelpers.json";
 import extractFhirResourcesThatNeedFetching from "./extractFhirResourcesThatNeedFetching";
 import buildPopulatedResourceBundle from "./buildPopulatedResourceBundle";
+import "fhirclient";
+
+function getSmartConnection(){
+
+  var smart = FHIR.client({
+          serviceUrl: sessionStorage["serviceUri"],
+          patientId: sessionStorage["patientId"],
+          auth: {
+            type: "bearer",
+            token: sessionStorage["token"]
+
+          }
+        });
+  return smart
+}
 
 function executeElm(smart, fhirVersion, executionInputs, consoleLog) {
+  smart = getSmartConnection(); 
   return new Promise(function(resolve, reject){
     const patientSource = getPatientSource(fhirVersion)
+    console.log("SssnStorage",sessionStorage)
+    if(sessionStorage.hasOwnProperty("CommunicationRequest")){
+      smart.patient.api.read({type: "CommunicationRequest", id: sessionStorage["CommunicationRequest"]})
+      .then(response => {
+        console.log("response",response)
+      }, err => reject(err))
+    }
     const neededResources = extractFhirResourcesThatNeedFetching(executionInputs.dataRequirement);
     consoleLog("need to fetch resources","infoClass");
     console.log("We need to fetch these resources:", neededResources);
     sessionStorage['fhir_queries'] = JSON.stringify(neededResources);
+
     buildPopulatedResourceBundle(smart, neededResources, consoleLog)
     .then(function(resourceBundle) {
       console.log("Fetched resources are in this bundle:", resourceBundle);

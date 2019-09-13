@@ -30,6 +30,9 @@ var redirectUri = launchUri.replace("launch", "index");
 // FHIR Service Conformance Statement URL
 var conformanceUri = serviceUri + "/metadata?_format=json";
 
+sessionStorage["serviceUri"] = serviceUri
+sessionStorage["launchContextId"] = launchContextId
+sessionStorage["launchUri"] = launchUri
 // Let's request the conformance statement from the SMART on FHIR API server and
 // find out the endpoint URLs for the authorization server
 let conformanceStatement;

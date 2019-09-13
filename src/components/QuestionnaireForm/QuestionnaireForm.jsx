@@ -30,6 +30,9 @@ const secret = params.secret;
 export default class QuestionnaireForm extends Component {
     constructor(props) {
         super(props);
+        if(!sessionStorage.hasOwnProperty("providerSource")){
+            sessionStorage["providerSource"] = 1
+        }
         this.state = {
             containedResources: null,
             items: null,
@@ -50,7 +53,10 @@ export default class QuestionnaireForm extends Component {
             providerQueries: [],
             providerSource: 1,
             communicationRequestId:''
+            providerSource: sessionStorage["providerSource"],
+            selectedQueries: []
         };
+
         this.updateQuestionValue = this.updateQuestionValue.bind(this);
         this.updateNestedQuestionValue = this.updateNestedQuestionValue.bind(this);
         this.updateDocuments = this.updateDocuments.bind(this);
@@ -64,9 +70,17 @@ export default class QuestionnaireForm extends Component {
         this.onChangeProviderQuery = this.onChangeProviderQuery.bind(this);
         this.setProviderSource = this.setProviderSource.bind(this);
         this.submitCommunicationRequest = this.submitCommunicationRequest.bind(this);
-
+        this.relaunch = this.relaunch.bind(this);
     }
 
+    relaunch(){
+        let serviceUri=sessionStorage["serviceUri"] 
+        let launchContextId=sessionStorage["launchContextId"] 
+        let launchUri=sessionStorage["launchUri"] 
+        console.log(launchUri+"?launch="+launchContextId+"&iss="+serviceUri);
+        window.location.href =  launchUri+"?launch="+launchContextId+"&iss="+serviceUri;
+        // this.props.history.push();
+    }
     componentWillMount() {
         // setup
         // get all contained resources
@@ -84,6 +98,8 @@ export default class QuestionnaireForm extends Component {
         console.log(this.state);
         if (values.length > 0) {
             this.setState({ "providerSource": values[0].value });
+            sessionStorage["providerSource"] = values[0].value;
+            sessionStorage["serviceUri"] = values[0].url;
         }
     }
 
@@ -130,7 +146,8 @@ export default class QuestionnaireForm extends Component {
 
     }
     componentDidMount() {
-
+        
+        
     }
 
     onChangeOtherProvider(event) {
@@ -1573,6 +1590,7 @@ export default class QuestionnaireForm extends Component {
                     }
                 </div> */}
                     <div className="wrapper1">
+                        
                         {
                             this.state.items.map((item) => {
                                 if (item.linkId <= (this.state.items.length / 2 + 1)) {
@@ -1580,7 +1598,7 @@ export default class QuestionnaireForm extends Component {
                                 }
                             })
                         }
-                        <div>
+                        <div className="section">
                             <div className="section-header">
                                 <input type="checkbox" name="otherProvider" value={this.state.otherProvider} onChange={this.onChangeOtherProvider} />Request from Other Provider
                             </div>
@@ -1610,6 +1628,14 @@ export default class QuestionnaireForm extends Component {
                         <DocumentInput
                             updateCallback={this.updateDocuments}
                         /> */}
+                        <div>
+                        <div>
+                            <button className="btn submit-button" onClick={this.outputResponse}>Submit</button>
+                        </div>
+                        <div className="section">
+                            <button className="btn btn-primary refreshButton" onClick={this.relaunch}>Refresh</button>
+                        </div>
+                    </div>
                     </div>
                     <div className="wrapper2">
                         <div>
@@ -1623,7 +1649,7 @@ export default class QuestionnaireForm extends Component {
 
                         </div>
                     </div>
-                    <button className="btn submit-button" onClick={this.outputResponse}>Submit</button>
+
                 </div>}
 
                 <div>
