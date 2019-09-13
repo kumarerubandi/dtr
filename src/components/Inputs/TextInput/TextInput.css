@@ -15,7 +15,12 @@
     border-radius: 3px;
     padding: 3px;
 }
-
+.file-checkbox{
+    margin-right: 5px;
+}
+.file-input{
+    padding: 10px;
+}
 .text-input-label{
     font-family:monospace;
     background-color:black;

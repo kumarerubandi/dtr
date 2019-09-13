@@ -133,6 +133,7 @@ tokenPost.onload =   function (){
         var request = getParameterByName('request',resp)
         var patient = getParameterByName('patient',resp)
         console.log(patient,'too')
+        sessionStorage["patientId"] = patient;
         const appContext = {
           template: resp.split("&")[0].split("=")[1],
           request: JSON.parse(request),

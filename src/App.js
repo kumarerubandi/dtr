@@ -36,6 +36,7 @@ class App extends Component {
         valueSetDB: {},
         parameters: {device_request: fhirWrapper.wrap(this.props.deviceRequest)}
       }
+      
       this.consoleLog("executing elm", "infoClass");
       return executeElm(this.smart, "stu3", executionInputs, this.consoleLog);
       //return true;

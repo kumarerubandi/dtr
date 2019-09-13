@@ -10,7 +10,7 @@ function executeElm(smart, fhirVersion, executionInputs, consoleLog) {
     const neededResources = extractFhirResourcesThatNeedFetching(executionInputs.dataRequirement);
     consoleLog("need to fetch resources","infoClass");
     console.log("We need to fetch these resources:", neededResources);
-    
+    sessionStorage['fhir_queries'] = JSON.stringify(neededResources);
     buildPopulatedResourceBundle(smart, neededResources, consoleLog)
     .then(function(resourceBundle) {
       console.log("Fetched resources are in this bundle:", resourceBundle);

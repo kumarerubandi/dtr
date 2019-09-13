@@ -47,7 +47,8 @@ export default class QuestionnaireForm extends Component {
             claimMessage: "",
             otherProvider: false,
             providerQueries: [],
-            providerSource: 1
+            providerSource: 1,
+            selectedQueries: []
         };
         this.updateQuestionValue = this.updateQuestionValue.bind(this);
         this.updateNestedQuestionValue = this.updateNestedQuestionValue.bind(this);
@@ -77,9 +78,9 @@ export default class QuestionnaireForm extends Component {
         this.getProviderQueries(items);
     }
 
-    setProviderSource(values){
+    setProviderSource(values) {
         console.log(this.state);
-        if(values.length > 0 ){
+        if (values.length > 0) {
             this.setState({ "providerSource": values[0].value });
         }
     }
@@ -105,6 +106,23 @@ export default class QuestionnaireForm extends Component {
                 })
             }
         })
+        if (sessionStorage["fhir_queries"] !== undefined) {
+            let fhir_queries = JSON.parse(sessionStorage["fhir_queries"]);
+            fhir_queries.forEach((query, key) => {
+                let code = "";
+                if (query.query["code"] !== undefined) {
+                    code = "code=" + query.query["code"];
+                }
+                let eachQuery = {
+                    "id": "fhir_" + key,
+                    "name": query.type,
+                    "type": "query",
+                    "code": code,
+                    "checked": false
+                }
+                queries.push(eachQuery);
+            })
+        }
         this.setState({ providerQueries: queries });
         console.log("Final queries---", this.state.providerQueries);
 
@@ -120,11 +138,11 @@ export default class QuestionnaireForm extends Component {
         this.setState({ otherProvider: otherProvider });
     }
 
-    onChangeProviderQuery(key){
-        let queries = this.state.providerQueries;
-        queries[key].checked = !queries[key].checked;
-        // this.setState({ providerQueries: queries });
-        console.log("key, queries--",key , queries);
+    onChangeProviderQuery(item) {
+        let queries = this.state.selectedQueries;
+        queries.push(item);
+        // this.setState({ selectedQueries: queries });
+        console.log("key, queries--", this.state.selectedQueries);
     }
 
     reloadClaimResponse() {
@@ -330,14 +348,23 @@ export default class QuestionnaireForm extends Component {
         return (value !== undefined && value !== null && value !== "" && (Array.isArray(value) ? value.length > 0 : true));
     }
 
-    renderQueries(item,key) {
+    renderQueries(item, key) {
         return (<div>
             <div key={key}>
                 <label>
-                <input type="checkbox" name={item.id} value={this.state.providerQueries[key].checked}
-                   onChange={this.onChangeProviderQuery(key)}/>
+                    <input type="checkbox" name={item.id} value={this.state.selectedQueries}
+                        onChange={this.onChangeProviderQuery(item)} />
                 </label>
-                {item.name} &nbsp; (LONIC Code - {item.code.coding[0].code})
+
+                {item.name} &nbsp; {item.type === "attachment" &&
+                    <span>
+                        (LONIC Code - {item.code.coding[0].code})
+                     </span>
+                }{item.type === "query" && item.code !== "" &&
+                    <span>
+                        (With Query - {item.code})
+                 </span>
+                }
             </div>
         </div>
         )
@@ -1216,18 +1243,16 @@ export default class QuestionnaireForm extends Component {
                             })
                         }
                         <div>
-                            <div>
+                            <div className="section-header">
                                 <input type="checkbox" name="otherProvider" value={this.state.otherProvider} onChange={this.onChangeOtherProvider} />Request from Other Provider
                             </div>
                             {this.state.otherProvider &&
                                 <div>
                                     <Select options={providerOptions} onChange={(values) => this.setProviderSource(values)} />
+                                    {this.state.providerQueries.map((item, key) => {
+                                        return this.renderQueries(item, key);
+                                    })}
                                 </div>
-                            } 
-                            {this.state.otherProvider &&
-                                this.state.providerQueries.map((item, key) => {
-                                    return this.renderQueries(item, key );
-                                })
                             }
                             <div>
 
