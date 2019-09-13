@@ -14,6 +14,8 @@ import OpenChoice from '../Inputs/OpenChoiceInput/OpenChoice';
 import DocumentInput from '../Inputs/DocumentInput/DocumentInput';
 import { isTSEnumMember } from '@babel/types';
 
+import Select from "react-dropdown-select";
+import providerOptions from "../../providerOptions.json";
 
 
 const state = urlUtils.getUrlParameter("state"); // session key
@@ -44,7 +46,8 @@ export default class QuestionnaireForm extends Component {
             claimResponse: {},
             claimMessage: "",
             otherProvider: false,
-            providerQueries: []
+            providerQueries: [],
+            providerSource: 1
         };
         this.updateQuestionValue = this.updateQuestionValue.bind(this);
         this.updateNestedQuestionValue = this.updateNestedQuestionValue.bind(this);
@@ -57,6 +60,8 @@ export default class QuestionnaireForm extends Component {
         this.getProviderQueries = this.getProviderQueries.bind(this);
         this.renderQueries = this.renderQueries.bind(this);
         this.onChangeProviderQuery = this.onChangeProviderQuery.bind(this);
+        this.setProviderSource = this.setProviderSource.bind(this);
+
     }
 
     componentWillMount() {
@@ -71,6 +76,14 @@ export default class QuestionnaireForm extends Component {
         this.setState({ orderedLinks: links });
         this.getProviderQueries(items);
     }
+
+    setProviderSource(values){
+        console.log(this.state);
+        if(values.length > 0 ){
+            this.setState({ "providerSource": values[0].value });
+        }
+    }
+
     getProviderQueries(questions) {
         console.log("In get queries------", questions);
         let queries = this.state.providerQueries;
@@ -1206,6 +1219,11 @@ export default class QuestionnaireForm extends Component {
                             <div>
                                 <input type="checkbox" name="otherProvider" value={this.state.otherProvider} onChange={this.onChangeOtherProvider} />Request from Other Provider
                             </div>
+                            {this.state.otherProvider &&
+                                <div>
+                                    <Select options={providerOptions} onChange={(values) => this.setProviderSource(values)} />
+                                </div>
+                            } 
                             {this.state.otherProvider &&
                                 this.state.providerQueries.map((item, key) => {
                                     return this.renderQueries(item, key );
