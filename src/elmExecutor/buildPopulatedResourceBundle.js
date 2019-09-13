@@ -70,6 +70,8 @@ function processError(smart, callback) {
   };
 }
 
+
+
 function buildPopulatedResourceBundle(smart, neededResources, consoleLog) {
   return new Promise(function(resolve, reject){
     console.log("waiting for patient");

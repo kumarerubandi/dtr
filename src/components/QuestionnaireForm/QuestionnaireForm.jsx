@@ -51,10 +51,8 @@ export default class QuestionnaireForm extends Component {
             claimMessage: "",
             otherProvider: false,
             providerQueries: [],
-            providerSource: 1,
-            communicationRequestId:''
+            communicationRequestId:'',
             providerSource: sessionStorage["providerSource"],
-            selectedQueries: []
         };
 
         this.updateQuestionValue = this.updateQuestionValue.bind(this);
@@ -374,21 +372,22 @@ export default class QuestionnaireForm extends Component {
 
     renderQueries(item, key) {
         return (<div>
-            <div key={key}>
+            <div key={key} style={{ padding:"15px" ,paddingBottom:"0px"}}>
                 <label>
                     <input type="checkbox" name={item.id} value={this.state.providerQueries[key].checked}
                         onChange={this.onChangeProviderQuery} />
                 </label>
 
-                {item.name} &nbsp; {item.type === "attachment" &&
+                <span style={{ lineHeight: "0.1px" }}>{item.name} &nbsp; {item.type === "attachment" &&
                     <span>
-                        (LONIC Code - {item.code.coding[0].code})
-                     </span>
-                }{item.type === "query" && item.code !== "" &&
-                    <span>
-                        (With Query - {item.code})
-                 </span>
-                }
+                            (LONIC Code - {item.code.coding[0].code})
+                        </span>
+                    }{item.type === "query" && item.code !== "" &&
+                        <span>
+                            (With Query - {item.code})
+                    </span>
+                    }
+                </span>
             </div>
         </div>
         )
@@ -1603,20 +1602,16 @@ export default class QuestionnaireForm extends Component {
                                 <input type="checkbox" name="otherProvider" value={this.state.otherProvider} onChange={this.onChangeOtherProvider} />Request from Other Provider
                             </div>
                             {this.state.otherProvider &&
-                                <div>
-                                    <Select options={providerOptions} onChange={(values) => this.setProviderSource(values)} />
+                                <div className="entry-block" style={{ marginLeft: "30px",padding:"20px" }}>
+                                    <div className="header-input">Select Provider</div>
+                                    <Select style={{width:"50%"}} className="text-input" options={providerOptions} onChange={(values) => this.setProviderSource(values)} />
+                                    <div className="header-input">Select Queries</div>
                                     {this.state.providerQueries.map((item, key) => {
                                         return this.renderQueries(item, key);
                                     })}
-                                    <button className="btn " onClick={this.submitCommunicationRequest}>Submit Communication Request</button>
+                                    <button className="btn comm-btn" onClick={this.submitCommunicationRequest}>Submit Communication Request</button>
                                 </div>
                             }
-                            <div>
-
-                            </div>
-                            <div>
-
-                            </div>
                         </div>
                         {/* <div className="section">
                             <h3 className="section-header" style={{ marginLeft: "-15px" }}>Please attach the following documents</h3>
