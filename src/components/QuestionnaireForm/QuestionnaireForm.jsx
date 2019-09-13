@@ -47,8 +47,7 @@ export default class QuestionnaireForm extends Component {
             claimMessage: "",
             otherProvider: false,
             providerQueries: [],
-            providerSource: 1,
-            selectedQueries: []
+            providerSource: 1
         };
         this.updateQuestionValue = this.updateQuestionValue.bind(this);
         this.updateNestedQuestionValue = this.updateNestedQuestionValue.bind(this);
@@ -63,6 +62,7 @@ export default class QuestionnaireForm extends Component {
         this.onChangeProviderQuery = this.onChangeProviderQuery.bind(this);
         this.setProviderSource = this.setProviderSource.bind(this);
         this.submitCommunicationRequest = this.submitCommunicationRequest.bind(this);
+
     }
 
     componentWillMount() {
@@ -138,11 +138,16 @@ export default class QuestionnaireForm extends Component {
         this.setState({ otherProvider: otherProvider });
     }
 
-    onChangeProviderQuery(item) {
-        let queries = this.state.selectedQueries;
-        queries.push(item);
-        // this.setState({ selectedQueries: queries });
-        console.log("key, queries--", this.state.selectedQueries);
+    onChangeProviderQuery(event) {
+        console.log("event --",event.target.value, event.target.name);
+        let queries = this.state.providerQueries;
+        queries.forEach((q)=>{
+            if(q.id === event.target.name){
+                q.checked = !q.checked;
+            }
+        })
+        this.setState({ providerQueries: queries });
+        console.log("key, queries--", queries, this.state.providerQueries);
     }
 
     reloadClaimResponse() {
@@ -310,7 +315,6 @@ export default class QuestionnaireForm extends Component {
                     results.push(this.evaluateOperator(rule.operator, question, answer));
                 }
             });
-            console.log(results,'results')
             return !checkAny ? results.some((i) => { return i }) : results.every((i) => { return i });
         } else {
             // default to showing the item
@@ -353,8 +357,8 @@ export default class QuestionnaireForm extends Component {
         return (<div>
             <div key={key}>
                 <label>
-                    <input type="checkbox" name={item.id} value={this.state.selectedQueries}
-                        onChange={this.onChangeProviderQuery(item)} />
+                    <input type="checkbox" name={item.id} value={this.state.providerQueries[key].checked}
+                        onChange={this.onChangeProviderQuery} />
                 </label>
 
                 {item.name} &nbsp; {item.type === "attachment" &&
@@ -1184,183 +1188,184 @@ export default class QuestionnaireForm extends Component {
         }
     }
     submitCommunicationRequest(){
-        
-        console.log(JSON.parse(sessionStorage['patientObject']),'queries',this.state.items)
-        var patient = JSON.parse(sessionStorage['patientObject'])
-        let json = {
-            "resourceType": "Bundle",
-            "id": "bundle-transaction",
-            "type": "transaction",
-            "entry": [
-              {
-                "resource": {
-                  "resourceType": "Endpoint",
-                  "id": "Payer-Endpoint-Id",
-                  "identifier": [
-                    {
-                      "system": "http://www.jurisdiction.com/insurer/123456",
-                      "value": 795960864
-                    }
-                  ],
-                  "connectionType": {
-                    "system": "http://terminology.hl7.org/CodeSystem/endpoint-connection-type",
-                    "code": "hl7-fhir-rest"
-                  },
-                  "address": "http://auth.mettles.com:8180/hapi-fhir-jpaserver/fhir/Communication"
-                },
-                "request": {
-                  "method": "POST",
-                  "url": "Endpoint",
-                  "ifNoneExist": {
-                    "_value": "identifier=http://www.jurisdiction.com/insurer/123456|795960864"
-                  }
-                }
-              },
-              {
-                "resource": {
-                  "resourceType": "Organization",
-                  "identifier": [
-                    {
-                      "system": "https://www.maxmddirect.com/fhir/identifier",
-                      "value": "6677829"
-                    }
-                  ],
-                  "id": "Payer-Organization-Id",
-                  "name": "Endocrinology Group of Chicago",
-                  "telecom": [
-                    {
-                      "id": "1",
-                      "system": "phone",
-                      "value": "666-444-5555",
-                      "use": "work"
-                    }
-                  ],
-                  "address": [
-                    {
-                      "line": [
-                        "123 Healthcare Ave."
-                      ],
-                      "city": "Chicago",
-                      "state": "IL",
-                      "postalCode": "60643",
-                      "country": "US"
-                    }
-                  ],
-                  "endpoint": [
-                    {
-                      "reference": "Endpoint/Payer-Endpoint-Id"
-                    }
-                  ]
-                },
-                "request": {
-                  "method": "POST",
-                  "url": "Organization",
-                  "ifNoneExist": {
-                    "_value": "identifier%3Dhttps%3A%2F%2Fwww.maxmddirect.com%2Ffhir%2Fidentifier%7C6677829"
-                  }
-                }
-              },
-              {
-                "resource": {
-                  "resourceType": "CommunicationRequest",
-                  "identifier": [
-                    {
-                      "system": "http://www.jurisdiction.com/insurer/123456",
-                      "value": 901382527
-                    }
-                  ],
-                  "contained": [
-                    {
-                      "resourceType": "Organization",
-                      "id": "Provider-organization-id",
-                      "identifier": [
-                        {
-                          "system": "http://www.Anthem.com/edi",
-                          "value": "DemoPayer"
+               
+                console.log(JSON.parse(sessionStorage['patientObject']),'queries',this.state.items)
+                var patient = JSON.parse(sessionStorage['patientObject'])
+                let json = {
+                    "resourceType": "Bundle",
+                    "id": "bundle-transaction",
+                    "type": "transaction",
+                    "entry": [
+                      {
+                        "resource": {
+                          "resourceType": "Endpoint",
+                          "id": "Payer-Endpoint-Id",
+                          "identifier": [
+                            {
+                              "system": "http://www.jurisdiction.com/insurer/123456",
+                              "value": 795960864
+                            }
+                          ],
+                          "connectionType": {
+                            "system": "http://terminology.hl7.org/CodeSystem/endpoint-connection-type",
+                            "code": "hl7-fhir-rest"
+                          },
+                          "address": "http://auth.mettles.com:8180/hapi-fhir-jpaserver/fhir/Communication"
                         },
-                        {
-                          "system": "https://www.maxmddirect.com/fhir/identifier",
-                          "value": "MaxMDDemoPayerOrganization-eval"
-                        }
-                      ],
-                      "name": "MaxMD Demo Payer Solutions",
-                      "endpoint": [
-                        {
-                          "reference": "#END123"
-                        }
-                      ]
-                    }
-                  ],
-                  "category": [
-                    {
-                      "coding": [
-                        {
-                          "system": "http://acme.org/messagetypes",
-                          "code": "SolicitedAttachmentRequest"
-                        }
-                      ]
-                    }
-                  ],
-                  "priority": "routine",
-                  "medium": [
-                    {
-                      "coding": [
-                        {
-                          "system": "http://terminology.hl7.org/CodeSystem/v3-ParticipationMode",
-                          "code": "WRITTEN",
-                          "display": "written"
-                        }
-                      ],
-                      "text": "written"
-                    }
-                  ],
-                  "subject": {
-                    // "reference": "Patient?given="+patient.name[0].given[0]+"&family="+&patient.name[0].family+"&address-postalcode="+07003&birthdate=1946-12-16"
-                  },
-                  "requester": {
-                    "reference": "Organization/Payer-Organization-Id"
-                  },
-                  "status": "active",
-                  "recipient": [
-                    {
-                      "reference": "Organization/Payer-Organization-Id"
-                    }
-                  ],
-                  "sender": {
-                    "reference": "#Provider-organization-id"
-                  },
-                  "occurrencePeriod": {
-                    "start": "2019-09-13T05:30:00.000Z",
-                    "end": "2019-09-21T05:29:59.000Z"
-                  },
-                  "authoredOn": "2019-09-13T10:49:27.581Z",
-                  "payload": [
-                    {
-                      "extension": [
-                        {
-                          "url": "http://hl7.org/fhir/us/davinci-cdex/StructureDefinition/cdex-payload-clinical-note-type",
-                          "valueCodeableConcept": {
-                            "coding": [
-                              {
-                                "system": "http://loinc.org",
-                                "code": "11506-3"
-                              }
-                            ]
+                        "request": {
+                          "method": "POST",
+                          "url": "Endpoint",
+                          "ifNoneExist": {
+                            "_value": "identifier=http://www.jurisdiction.com/insurer/123456|795960864"
                           }
                         }
-                      ],
-                      "contentString": "Please provide Progress Note recorded during 2019-09-05 - 2019-09-13"
-                    }
-                  ]
-                },
-                "request": {
-                  "method": "POST",
-                  "url": "CommunicationRequest"
-                }
-              }
-            ]
-          }
-    }
+                      },
+                      {
+                        "resource": {
+                          "resourceType": "Organization",
+                          "identifier": [
+                            {
+                              "system": "https://www.maxmddirect.com/fhir/identifier",
+                              "value": "6677829"
+                            }
+                          ],
+                          "id": "Payer-Organization-Id",
+                          "name": "Endocrinology Group of Chicago",
+                          "telecom": [
+                            {
+                              "id": "1",
+                              "system": "phone",
+                              "value": "666444-5555",
+                              "use": "work"
+                            }
+                          ],
+                          "address": [
+                            {
+                              "line": [
+                                "123 Healthcare Ave."
+                              ],
+                              "city": "Chicago",
+                              "state": "IL",
+                              "postalCode": "60643",
+                              "country": "US"
+                            }
+                          ],
+                          "endpoint": [
+                            {
+                              "reference": "Endpoint/Payer-Endpoint-Id"
+                            }
+                          ]
+                        },
+                        "request": {
+                          "method": "POST",
+                          "url": "Organization",
+                          "ifNoneExist": {
+                            "_value": "identifier%3Dhttps%3A%2F%2Fwww.maxmddirect.com%2Ffhir%2Fidentifier%7C6677829"
+                          }
+                        }
+                      },
+                      {
+                        "resource": {
+                          "resourceType": "CommunicationRequest",
+                          "identifier": [
+                            {
+                              "system": "http://www.jurisdiction.com/insurer/123456",
+                              "value": 901382527
+                            }
+                          ],
+                          "contained": [
+                            {
+                              "resourceType": "Organization",
+                              "id": "Provider-organization-id",
+                              "identifier": [
+                                {
+                                  "system": "http://www.Anthem.com/edi",
+                                  "value": "DemoPayer"
+                                },
+                                {
+                                  "system": "https://www.maxmddirect.com/fhir/identifier",
+                                  "value": "MaxMDDemoPayerOrganizationeval"
+                                }
+                              ],
+                              "name": "MaxMD Demo Payer Solutions",
+                              "endpoint": [
+                                {
+                                  "reference": "#END123"
+                                }
+                              ]
+                            }
+                          ],
+                          "category": [
+                            {
+                              "coding": [
+                                {
+                                  "system": "http://acme.org/messagetypes",
+                                  "code": "SolicitedAttachmentRequest"
+                                }
+                              ]
+                            }
+                          ],
+                          "priority": "routine",
+                          "medium": [
+                            {
+                              "coding": [
+                                {
+                                  "system": "http://terminology.hl7.org/CodeSystem/v3ParticipationMode",
+                                  "code": "WRITTEN",
+                                  "display": "written"
+                                }
+                              ],
+                              "text": "written"
+                            }
+                          ],
+                          "subject": {
+                            // "reference": "Patient?given="+patient.name[0].given[0]+"&family="+&patient.name[0].family+"&address-postalcode="+07003&birthdate=1946-12-16"
+                          },
+                          "requester": {
+                            "reference": "Organization/Payer-Organization-Id"
+                          },
+                          "status": "active",
+                          "recipient": [
+                            {
+                              "reference": "Organization/Payer-Organization-Id"
+                            }
+                          ],
+                          "sender": {
+                            "reference": "#Provider-organization-id"
+                          },
+                          "occurrencePeriod": {
+                            "start": "2019-09-13T05:30:00.000Z",
+                            "end": "2019-09-21T05:29:59.000Z"
+                          },
+                          "authoredOn": "2019-09-13T10:49:27.581Z",
+                          "payload": [
+                            {
+                              "extension": [
+                                {
+                                  "url": "http://hl7.org/fhir/us/davinci-cdex/StructureDefinition/cdex-payload-clinical-note-type",
+                                  "valueCodeableConcept": {
+                                    "coding": [
+                                      {
+                                        "system": "http://loinc.org",
+                                        "code": "11506-3"
+                                      }
+                                    ]
+                                  }
+                                }
+                              ],
+                              "contentString": "Please provide Progress Note recorded during 2019-09-05 - 2019-09-13"
+                            }
+                          ]
+                        },
+                        "request": {
+                          "method": "POST",
+                          "url": "CommunicationRequest"
+                        }
+                      }
+                    ]
+                  }
+            }
+        
     render() {
         return (
             <div>{this.state.displayQuestionnaire &&
@@ -1431,13 +1436,13 @@ export default class QuestionnaireForm extends Component {
                                     {this.state.providerQueries.map((item, key) => {
                                         return this.renderQueries(item, key);
                                     })}
+                                    <button className="btn " onClick={this.submitCommunicationRequest}>Submit Communication Request</button>
                                 </div>
                             }
                             <div>
 
                             </div>
                             <div>
-                            <button className="btn " onClick={this.submitCommunicationRequest}>Submit Communication Request</button>
 
                             </div>
                         </div>
