@@ -47,10 +47,34 @@ export default class TextInput extends Component {
     }
 
     onInputChange(event) {
-        // update the parent state
-        this.props.updateCallback(this.props.item.linkId, event.target.value, "values")
-        // update local state
-        this.setState({value: event.target.value})
+        if (this.props.valueType === 'valueAttachment'){
+            this.setState({value: event.target.value})
+            console.log("Input change",event.target.files,event.target.value );
+            let file = event.target.files[0];
+            let content_type = file.type;
+            let file_name = file.name;
+            var fileValue = {}
+            let self = this;
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                // get file content  
+                fileValue = {
+                    "data": reader.result,
+                    "contentType": content_type,
+                    "title": file_name,
+                    "language": "en"
+                }
+                console.log(fileValue, JSON.stringify(fileValue));
+                // update the parent state
+                self.props.updateCallback(self.props.item.linkId, fileValue, "values")
+            }
+            reader.readAsBinaryString(file);
+        } else{
+            // update the parent state
+            this.props.updateCallback(this.props.item.linkId, event.target.value, "values")
+            // update local state
+            this.setState({value: event.target.value})
+        }
     }
 
      handleDateChange(value) {
@@ -80,8 +104,6 @@ export default class TextInput extends Component {
                         readOnly={this.props.item.readOnly}>
                          
                     </input>
-              
-
                 }
             </div>
         );

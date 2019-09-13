@@ -107,14 +107,17 @@ html {
 }
 
 .submit-button {
-  margin-left: 55px;
-  border-width: 1px 1px 1px 5px;
-  border-style:solid;
-  border-color:#333;
+    margin-left: 55px;
+    border-width: 1px 1px 1px 5px;
+    border-style: solid;
+    width: 92%;
+    border-color: grey;
+    background: #3FB1CF;
+    color: white;
 }
 
 .submit-button:hover {
-  background-color: #f3f3f3;
+  /* background-color: #f3f3f3; */
   border-color:#000;
 }
 

@@ -12,6 +12,7 @@ import QuantityInput from '../Inputs/QuantityInput/QuantityInput';
 import { findValueByPrefix } from '../../util/util.js';
 import OpenChoice from '../Inputs/OpenChoiceInput/OpenChoice';
 import DocumentInput from '../Inputs/DocumentInput/DocumentInput';
+import { isTSEnumMember } from '@babel/types';
 
 
 
@@ -41,7 +42,8 @@ export default class QuestionnaireForm extends Component {
             communicationJson: {},
             displayQuestionnaire: true,
             claimResponse: {},
-            claimMessage: ""
+            claimMessage: "",
+            otherProvider:true
         };
         this.updateQuestionValue = this.updateQuestionValue.bind(this);
         this.updateNestedQuestionValue = this.updateNestedQuestionValue.bind(this);
@@ -50,6 +52,7 @@ export default class QuestionnaireForm extends Component {
         this.retrieveValue = this.retrieveValue.bind(this);
         this.outputResponse = this.outputResponse.bind(this);
         this.reloadClaimResponse = this.reloadClaimResponse.bind(this);
+        this.onChangeOtherProvider = this.onChangeOtherProvider.bind(this);
     }
 
     componentWillMount() {
@@ -66,6 +69,11 @@ export default class QuestionnaireForm extends Component {
 
     componentDidMount() {
 
+    }
+
+    onChangeOtherProvider(event){
+        console.log("other provider----",event.target.value);
+        this.setState({otherProvider:event.target.value});
     }
 
     reloadClaimResponse() {
@@ -270,6 +278,15 @@ export default class QuestionnaireForm extends Component {
     isNotEmpty(value) {
         return (value !== undefined && value !== null && value !== "" && (Array.isArray(value) ? value.length > 0 : true));
     }
+
+    renderDocuments(item){
+        return (<div>
+            <input type="checkbox" />
+            <div className="text-input-label">{item.inputTypeDisplay}</div>
+        </div>
+        )
+    }
+    
 
     renderComponent(item, level) {
         const enable = this.checkEnable(item);
@@ -506,7 +523,9 @@ export default class QuestionnaireForm extends Component {
                 }
                 switch (itemType.valueType) {
                     case "valueAttachment":
-                        //TODO
+                        console.log("In attachment", this.state.values[item])
+                        const attachment = this.state.values[item]
+                        answerItem.answer.push({ [itemType.valueType]: attachment })
                         break;
                     case "valueQuantity":
                         const quantity = this.state.values[item];
@@ -1140,6 +1159,25 @@ export default class QuestionnaireForm extends Component {
                                 }
                             })
                         }
+                        <div>
+                            <div>
+                                <input type="checkbox" onChange={this.onChangeOtherProvider}/>Request from Other Provider
+                            </div>
+                            {this.state.otherProvider &&
+                                this.state.items.map((item) => {
+                                    if(item.type === 'attachment'){
+                                        return this.renderDocuments();
+                                        
+                                    }
+                                })     
+                            }
+                            <div>
+
+                            </div>
+                            <div>
+
+                            </div>
+                        </div>
                         {/* <div className="section">
                             <h3 className="section-header" style={{ marginLeft: "-15px" }}>Please attach the following documents</h3>
                             <ol>
@@ -1171,7 +1209,7 @@ export default class QuestionnaireForm extends Component {
                         <div>
                             <div style={{ fontSize: "1.5em", background: "#98ce94", padding: "10px" }}> {this.state.claimMessage}</div>
                             <pre style={{ background: "#dee2e6" }}> {JSON.stringify(this.state.claimResponse, null, 2)}</pre>
-                            {this.state.claimResponse.length > 0  &&
+                            {JSON.stringify(this.state.claimResponse).length > 0  &&
                                 <div><button style={{ marginLeft: "0px" }} className="btn submit-button" onClick={this.reloadClaimResponse} >Reload Claim Response</button></div>
                             }
                         </div>

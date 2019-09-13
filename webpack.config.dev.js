@@ -27,7 +27,7 @@ module.exports = merge(common, {
       },
     proxy: [{
       context: ['/fetchFhirUri', '/getfile'],
-      target: 'http://54.227.218.17:8090/',
+      target: 'http://cdex.mettles.com:8090/',
       changeOrigin: true,
       secure: false
     }],
