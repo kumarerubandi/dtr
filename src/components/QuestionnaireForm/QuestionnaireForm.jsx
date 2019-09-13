@@ -30,7 +30,7 @@ const secret = params.secret;
 export default class QuestionnaireForm extends Component {
     constructor(props) {
         super(props);
-        if(!sessionStorage.hasOwnProperty("providerSource")){
+        if (!sessionStorage.hasOwnProperty("providerSource")) {
             sessionStorage["providerSource"] = 1
         }
         this.state = {
@@ -51,7 +51,7 @@ export default class QuestionnaireForm extends Component {
             claimMessage: "",
             otherProvider: false,
             providerQueries: [],
-            communicationRequestId:'',
+            communicationRequestId: '',
             providerSource: sessionStorage["providerSource"],
         };
 
@@ -71,12 +71,12 @@ export default class QuestionnaireForm extends Component {
         this.relaunch = this.relaunch.bind(this);
     }
 
-    relaunch(){
-        let serviceUri=sessionStorage["serviceUri"] 
-        let launchContextId=sessionStorage["launchContextId"] 
-        let launchUri=sessionStorage["launchUri"] 
-        console.log(launchUri+"?launch="+launchContextId+"&iss="+serviceUri);
-        window.location.href =  launchUri+"?launch="+launchContextId+"&iss="+serviceUri;
+    relaunch() {
+        let serviceUri = sessionStorage["serviceUri"]
+        let launchContextId = sessionStorage["launchContextId"]
+        let launchUri = sessionStorage["launchUri"]
+        console.log(launchUri + "?launch=" + launchContextId + "&iss=" + serviceUri);
+        window.location.href = launchUri + "?launch=" + launchContextId + "&iss=" + serviceUri;
         // this.props.history.push();
     }
     componentWillMount() {
@@ -144,8 +144,8 @@ export default class QuestionnaireForm extends Component {
 
     }
     componentDidMount() {
-        
-        
+
+
     }
 
     onChangeOtherProvider(event) {
@@ -156,10 +156,10 @@ export default class QuestionnaireForm extends Component {
     }
 
     onChangeProviderQuery(event) {
-        console.log("event --",event.target.value, event.target.name);
+        console.log("event --", event.target.value, event.target.name);
         let queries = this.state.providerQueries;
-        queries.forEach((q)=>{
-            if(q.id === event.target.name){
+        queries.forEach((q) => {
+            if (q.id === event.target.name) {
                 q.checked = !q.checked;
             }
         })
@@ -372,7 +372,7 @@ export default class QuestionnaireForm extends Component {
 
     renderQueries(item, key) {
         return (<div>
-            <div key={key} style={{ padding:"15px" ,paddingBottom:"0px"}}>
+            <div key={key} style={{ padding: "15px", paddingBottom: "0px" }}>
                 <label>
                     <input type="checkbox" name={item.id} value={this.state.providerQueries[key].checked}
                         onChange={this.onChangeProviderQuery} />
@@ -380,11 +380,11 @@ export default class QuestionnaireForm extends Component {
 
                 <span style={{ lineHeight: "0.1px" }}>{item.name} &nbsp; {item.type === "attachment" &&
                     <span>
-                            (LONIC Code - {item.code.coding[0].code})
+                        (LONIC Code - {item.code.coding[0].code})
                         </span>
-                    }{item.type === "query" && item.code !== "" &&
-                        <span>
-                            (With Query - {item.code})
+                }{item.type === "query" && item.code !== "" &&
+                    <span>
+                        (With Query - {item.code})
                     </span>
                     }
                 </span>
@@ -727,10 +727,10 @@ export default class QuestionnaireForm extends Component {
         })
         console.log(priorAuthClaim, 'HEREEE', tokenUri);
         console.log(JSON.stringify(priorAuthClaim));
-        if(sessionStorage.hasOwnProperty("docResources") ){
-            if(sessionStorage["docResources"] ){
-                JSON.parse(sessionStorage["docResources"]).forEach((doc)=>{
-                    priorAuthBundle.entry.push({"resource":doc})
+        if (sessionStorage.hasOwnProperty("docResources")) {
+            if (sessionStorage["docResources"]) {
+                JSON.parse(sessionStorage["docResources"]).forEach((doc) => {
+                    priorAuthBundle.entry.push({ "resource": doc })
                 })
             }
         }
@@ -1196,7 +1196,7 @@ export default class QuestionnaireForm extends Component {
         var entry = bundle.entry.find(function (entry) {
             return (entry.resource.resourceType == resourceType);
         });
-        if(entry.resource.hasOwnProperty("id")){
+        if (entry.resource.hasOwnProperty("id")) {
             return resourceType + "/" + entry.resource.id;
         }
         return null
@@ -1215,65 +1215,65 @@ export default class QuestionnaireForm extends Component {
             this.setState({ turnOffValues: returnArray });
         }
     }
-    submitCommunicationRequest(){
-               
-        console.log(JSON.parse(sessionStorage['patientObject']),'queries',this.state.providerQueries)
+    submitCommunicationRequest() {
+
+        console.log(JSON.parse(sessionStorage['patientObject']), 'queries', this.state.providerQueries)
         var patient = JSON.parse(sessionStorage['patientObject'])
         var providerQueries = this.state.providerQueries
         var valueCodeableConcept = {
             "coding": [
                 {
-                "system": "http://loinc.org",
+                    "system": "http://loinc.org",
                 }
             ]
-            }
+        }
         var value
         var contentStringJson = {
             "extension": [
                 {
                     "url": "http://hl7.org/fhir/us/davinci-cdex/StructureDefinition/cdex-payload-clinical-note-type",
                 }
-                ],
+            ],
         }
-        var contentString =  "Please provide Progress Note recorded during 2018-09-05 - 2019-09-13"
-        var arr=[]
-        for(var i = 0; i<providerQueries.length;i++){
-            if(providerQueries[i].checked=== true){
-                if(providerQueries[i].type=== 'attachment'){
-                    for(var j =0;j<providerQueries[i].code.coding.length;j++){
-                        arr.push({
-                            "extension": [
-                            {
-                                "url": "http://hl7.org/fhir/us/davinci-cdex/StructureDefinition/cdex-payload-clinical-note-type",
-                            "valueCodeableConcept" :{
-                                    "coding": [
-                                        {
-                                        "system": "http://loinc.org",
-                                         "code":providerQueries[i].code.coding[j].code
-                                        }
-                                    ]
-                            }
-                            }
-                        ],
-                        "contentString" :  "Please provide "+ providerQueries[i].code.coding[j].display+" recorded during 2018-09-05 - 2019-09-13"
-                        }
-                        )
-                    }
-                }
-                else if(providerQueries[i].type=== "query"){
-                    if(providerQueries[i].code !== "" ){
+        var contentString = "Please provide Progress Note recorded during 2018-09-05 - 2019-09-13"
+        var arr = []
+        for (var i = 0; i < providerQueries.length; i++) {
+            if (providerQueries[i].checked === true) {
+                if (providerQueries[i].type === 'attachment') {
+                    for (var j = 0; j < providerQueries[i].code.coding.length; j++) {
                         arr.push({
                             "extension": [
                                 {
                                     "url": "http://hl7.org/fhir/us/davinci-cdex/StructureDefinition/cdex-payload-clinical-note-type",
-                                    "valueString": providerQueries[i].name+"?patient="+patient.id+"&"+providerQueries[i].code
+                                    "valueCodeableConcept": {
+                                        "coding": [
+                                            {
+                                                "system": "http://loinc.org",
+                                                "code": providerQueries[i].code.coding[j].code
+                                            }
+                                        ]
+                                    }
                                 }
                             ],
-                            "contentString" :  "Please provide "+ providerQueries[i].name+" recorded during 2018-09-05 - 2019-09-13"
-                            }
+                            "contentString": "Please provide " + providerQueries[i].code.coding[j].display + " recorded during 2018-09-05 - 2019-09-13"
+                        }
                         )
                     }
-                    else{
+                }
+                else if (providerQueries[i].type === "query") {
+                    if (providerQueries[i].code !== "") {
+                        arr.push({
+                            "extension": [
+                                {
+                                    "url": "http://hl7.org/fhir/us/davinci-cdex/StructureDefinition/cdex-payload-clinical-note-type",
+                                    "valueString": providerQueries[i].name + "?patient=" + patient.id + "&" + providerQueries[i].code
+                                }
+                            ],
+                            "contentString": "Please provide " + providerQueries[i].name + " recorded during 2018-09-05 - 2019-09-13"
+                        }
+                        )
+                    }
+                    else {
                         arr.push({
                             "extension": [
                                 {
@@ -1281,271 +1281,271 @@ export default class QuestionnaireForm extends Component {
                                     "valueString": providerQueries[i].name
                                 }
                             ],
-                            "contentString" :  "Please provide "+ providerQueries[i].name+" recorded during 2018-09-05 - 2019-09-13"
-                            }
+                            "contentString": "Please provide " + providerQueries[i].name + " recorded during 2018-09-05 - 2019-09-13"
+                        }
                         )
 
                     }
-                    
+
                 }
 
             }
         }
-        console.log(arr,'please')
+        console.log(arr, 'please')
         let json = {
             "resourceType": "Bundle",
             "id": "bundle-transaction",
             "type": "transaction",
             "entry": [
                 {
-                "resource": {
-                    "resourceType": "Endpoint",
-                    "id": "Payer-Endpoint-Id",
-                    "identifier": [
-                    {
-                        "system": "http://www.jurisdiction.com/insurer/123456",
-                        "value": 795960864
-                    }
-                    ],
-                    "connectionType": {
-                    "system": "http://terminology.hl7.org/CodeSystem/endpoint-connection-type",
-                    "code": "hl7-fhir-rest"
-                    },
-                    "address": "http://auth.mettles.com:8180/hapi-fhir-jpaserver/fhir/Communication"
-                },
-                "request": {
-                    "method": "POST",
-                    "url": "Endpoint",
-                    "ifNoneExist": {
-                    "_value": "identifier=http://www.jurisdiction.com/insurer/123456|795960864"
-                    }
-                }
-                },
-                {
-                "resource": {
-                    "resourceType": "Organization",
-                    "identifier": [
-                    {
-                        "system": "https://www.maxmddirect.com/fhir/identifier",
-                        "value": "6677829"
-                    }
-                    ],
-                    "id": "Payer-Organization-Id",
-                    "name": "Endocrinology Group of Chicago",
-                    "telecom": [
-                    {
-                        "id": "1",
-                        "system": "phone",
-                        "value": "666444-5555",
-                        "use": "work"
-                    }
-                    ],
-                    "address": [
-                    {
-                        "line": [
-                        "123 Healthcare Ave."
-                        ],
-                        "city": "Chicago",
-                        "state": "IL",
-                        "postalCode": "60643",
-                        "country": "US"
-                    }
-                    ],
-                    "endpoint": [
-                    {
-                        "reference": "Endpoint/Payer-Endpoint-Id"
-                    }
-                    ]
-                },
-                "request": {
-                    "method": "POST",
-                    "url": "Organization",
-                    "ifNoneExist": {
-                    "_value": "identifier%3Dhttps%3A%2F%2Fwww.maxmddirect.com%2Ffhir%2Fidentifier%7C6677829"
-                    }
-                }
-                },
-                {
-                "resource": {
-                    "resourceType": "CommunicationRequest",
-                    "identifier": [
-                    {
-                        "system": "http://www.jurisdiction.com/insurer/123456",
-                        "value": 901382527
-                    }
-                    ],
-                    "contained": [
-                    {
-                        "resourceType": "Organization",
-                        "id": "Provider-organization-id",
+                    "resource": {
+                        "resourceType": "Endpoint",
+                        "id": "Payer-Endpoint-Id",
                         "identifier": [
-                        {
-                            "system": "http://www.Anthem.com/edi",
-                            "value": "DemoPayer"
+                            {
+                                "system": "http://www.jurisdiction.com/insurer/123456",
+                                "value": 795960864
+                            }
+                        ],
+                        "connectionType": {
+                            "system": "http://terminology.hl7.org/CodeSystem/endpoint-connection-type",
+                            "code": "hl7-fhir-rest"
                         },
-                        {
-                            "system": "https://www.maxmddirect.com/fhir/identifier",
-                            "value": "MaxMDDemoPayerOrganizationeval"
-                        }
-                        ],
-                        "name": "MaxMD Demo Payer Solutions",
-                        "endpoint": [
-                        {
-                            "reference": "#END123"
-                        }
-                        ]
-                    }
-                    ],
-                    "category": [
-                    {
-                        "coding": [
-                        {
-                            "system": "http://acme.org/messagetypes",
-                            "code": "SolicitedAttachmentRequest"
-                        }
-                        ]
-                    }
-                    ],
-                    "priority": "routine",
-                    "medium": [
-                    {
-                        "coding": [
-                        {
-                            "system": "http://terminology.hl7.org/CodeSystem/v3ParticipationMode",
-                            "code": "WRITTEN",
-                            "display": "written"
-                        }
-                        ],
-                        "text": "written"
-                    }
-                    ],
-                    "subject": {
-                    "reference": "Patient?given="+patient.name[0].given[0]+"&family="+patient.name[0].family+"&address-postalcode="+patient.address[0].postalCode+"&birthdate="+patient.birthDate
+                        "address": "http://auth.mettles.com:8180/hapi-fhir-jpaserver/fhir/Communication"
                     },
-                    "requester": {
-                    "reference": "Organization/Payer-Organization-Id"
-                    },
-                    "status": "active",
-                    "recipient": [
-                    {
-                        "reference": "Organization/Payer-Organization-Id"
+                    "request": {
+                        "method": "POST",
+                        "url": "Endpoint",
+                        "ifNoneExist": {
+                            "_value": "identifier=http://www.jurisdiction.com/insurer/123456|795960864"
+                        }
                     }
-                    ],
-                    "sender": {
-                    "reference": "#Provider-organization-id"
-                    },
-                    "occurrencePeriod": {
-                    "start": "2018-09-13T05:30:00.000Z",
-                    "end": "2019-09-21T05:29:59.000Z"
-                    },
-                    "authoredOn": "2019-09-13T10:49:27.581Z",
-                    "payload": arr
                 },
-                "request": {
-                    "method": "POST",
-                    "url": "CommunicationRequest"
-                }
+                {
+                    "resource": {
+                        "resourceType": "Organization",
+                        "identifier": [
+                            {
+                                "system": "https://www.maxmddirect.com/fhir/identifier",
+                                "value": "6677829"
+                            }
+                        ],
+                        "id": "Payer-Organization-Id",
+                        "name": "Endocrinology Group of Chicago",
+                        "telecom": [
+                            {
+                                "id": "1",
+                                "system": "phone",
+                                "value": "666444-5555",
+                                "use": "work"
+                            }
+                        ],
+                        "address": [
+                            {
+                                "line": [
+                                    "123 Healthcare Ave."
+                                ],
+                                "city": "Chicago",
+                                "state": "IL",
+                                "postalCode": "60643",
+                                "country": "US"
+                            }
+                        ],
+                        "endpoint": [
+                            {
+                                "reference": "Endpoint/Payer-Endpoint-Id"
+                            }
+                        ]
+                    },
+                    "request": {
+                        "method": "POST",
+                        "url": "Organization",
+                        "ifNoneExist": {
+                            "_value": "identifier%3Dhttps%3A%2F%2Fwww.maxmddirect.com%2Ffhir%2Fidentifier%7C6677829"
+                        }
+                    }
+                },
+                {
+                    "resource": {
+                        "resourceType": "CommunicationRequest",
+                        "identifier": [
+                            {
+                                "system": "http://www.jurisdiction.com/insurer/123456",
+                                "value": 901382527
+                            }
+                        ],
+                        "contained": [
+                            {
+                                "resourceType": "Organization",
+                                "id": "Provider-organization-id",
+                                "identifier": [
+                                    {
+                                        "system": "http://www.Anthem.com/edi",
+                                        "value": "DemoPayer"
+                                    },
+                                    {
+                                        "system": "https://www.maxmddirect.com/fhir/identifier",
+                                        "value": "MaxMDDemoPayerOrganizationeval"
+                                    }
+                                ],
+                                "name": "MaxMD Demo Payer Solutions",
+                                "endpoint": [
+                                    {
+                                        "reference": "#END123"
+                                    }
+                                ]
+                            }
+                        ],
+                        "category": [
+                            {
+                                "coding": [
+                                    {
+                                        "system": "http://acme.org/messagetypes",
+                                        "code": "SolicitedAttachmentRequest"
+                                    }
+                                ]
+                            }
+                        ],
+                        "priority": "routine",
+                        "medium": [
+                            {
+                                "coding": [
+                                    {
+                                        "system": "http://terminology.hl7.org/CodeSystem/v3ParticipationMode",
+                                        "code": "WRITTEN",
+                                        "display": "written"
+                                    }
+                                ],
+                                "text": "written"
+                            }
+                        ],
+                        "subject": {
+                            "reference": "Patient?given=" + patient.name[0].given[0] + "&family=" + patient.name[0].family + "&address-postalcode=" + patient.address[0].postalCode + "&birthdate=" + patient.birthDate
+                        },
+                        "requester": {
+                            "reference": "Organization/Payer-Organization-Id"
+                        },
+                        "status": "active",
+                        "recipient": [
+                            {
+                                "reference": "Organization/Payer-Organization-Id"
+                            }
+                        ],
+                        "sender": {
+                            "reference": "#Provider-organization-id"
+                        },
+                        "occurrencePeriod": {
+                            "start": "2018-09-13T05:30:00.000Z",
+                            "end": "2019-09-21T05:29:59.000Z"
+                        },
+                        "authoredOn": "2019-09-13T10:49:27.581Z",
+                        "payload": arr
+                    },
+                    "request": {
+                        "method": "POST",
+                        "url": "CommunicationRequest"
+                    }
                 }
             ]
+        }
+        let selectedSource = this.state.providerSource
+        let url;
+        for (var k = 0; k < providerOptions.length; k++) {
+            if (providerOptions[k].value === selectedSource) {
+                url = providerOptions[k].url
             }
-            let selectedSource = this.state.providerSource
-            let url;
-            for(var k=0;k<providerOptions.length;k++){
-                if(providerOptions[k].value === selectedSource){
-                    url = providerOptions[k].url
-                }
-            }
-            var self = this;
-            const tokenPost = new XMLHttpRequest();
-            var auth_response;
-            tokenPost.open("POST", tokenUri);
-            tokenPost.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-            var data = `client_id=${clientId}&grant_type=password&username=john&password=john123`
-            tokenPost.onload = function () {
-                if (tokenPost.status === 200) {
-                    try {
-                        auth_response = JSON.parse(tokenPost.responseText);
-                        console.log("auth res--1243-", auth_response);
-                    } catch (e) {
-                        const errorMsg = "Failed to parse auth response";
-                        document.body.innerText = errorMsg;
-                        console.error(errorMsg);
-                        return;
-                    }
-                    /** creating cliam  */
-                    const Http = new XMLHttpRequest();
-                    // const priorAuthUrl = "https://davinci-prior-auth.logicahealth.org/fhir/Claim/$submit";
-                    // const priorAuthUrl = "http://cmsfhir.mettles.com:8080/drfp/fhir/Claim/$submit";
-                    Http.open("POST", url);
-                    Http.setRequestHeader("Content-Type", "application/fhir+json");
-                    Http.setRequestHeader("Authorization", "Bearer " + auth_response.access_token);
-                    // Http.send(JSON.stringify(pBundle));
-                    Http.send(JSON.stringify(json));
-                    Http.onreadystatechange = function () {
-                        if (this.readyState === XMLHttpRequest.DONE) {
-                            var message = "";
-                            // self.setState({ displayQuestionnaire: false })
-                            if (this.status === 200) {
-                                var BundleResponse = JSON.parse(this.responseText);
-                                // console.log("lllllll",BundleResponse)
-                                for(var i =0;i<BundleResponse.entry.length;i++){
-                                    var resource = BundleResponse.entry[i].response.location.split('/')
-                                    console.log(resource[1],'resource1234')
-                                    if(resource[0]==="CommunicationRequest"){
-                                        self.setState({ communicationRequestId: resource[1] })
-                                        sessionStorage['communicationRequest'] = resource[1]
-                                    }
-                                }
-                                console.log(sessionStorage['communicationRequest'],self.state.communicationRequestId,'yes wroking')
-                                // console.log(this.state.communicationRequestId,'ress')
-                                // self.setState({ claimResponse: claimResponse })
-                                // self.setState({ claimMessage: "Prior Authorization has been submitted successfully" })
-                                // message = "Prior Authorization " + claimResponse.disposition + "\n";
-                                // message += "Prior Authorization Number: " + claimResponse.preAuthRef;
-                            } else {
-                                // self.setState({ "CommunicationRequestMessage": "Communication Request Failed." })
-                                message = "Communication Request Failed."
-                            }
-                            console.log(message);
-                            //alert(message);
-                            console.log(this.responseText);
-                        }
-                    }
-                } else {
-                    const errorMsg = "Token post request failed. Returned status: " + tokenPost.status;
+        }
+        var self = this;
+        const tokenPost = new XMLHttpRequest();
+        var auth_response;
+        tokenPost.open("POST", tokenUri);
+        tokenPost.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        var data = `client_id=${clientId}&grant_type=password&username=john&password=john123`
+        tokenPost.onload = function () {
+            if (tokenPost.status === 200) {
+                try {
+                    auth_response = JSON.parse(tokenPost.responseText);
+                    console.log("auth res--1243-", auth_response);
+                } catch (e) {
+                    const errorMsg = "Failed to parse auth response";
                     document.body.innerText = errorMsg;
                     console.error(errorMsg);
-                    // return;
+                    return;
                 }
-            };
-            tokenPost.send(data)
-            // const Http = new XMLHttpRequest();
-            // // const priorAuthUrl = "http://cmsfhir.mettles.com:8080/drfp/fhir/ClaimResponse/" + this.state.claimResponse.id;
-            // const priorAuthUrl = providerSource;
-            // Http.open("POST", url);
-            // Http.setRequestHeader("Content-Type", "application/fhir+json");
-            // // Http.setRequestHeader("Authorization", "Bearer "+token);
-            // Http.send();
-            // Http.onreadystatechange = function () {
-            //     if (this.readyState === XMLHttpRequest.DONE) {
-            //         var message = "";
-            //         self.setState({ displayQuestionnaire: false })
-            //         if (this.status === 200) {
-            //             var claimResponse = JSON.parse(this.responseText);
-            //             self.setState({ claimResponse: claimResponse })
-            //             self.setState({ claimMessage: "Prior Authorization has been submitted successfully" })
-            //             message = "Prior Authoriza  tion " + claimResponse.disposition + "\n";
-            //             message += "Prior Authorization Number: " + claimResponse.preAuthRef;
-            //         } else {
-            //             this.setState({ "claimMessage": "Prior Authorization Request Failed." })
-            //             message = "Prior Authorization Request Failed."
-            //         }
-            //     }
-            // }
+                /** creating cliam  */
+                const Http = new XMLHttpRequest();
+                // const priorAuthUrl = "https://davinci-prior-auth.logicahealth.org/fhir/Claim/$submit";
+                // const priorAuthUrl = "http://cmsfhir.mettles.com:8080/drfp/fhir/Claim/$submit";
+                Http.open("POST", url);
+                Http.setRequestHeader("Content-Type", "application/fhir+json");
+                Http.setRequestHeader("Authorization", "Bearer " + auth_response.access_token);
+                // Http.send(JSON.stringify(pBundle));
+                Http.send(JSON.stringify(json));
+                Http.onreadystatechange = function () {
+                    if (this.readyState === XMLHttpRequest.DONE) {
+                        var message = "";
+                        // self.setState({ displayQuestionnaire: false })
+                        if (this.status === 200) {
+                            var BundleResponse = JSON.parse(this.responseText);
+                            // console.log("lllllll",BundleResponse)
+                            for (var i = 0; i < BundleResponse.entry.length; i++) {
+                                var resource = BundleResponse.entry[i].response.location.split('/')
+                                console.log(resource[1], 'resource1234')
+                                if (resource[0] === "CommunicationRequest") {
+                                    self.setState({ communicationRequestId: resource[1] })
+                                    sessionStorage['communicationRequest'] = resource[1]
+                                }
+                            }
+                            console.log(sessionStorage['communicationRequest'], self.state.communicationRequestId, 'yes wroking')
+                            // console.log(this.state.communicationRequestId,'ress')
+                            // self.setState({ claimResponse: claimResponse })
+                            // self.setState({ claimMessage: "Prior Authorization has been submitted successfully" })
+                            // message = "Prior Authorization " + claimResponse.disposition + "\n";
+                            // message += "Prior Authorization Number: " + claimResponse.preAuthRef;
+                        } else {
+                            // self.setState({ "CommunicationRequestMessage": "Communication Request Failed." })
+                            message = "Communication Request Failed."
+                        }
+                        console.log(message);
+                        //alert(message);
+                        console.log(this.responseText);
+                    }
+                }
+            } else {
+                const errorMsg = "Token post request failed. Returned status: " + tokenPost.status;
+                document.body.innerText = errorMsg;
+                console.error(errorMsg);
+                // return;
+            }
+        };
+        tokenPost.send(data)
+        // const Http = new XMLHttpRequest();
+        // // const priorAuthUrl = "http://cmsfhir.mettles.com:8080/drfp/fhir/ClaimResponse/" + this.state.claimResponse.id;
+        // const priorAuthUrl = providerSource;
+        // Http.open("POST", url);
+        // Http.setRequestHeader("Content-Type", "application/fhir+json");
+        // // Http.setRequestHeader("Authorization", "Bearer "+token);
+        // Http.send();
+        // Http.onreadystatechange = function () {
+        //     if (this.readyState === XMLHttpRequest.DONE) {
+        //         var message = "";
+        //         self.setState({ displayQuestionnaire: false })
+        //         if (this.status === 200) {
+        //             var claimResponse = JSON.parse(this.responseText);
+        //             self.setState({ claimResponse: claimResponse })
+        //             self.setState({ claimMessage: "Prior Authorization has been submitted successfully" })
+        //             message = "Prior Authoriza  tion " + claimResponse.disposition + "\n";
+        //             message += "Prior Authorization Number: " + claimResponse.preAuthRef;
+        //         } else {
+        //             this.setState({ "claimMessage": "Prior Authorization Request Failed." })
+        //             message = "Prior Authorization Request Failed."
+        //         }
+        //     }
+        // }
     }
 
 
-        
+
     render() {
         return (
             <div>{this.state.displayQuestionnaire &&
@@ -1599,7 +1599,6 @@ export default class QuestionnaireForm extends Component {
                     }
                 </div> */}
                     <div className="wrapper1">
-                        
                         {
                             this.state.items.map((item) => {
                                 if (item.linkId <= (this.state.items.length / 2 + 1)) {
@@ -1607,14 +1606,14 @@ export default class QuestionnaireForm extends Component {
                                 }
                             })
                         }
-                        <div className="section">
+                        <div className="section" style={{marginBottom: "30px"}}>
                             <div className="section-header">
                                 <input type="checkbox" name="otherProvider" value={this.state.otherProvider} onChange={this.onChangeOtherProvider} />Request from Other Provider
                             </div>
                             {this.state.otherProvider &&
-                                <div className="entry-block" style={{ marginLeft: "30px",padding:"20px" }}>
+                                <div className="entry-block" style={{ marginLeft: "30px"}}>
                                     <div className="header-input">Select Provider</div>
-                                    <Select style={{width:"50%"}} className="text-input" options={providerOptions} onChange={(values) => this.setProviderSource(values)} />
+                                    <Select style={{ width: "50%" }} className="text-input" options={providerOptions} onChange={(values) => this.setProviderSource(values)} />
                                     <div className="header-input">Select Queries</div>
                                     {this.state.providerQueries.map((item, key) => {
                                         return this.renderQueries(item, key);
@@ -1633,25 +1632,21 @@ export default class QuestionnaireForm extends Component {
                         <DocumentInput
                             updateCallback={this.updateDocuments}
                         /> */}
-                        <div>
-                        <div>
-                            <button className="btn submit-button" onClick={this.outputResponse}>Submit Prior Authorization</button>
-                        </div>
-                        <div className="section">
-                            <button className="btn btn-primary refreshButton" onClick={this.relaunch}>Refresh</button>
-                        </div>
-                    </div>
                     </div>
                     <div className="wrapper2">
-                        <div>
-                            {
-                                this.state.items.map((item) => {
-                                    if (item.linkId > (this.state.items.length / 2 + 1)) {
-                                        return this.renderComponent(item, 0);
-                                    }
-                                })
-                            }
 
+                        {
+                            this.state.items.map((item) => {
+                                if (item.linkId > (this.state.items.length / 2 + 1)) {
+                                    return this.renderComponent(item, 0);
+                                }
+                            })
+                        }
+                        <div> <button className="btn submit-button" onClick={this.outputResponse}>Submit Prior Authorization</button>
+                        </div>
+                        <br /><hr></hr>
+                        <div>
+                            <button className="btn refreshButton" onClick={this.relaunch}>Refresh</button>
                         </div>
                     </div>
 

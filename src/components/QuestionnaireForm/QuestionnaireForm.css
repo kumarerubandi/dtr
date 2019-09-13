@@ -27,10 +27,17 @@
 }
 
 .refreshButton {
-  margin-top: 10px;
-    float: right;
-    /*margin-right: 8%;*/
-
+  margin-left: 55px;
+    border-width: 1px 1px 1px 5px;
+    border-style: solid;
+    width: 25%;
+    border-color: grey;
+    background: grey;
+    color: white;
+    float: left;
+}
+.refreshButton :hover{
+  background-color: #ccc;
 }
 
 .wrapper1{
@@ -118,6 +125,8 @@ html {
     border-color: grey;
     background: #3FB1CF;
     color: white;
+    margin-left: 18px;
+    margin-top:10px;
 }
 .submit-button {
     margin-left: 55px;
