@@ -9,7 +9,8 @@ import "fhirclient";
 function getSmartConnection(){
 
   var smart = FHIR.client({
-          serviceUrl: sessionStorage["serviceUri"],
+          // serviceUrl: sessionStorage["serviceUri"],
+          serviceUrl: "http://cdex.mettles.com:8080/hapi-fhir-jpaserver/fhir",
           patientId: sessionStorage["patientId"],
           auth: {
             type: "bearer",
