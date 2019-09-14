@@ -18,7 +18,11 @@ function extractFhirResourcesThatNeedFetching(elm) {
       if (elm[query].codeFilter !== undefined){
         if ((elm[query].codeFilter || [])){
           const key = elm[query].codeFilter[0].path;
-          resource.query[key] = elm[query].codeFilter[0].valueSetString;
+          if (elm[query].codeFilter[0].valueSetString !== "Patient.id"){
+            resource.query[key] = elm[query].codeFilter[0].valueSetString;
+          } else {
+            resource.query[key] = sessionStorage["patientId"];
+          }
         }
       }
       resources.add(resource);

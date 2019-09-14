@@ -34,9 +34,15 @@ function doSearch(smart, type, q, callback) {
       //nothing
     }
   }
-  smart.patient.api
+  if (type === "SupplyRequest"){
+    smart.api
     .search({type: type, query: q})
     .then(processSuccess(smart, [], callback), processError(smart, callback));
+  } else {
+    smart.patient.api
+      .search({type: type, query: q})
+      .then(processSuccess(smart, [], callback), processError(smart, callback));
+    }
 }
 
 function processSuccess(smart, resources, callback) {
