@@ -9,8 +9,8 @@ import "fhirclient";
 function getSmartConnection(){
 
   var smart = FHIR.client({
-          // serviceUrl: sessionStorage["serviceUri"],
-          serviceUrl: "http://cdex.mettles.com:8080/hapi-fhir-jpaserver/fhir",
+          serviceUrl: sessionStorage["serviceUri"],
+          // serviceUrl: "http://cdex.mettles.com:8080/hapi-fhir-jpaserver/fhir",
           patientId: sessionStorage["patientId"],
           auth: {
             type: "bearer",
@@ -22,12 +22,12 @@ function getSmartConnection(){
 }
 
 function executeElm(smart, fhirVersion, executionInputs, consoleLog) {
-  smart = getSmartConnection(); 
+  smart1 = getSmartConnection(); 
   return new Promise(function(resolve, reject){
     const patientSource = getPatientSource(fhirVersion)
     console.log("SssnStorage",sessionStorage)
     if(sessionStorage.hasOwnProperty("communicationRequest")){
-      smart.api.search({type: "Communication", query:{"based-on":sessionStorage["communicationRequest"]}})
+      smart1.api.search({type: "Communication", query:{"based-on":sessionStorage["communicationRequest"]}})
       .then(response => {
         console.log("response",response)
         let communication = response.data;
