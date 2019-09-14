@@ -701,14 +701,40 @@ export default class QuestionnaireForm extends Component {
                     display: "Professional"
                 }]
             },
+            subType: {
+                coding: [
+                  {
+                    system: "https://www.cms.gov/codes/billtype",
+                    code: "41",
+                    display: "Hospital Outpatient Surgery performed in an Ambulatory ​Surgical Center"
+                  }
+                ]
+              },
             use: "preauthorization",
             patient: { reference: this.makeReference(priorAuthBundle, "Patient") },
             created: authored,
-            provider: { reference: this.makeReference(priorAuthBundle, "Practitioner") },
+            provider: { reference: this.makeReference(priorAuthBundle, "Organization") },
+            insurer: { reference: this.makeReference(priorAuthBundle, "Organization") },
+            facility: { reference: this.makeReference(priorAuthBundle, "Location") },
             priority: { coding: [{ "code": "normal" }] },
-            presciption: { reference: this.makeReference(priorAuthBundle, "DeviceRequest") },
+            // presciption: { reference: this.makeReference(priorAuthBundle, "DeviceRequest") },
             supportingInfo: [{
                 sequence: 1,
+                category: {
+                  coding: [
+                    {
+                      "system": "http://hl7.org/us/davinci-pas/CodeSystem/PASSupportingInfoType",
+                      "code": "patientEvent"
+                    }
+                  ]
+                },
+                timingPeriod: {
+                  start: "2019-01-05T00:00:00-07:00",
+                  end: "2019-03-05T00:00:00-07:00"
+                }
+              },
+               {
+                sequence: 2,
                 category: {
                     coding: [{
                         system: "http://terminology.hl7.org/CodeSystem/claiminformationcategory",
@@ -718,6 +744,27 @@ export default class QuestionnaireForm extends Component {
                 },
                 valueReference: { reference: this.makeReference(priorAuthBundle, "QuestionnaireResponse") }
             }],
+            item: [
+                {
+                  sequence: 1,
+                  productOrService: this.props.deviceRequest.codeCodeableConcept,
+                  quantity: {
+                    value: 30
+                  }
+                }
+              ],
+              careTeam: [
+                {
+                  sequence: 1,
+                  provider: { reference: this.makeReference(priorAuthBundle, "Practitioner") },
+                  extension: [
+                    {
+                      url: "http://terminology.hl7.org/ValueSet/v2-0912",
+                      valueCode: "OP"
+                    }
+                  ]
+                }
+              ],
             diagnosis: [],
             insurance: [{
                 sequence: 1,
@@ -765,377 +812,378 @@ export default class QuestionnaireForm extends Component {
                 }
                 /** creating cliam  */
                 const Http = new XMLHttpRequest();
-                const priorAuthUrl = "https://davinci-prior-auth.logicahealth.org/fhir/Claim/$submit";
-                // const priorAuthUrl = "http://cmsfhir.mettles.com:8080/drfp/fhir/Claim/$submit";
+                // const priorAuthUrl = "https://davinci-prior-auth.logicahealth.org/fhir/Claim/$submit";
+                const priorAuthUrl = "http://cmsfhir.mettles.com:8080/drfp/fhir/Claim/$submit";
                 // const priorAuthUrl = "http://cdex.mettles.com:9000/fhir/Claim/$submit";
-                // 	    const pBundle = {
-                //    "resourceType":"Bundle",
-                //    "id": "1234567890",
-                //    "type":"collection",
-                //    "entry":[
-                //       {
-                //          "resource":{
-                //             "resourceType":"Claim",
-                //             "status":"active",
-                //             "type":{
-                //                "coding":[
-                //                   {
-                //                      "system":"http://terminology.hl7.org/CodeSystem/claim-type",
-                //                      "code":"institutional",
-                //                      "display":"Institutional"
-                //                   }
-                //                ]
-                //             },
-                //             "subType":{
-                //                "coding":[
-                //                   {
-                //                      "system":"https://www.cms.gov/codes/billtype",
-                //                      "code":"32",
-                //                      "display":"Hospital Outpatient Surgery performed in an Ambulatory ​Surgical Center"
-                //                   }
-                //                ]
-                //             },
-                //             "use":"preauthorization",
-                //             "patient":{
-                //                "reference":"Patient/1"
-                //             },
-                //             "created":"2019-07-12",
-                //             "provider":{
-                //                "reference":"Organization/516"
-                //             },
-                //             "insurer":{
-                //                "reference":"Organization/415"
-                //             },
-                //             "facility":{
-                //                "reference":"Location/235"
-                //             },
-                //             "priority":{
-                //                "coding":[
-                //                   {
-                //                      "code":"normal"
-                //                   }
-                //                ]
-                //             },
-                //             "supportingInfo":[
-                //                {
-                //                   "sequence":1,
-                //                   "category":{
-                //                      "coding":[
-                //                         {
-                //                            "system":"http://hl7.org/us/davinci-pas/CodeSystem/PASSupportingInfoType",
-                //                            "code":"patientEvent"
-                //                         }
-                //                      ]
-                //                   },
-                //                   "timingPeriod":{
-                //                         "start": "2015-10-01T00:00:00-07:00",
-                //                         "end":"2015-10-05T00:00:00-07:00"
-                //                   }
-                //                }
-                //             ],
-                //             "item":[
-                //                {
-                //                   "sequence":3456,
-                //                   "productOrService":{
-                //                      "coding":[
-                //                         {
-                //                            "system":"http://www.ama-assn.org/go/cpt",
-                //                            "code":"G0299"
-                //                         }
-                //                      ]
-                //                   },
-                //                   "quantity":{
-                //                        "value":5
-                //                   }
-                //                }
-                //             ],
-                //             "careTeam":[
-                //                {
-                //                   "sequence":1,
-                //                   "provider":{
-                //                      "reference":"Practitioner/386"
-                //                   },
-                //                   "extension":[
-                // 				  {
-                //                      "url":"http://terminology.hl7.org/ValueSet/v2-0912",
-                //                      "valueCode":"AT"
-                //                   }
-                // 				  ]
-                //                },
-                //                {
-                //                   "sequence":2,
-                //                   "provider":{
-                //                      "reference":"Practitioner/386"
-                //                   },
-                //                   "extension":[
-                //                    {
-                //                      "url":"http://terminology.hl7.org/ValueSet/v2-0912",
-                //                      "valueCode":"OP"
-                //                   }
-                // 				 ]
-                //                }
-                //             ],
-                //             "diagnosis":[
-                //                {
-                //                   "sequence":123,
-                //                   "diagnosisReference":{
-                //                   	 "reference":"Condition/234"
+                	    const pBundle = {
+                   "resourceType":"Bundle",
+                   "id": "1234567890",
+                   "type":"collection",
+                   "entry":[
+                      {
+                         "resource":{
+                            "resourceType":"Claim",
+                            "status":"active",
+                            "type":{
+                               "coding":[
+                                  {
+                                     "system":"http://terminology.hl7.org/CodeSystem/claim-type",
+                                     "code":"institutional",
+                                     "display":"Institutional"
+                                  }
+                               ]
+                            },
+                            "subType":{
+                               "coding":[
+                                  {
+                                     "system":"https://www.cms.gov/codes/billtype",
+                                     "code":"32",
+                                     "display":"Hospital Outpatient Surgery performed in an Ambulatory ​Surgical Center"
+                                  }
+                               ]
+                            },
+                            "use":"preauthorization",
+                            "patient":{
+                               "reference":"Patient/1"
+                            },
+                            "created":"2019-07-12",
+                            "provider":{
+                               "reference":"Organization/516"
+                            },
+                            "insurer":{
+                               "reference":"Organization/415"
+                            },
+                            "facility":{
+                               "reference":"Location/235"
+                            },
+                            "priority":{
+                               "coding":[
+                                  {
+                                     "code":"normal"
+                                  }
+                               ]
+                            },
+                            "supportingInfo":[
+                               {
+                                  "sequence":1,
+                                  "category":{
+                                     "coding":[
+                                        {
+                                           "system":"http://hl7.org/us/davinci-pas/CodeSystem/PASSupportingInfoType",
+                                           "code":"patientEvent"
+                                        }
+                                     ]
+                                  },
+                                  "timingPeriod":{
+                                        "start": "2015-10-01T00:00:00-07:00",
+                                        "end":"2015-10-05T00:00:00-07:00"
+                                  }
+                               }
+                            ],
+                            "item":[
+                               {
+                                  "sequence":3456,
+                                  "productOrService":{
+                                     "coding":[
+                                        {
+                                           "system":"http://www.ama-assn.org/go/cpt",
+                                           "code":"G0299"
+                                        }
+                                     ]
+                                  },
+                                  "quantity":{
+                                       "value":5
+                                  }
+                               }
+                            ],
+                            "careTeam":[
+                               {
+                                  "sequence":1,
+                                  "provider":{
+                                     "reference":"Practitioner/386"
+                                  },
+                                  "extension":[
+                				  {
+                                     "url":"http://terminology.hl7.org/ValueSet/v2-0912",
+                                     "valueCode":"AT"
+                                  }
+                				  ]
+                               },
+                               {
+                                  "sequence":2,
+                                  "provider":{
+                                     "reference":"Practitioner/386"
+                                  },
+                                  "extension":[
+                                   {
+                                     "url":"http://terminology.hl7.org/ValueSet/v2-0912",
+                                     "valueCode":"OP"
+                                  }
+                				 ]
+                               }
+                            ],
+                            "diagnosis":[
+                               {
+                                  "sequence":123,
+                                  "diagnosisReference":{
+                                  	 "reference":"Condition/234"
 
-                //                   }
+                                  }
 
-                //                }
-                //             ],
-                //             "insurance":[
-                //                {
-                //                   "sequence":1,
-                //                   "focal":true,
-                //                   "coverage":{
-                //                      "reference":"Coverage/29956"
-                //                   }
-                //                }
-                //             ]
-                //          }
-                //       },
-                //       {
-                //          "resource":{
-                //             "resourceType":"Condition",
-                //             "id":"234",
-                //             "code":{
-                //                          "coding": [
-                //                {
-                //                   "code":"G1221",
-                //                   "system":"http://hl7.org/fhir/sid/icd-10-cm",
-                //                   "display":"G1221,Amyotrophic lateral sclerosis"
-                //                }
-                // 			   ]
+                               }
+                            ],
+                            "insurance":[
+                               {
+                                  "sequence":1,
+                                  "focal":true,
+                                  "coverage":{
+                                     "reference":"Coverage/29956"
+                                  }
+                               }
+                            ]
+                         }
+                      },
+                      {
+                         "resource":{
+                            "resourceType":"Condition",
+                            "id":"234",
+                            "code":{
+                                         "coding": [
+                               {
+                                  "code":"G1221",
+                                  "system":"http://hl7.org/fhir/sid/icd-10-cm",
+                                  "display":"G1221,Amyotrophic lateral sclerosis"
+                               }
+                			   ]
 
-                //          },
-                //          "subject":{
-                //             "reference":"Patient/1"
-                //          }
-                //       }
-                //       },
-                //       {
-                //          "resource":{
+                         },
+                         "subject":{
+                            "reference":"Patient/1"
+                         }
+                      }
+                      },
+                      {
+                         "resource":{
 
 
-                //             "resourceType":"Patient",
-                //             "id":"1",
-                //              "identifier":[
-                //                {
-                //                   "use":"usual",
-                //                   "type":{
-                //                      "coding":[
-                //                         {
-                //                            "system":"http://hl7.org/fhir/sid/us-medicare",
-                //                            "code":"MC"
-                //                         }
-                //                      ]
-                //                   },
-                //                   "value":"525697298M"
-                //                }
-                //             ],
-                //             "active":true,
-                //             "name":[
-                //                {
-                //                   "use":"official",
-                //                   "family":"Miami",
-                //                   "given":[
-                //                      "Michael"
-                //                   ]
-                //                }
-                //             ],
-                //             "gender":"male",
-                //             "birthDate":"1938-08-11",
-                //             "_birthDate":{
-                //                "extension":[
-                //                   {
-                //                      "url":"http://hl7.org/fhir/StructureDefinition/patient-birthTime",
-                //                      "valueDateTime":"1972-05-12T14:02:45-04:00"
-                //                   }
-                //                ]
-                //             },
-                //             "deceasedBoolean":false,
-                //             "address":[
-                //                {
-                //                   "line":[
-                //                      "1763 Pitkin Cir"
-                //                   ],
-                //                   "city":"Aurora",
-                //                   "state":"CO",
-                //                   "postalCode":"80017",
-                //                   "country":"US"
-                //                }
-                //             ]
-                //          }
-                //       },
-                //       {
-                //                    "resource":{
-                //          "resourceType":"Organization",
-                //          "id":"415",
-                //           "identifier":[
-                //             {
-                //                "system":"urn:ietf:rfc:3986",
-                //                "value":"2.16.840.1.113883.13.34.110.1.110.99"
-                //             }
-                //          ],
-                //          "name":"MGS123"
-                //           }
-                //       },
-                //       {
-                //                            "resource":{
-                //          "resourceType":"Location",
-                //          "id":"235",
+                            "resourceType":"Patient",
+                            "id":"1",
+                             "identifier":[
+                               {
+                                  "use":"usual",
+                                  "type":{
+                                     "coding":[
+                                        {
+                                           "system":"http://hl7.org/fhir/sid/us-medicare",
+                                           "code":"MC"
+                                        }
+                                     ]
+                                  },
+                                  "value":"525697298M"
+                               }
+                            ],
+                            "active":true,
+                            "name":[
+                               {
+                                  "use":"official",
+                                  "family":"Miami",
+                                  "given":[
+                                     "Michael"
+                                  ]
+                               }
+                            ],
+                            "gender":"male",
+                            "birthDate":"1938-08-11",
+                            "_birthDate":{
+                               "extension":[
+                                  {
+                                     "url":"http://hl7.org/fhir/StructureDefinition/patient-birthTime",
+                                     "valueDateTime":"1972-05-12T14:02:45-04:00"
+                                  }
+                               ]
+                            },
+                            "deceasedBoolean":false,
+                            "address":[
+                               {
+                                  "line":[
+                                     "1763 Pitkin Cir"
+                                  ],
+                                  "city":"Aurora",
+                                  "state":"CO",
+                                  "postalCode":"80017",
+                                  "country":"US"
+                               }
+                            ]
+                         }
+                      },
+                      {
+                                   "resource":{
+                         "resourceType":"Organization",
+                         "id":"415",
+                          "identifier":[
+                            {
+                               "system":"urn:ietf:rfc:3986",
+                               "value":"2.16.840.1.113883.13.34.110.1.110.99"
+                            }
+                         ],
+                         "name":"MGS123"
+                          }
+                      },
+                      {
+                                           "resource":{
+                         "resourceType":"Location",
+                         "id":"235",
 
-                //          "type":[
-                // 		 {
-                //         "coding":[
-                //             {
-                //                "system":"http://terminology.hl7.org/CodeSystem/v3-RoleCode",
-                //                "code":"PTRES",
-                //                "display":"Patient's Residence"
-                //             }
-                //          ]
-                //           }
-                //          ],
+                         "type":[
+                		 {
+                        "coding":[
+                            {
+                               "system":"http://terminology.hl7.org/CodeSystem/v3-RoleCode",
+                               "code":"PTRES",
+                               "display":"Patient's Residence"
+                            }
+                         ]
+                          }
+                         ],
 
-                //          "managingOrganization":{
-                //             "reference":"Organization/516"
-                //          }
-                //       }
-                // 	  },
-                //       {
-                //                  "resource":{
-                //          "resourceType":"Organization",
-                //          "id":"516",
-                //          "identifier":[
-                //             {
-                //                "system":"http://hl7.org.fhir/sid/us-npi",
-                //                "value":"1427862956"
-                //             }
-                //          ],
-                //          "name":"Home Health Services",
-                //          "address":[
-                //             {
-                //                "use":"work",
-                //                "line":[
-                //                   "106 19th Ave 101"
-                //                ],
-                //                "city":"Moline",
-                //                "state":"IL",
-                //                "postalCode":"61265"
-                //             }
-                //          ],
-                //          "contact":[
-                //             {
-                //                "name":[
-                //                   {
-                //                      "use":"official",
-                //                      "family":"Dow",
-                //                      "given":[
-                //                         "Jones"
-                //                      ]
-                //                   }
-                //                ],
-                //                "telecom":[
-                //                   {
-                //                      "system":"phone",
-                //                      "value":"555-555-5555",
-                //                      "use":"home"
-                //                   }
-                //                ]
-                //             }
-                //          ]
-                //       }
-                //        },
-                //       {
-                //          "resource":{
-                //             "resourceType":"Practitioner",
-                //             "id":"386",
-                //             "identifier":[
-                //                {
-                //                   "system":"http://hl7.org.fhir/sid/us-npi",
-                //                   "value":"1234567890"
-                //                }
-                //             ],
-                //             "name":[
-                // 			{
-                //                "use":"official",
-                //                "family":"Uber",
-                //                "given":[
-                //                   "Kathy"
-                //                ]
-                //             }
-                // 			],
-                //             "address":[
-                //                {
-                //                   "use":"work",
-                //                   "line":[
-                //                      "610 S Maple Ave"
-                //                   ],
-                //                   "city":"Oak Park",
-                //                   "state":"IL",
-                //                   "postalCode":"60304"
-                //                }
-                //             ]
-                //          }
-                //       },
-                //       {
-                //          "resource":{
-                //             "resourceType":"Coverage",
-                //             "id":"29956",
-                //             "meta":{
-                //                "versionId":"1",
-                //                "lastUpdated":"2019-07-11T06:27:08.949+00:00",
-                //                "profile":[
-                //                   "http://hl7.org/fhir/us/davinci-deqm/STU3/StructureDefinition/coverage-deqm"
-                //                ]
-                //             },
-                //             "identifier":[
-                //                {
-                //                   "system":"http://benefitsinc.com/certificate",
-                //                   "value":"10138556"
-                //                }
-                //             ],
-                //             "status":"active",
-                //             "type":{
-                //                "coding":[
-                //                   {
-                //                      "system":"http://terminology.hl7.org/CodeSystem/v3-ActCode",
-                //                      "code":"HIP",
-                //                      "display":"health insurance plan policy"
-                //                   }
-                //                ]
-                //             },
-                //             "policyHolder":{
-                //                "reference":"Patient/1"
-                //             },
-                //             "subscriber":{
-                //                "reference":"Patient/1"
-                //             },
-                //             "subscriberId":"525697298M",
-                //             "beneficiary":{
-                //                "reference":"Patient/1"
-                //             },
-                //             "relationship":{
-                //                "coding":[
-                //                   {
-                //                      "code":"self"
-                //                   }
-                //                ]
-                //             },
-                //             "payor":[
-                //                {
-                //                   "reference":"Organization/415"
-                //                }
-                //             ]
-                //          }
-                //       }
-                //    ]
-                // };
+                         "managingOrganization":{
+                            "reference":"Organization/516"
+                         }
+                      }
+                	  },
+                      {
+                                 "resource":{
+                         "resourceType":"Organization",
+                         "id":"516",
+                         "identifier":[
+                            {
+                               "system":"http://hl7.org.fhir/sid/us-npi",
+                               "value":"1427862956"
+                            }
+                         ],
+                         "name":"Home Health Services",
+                         "address":[
+                            {
+                               "use":"work",
+                               "line":[
+                                  "106 19th Ave 101"
+                               ],
+                               "city":"Moline",
+                               "state":"IL",
+                               "postalCode":"61265"
+                            }
+                         ],
+                         "contact":[
+                            {
+                               "name":[
+                                  {
+                                     "use":"official",
+                                     "family":"Dow",
+                                     "given":[
+                                        "Jones"
+                                     ]
+                                  }
+                               ],
+                               "telecom":[
+                                  {
+                                     "system":"phone",
+                                     "value":"555-555-5555",
+                                     "use":"home"
+                                  }
+                               ]
+                            }
+                         ]
+                      }
+                       },
+                      {
+                         "resource":{
+                            "resourceType":"Practitioner",
+                            "id":"386",
+                            "identifier":[
+                               {
+                                  "system":"http://hl7.org.fhir/sid/us-npi",
+                                  "value":"1234567890"
+                               }
+                            ],
+                            "name":[
+                			{
+                               "use":"official",
+                               "family":"Uber",
+                               "given":[
+                                  "Kathy"
+                               ]
+                            }
+                			],
+                            "address":[
+                               {
+                                  "use":"work",
+                                  "line":[
+                                     "610 S Maple Ave"
+                                  ],
+                                  "city":"Oak Park",
+                                  "state":"IL",
+                                  "postalCode":"60304"
+                               }
+                            ]
+                         }
+                      },
+                      {
+                         "resource":{
+                            "resourceType":"Coverage",
+                            "id":"29956",
+                            "meta":{
+                               "versionId":"1",
+                               "lastUpdated":"2019-07-11T06:27:08.949+00:00",
+                               "profile":[
+                                  "http://hl7.org/fhir/us/davinci-deqm/STU3/StructureDefinition/coverage-deqm"
+                               ]
+                            },
+                            "identifier":[
+                               {
+                                  "system":"http://benefitsinc.com/certificate",
+                                  "value":"10138556"
+                               }
+                            ],
+                            "status":"active",
+                            "type":{
+                               "coding":[
+                                  {
+                                     "system":"http://terminology.hl7.org/CodeSystem/v3-ActCode",
+                                     "code":"HIP",
+                                     "display":"health insurance plan policy"
+                                  }
+                               ]
+                            },
+                            "policyHolder":{
+                               "reference":"Patient/1"
+                            },
+                            "subscriber":{
+                               "reference":"Patient/1"
+                            },
+                            "subscriberId":"525697298M",
+                            "beneficiary":{
+                               "reference":"Patient/1"
+                            },
+                            "relationship":{
+                               "coding":[
+                                  {
+                                     "code":"self"
+                                  }
+                               ]
+                            },
+                            "payor":[
+                               {
+                                  "reference":"Organization/415"
+                               }
+                            ]
+                         }
+                      }
+                   ]
+                };
+                console.log("claim final--",JSON.stringify(priorAuthBundle));
                 Http.open("POST", priorAuthUrl);
                 Http.setRequestHeader("Content-Type", "application/fhir+json");
-                Http.setRequestHeader("Authorization", "Bearer " + auth_response.access_token);
+                // Http.setRequestHeader("Authorization", "Bearer " + auth_response.access_token);
                 // Http.send(JSON.stringify(pBundle));
                 Http.send(JSON.stringify(priorAuthBundle));
                 Http.onreadystatechange = function () {
