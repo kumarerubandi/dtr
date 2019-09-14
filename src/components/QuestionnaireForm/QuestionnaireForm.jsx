@@ -50,6 +50,7 @@ export default class QuestionnaireForm extends Component {
             claimResponse: {},
             claimMessage: "",
             otherProvider: false,
+            otherProviderName: "",
             providerQueries: [],
             communicationRequestId: '',
             providerSource: sessionStorage["providerSource"],
@@ -97,6 +98,14 @@ export default class QuestionnaireForm extends Component {
         if (values.length > 0) {
             this.setState({ "providerSource": values[0].value });
             sessionStorage["providerSource"] = values[0].value;
+            console.log("options---",providerOptions)
+            providerOptions.forEach((p)=>{
+                if (p.value === values[0].value){
+                    this.setState({"otherProviderName": p.label});
+                    sessionStorage["otherProviderUrl"] = p.url;
+                    console.log("Selected PRovider URi",p.url)  
+                }
+            })
             // sessionStorage["serviceUri"] = values[0].url;
         }
     }
@@ -756,9 +765,9 @@ export default class QuestionnaireForm extends Component {
                 }
                 /** creating cliam  */
                 const Http = new XMLHttpRequest();
-                // const priorAuthUrl = "https://davinci-prior-auth.logicahealth.org/fhir/Claim/$submit";
+                const priorAuthUrl = "https://davinci-prior-auth.logicahealth.org/fhir/Claim/$submit";
                 // const priorAuthUrl = "http://cmsfhir.mettles.com:8080/drfp/fhir/Claim/$submit";
-                const priorAuthUrl = "http://cdex.mettles.com:9000/fhir/Claim/$submit";
+                // const priorAuthUrl = "http://cdex.mettles.com:9000/fhir/Claim/$submit";
                 // 	    const pBundle = {
                 //    "resourceType":"Bundle",
                 //    "id": "1234567890",
@@ -1612,7 +1621,12 @@ export default class QuestionnaireForm extends Component {
                                     {this.state.providerQueries.map((item, key) => {
                                         return this.renderQueries(item, key);
                                     })}
-                                    <button className="btn comm-btn" onClick={this.submitCommunicationRequest}>Submit Communication Request</button>
+                                    
+                                    <button className="btn comm-btn" onClick={this.submitCommunicationRequest}>Send Request</button>
+                                    
+                                    {this.state.communicationRequestId && 
+                                        <div className="decision-card alert-success">Request Posted successfully to {this.state.otherProviderName} - ({this.state.communicationRequestId}) </div>
+                                    }
                                 </div>
                             }
                         </div>

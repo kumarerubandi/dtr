@@ -6,132 +6,127 @@ import extractFhirResourcesThatNeedFetching from "./extractFhirResourcesThatNeed
 import buildPopulatedResourceBundle from "./buildPopulatedResourceBundle";
 import "fhirclient";
 
-function getSmartConnection(){
+function getSmartConnection() {
 
   var smart = FHIR.client({
-          serviceUrl: sessionStorage["serviceUri"],
-          // serviceUrl: "http://cdex.mettles.com:8080/hapi-fhir-jpaserver/fhir",
-          patientId: sessionStorage["patientId"],
-          auth: {
-            type: "bearer",
-            token: sessionStorage["token"]
+    serviceUrl: sessionStorage["otherProviderUrl"],
+    patientId: sessionStorage["patientId"],
+    auth: {
+      type: "bearer",
+      token: sessionStorage["token"]
 
-          }
-        });
+    }
+  });
   return smart
 }
 
 function executeElm(smart, fhirVersion, executionInputs, consoleLog) {
-  smart1 = getSmartConnection(); 
-  return new Promise(function(resolve, reject){
+
+  return new Promise(function (resolve, reject) {
     const patientSource = getPatientSource(fhirVersion)
-    console.log("SssnStorage",sessionStorage)
-    if(sessionStorage.hasOwnProperty("communicationRequest")){
-      smart1.api.search({type: "Communication", query:{"based-on":sessionStorage["communicationRequest"]}})
-      .then(response => {
-        console.log("response",response)
-        let communication = response.data;
-        if (communication.total > 0){
-          buildResourceBundleFromCommunication(smart, communication.entry[0].resource)
-          .then(function(resourceBundle){
-            patientSource.loadBundles([resourceBundle]);
-              const elmResults = executeElmAgainstPatientSource(executionInputs, patientSource);
-              const results = {
-                bundle: resourceBundle,
-                elmResults: elmResults
-              }
-              resolve(results);
-            })
-            .catch(function(err){reject(err)});
-        }
-      }, err => reject(err))
-    }
-    else{
-      const neededResources = extractFhirResourcesThatNeedFetching(executionInputs.dataRequirement);
-      consoleLog("need to fetch resources","infoClass");
-      console.log("We need to fetch these resources:", neededResources);
-      sessionStorage['fhir_queries'] = JSON.stringify(neededResources);
-    
-    
-      buildPopulatedResourceBundle(smart, neededResources, consoleLog)
-      .then(function(resourceBundle) {
+    console.log("SssnStorage", sessionStorage)
+    const neededResources = extractFhirResourcesThatNeedFetching(executionInputs.dataRequirement);
+    consoleLog("need to fetch resources", "infoClass");
+    console.log("We need to fetch these resources:", neededResources);
+    sessionStorage['fhir_queries'] = JSON.stringify(neededResources);
+
+    buildPopulatedResourceBundle(smart, neededResources, consoleLog)
+      .then(function (resourceBundle) {
         console.log("Fetched resources are in this bundle:", resourceBundle);
         console.log(JSON.stringify(resourceBundle));
-        patientSource.loadBundles([resourceBundle]);
-        const elmResults = executeElmAgainstPatientSource(executionInputs, patientSource);
-        const results = {
-          bundle: resourceBundle,
-          elmResults: elmResults
+        if (sessionStorage.hasOwnProperty("communicationRequest")) {
+          let smart1 = getSmartConnection();
+          smart1.api.search({ type: "Communication", query: { "based-on": sessionStorage["communicationRequest"] } })
+            .then(response => {
+              console.log("response", response)
+              let communication = response.data;
+              if (communication.total > 0) {
+                buildResourceBundleFromCommunication(smart, communication.entry[0].resource)
+                  .then(function (otherResourceBundle) {
+                    otherResourceBundle.forEach((resource) => {
+                      resourceBundle.entry.push(resource);
+                    })
+                    console.log("other resource Bule---", otherResourceBundle);
+                    // let finalBundle = resourceBundle.push(otherResourceBundle);
+                    patientSource.loadBundles([resourceBundle]);
+                    const elmResults = executeElmAgainstPatientSource(executionInputs, patientSource);
+                    const results = {
+                      bundle: resourceBundle,
+                      elmResults: elmResults
+                    }
+                    resolve(results);
+                  })
+                  .catch(function (err) { reject(err) });
+              }
+            }, err => reject(err))
+        } else {
+          patientSource.loadBundles([resourceBundle]);
+          const elmResults = executeElmAgainstPatientSource(executionInputs, patientSource);
+          const results = {
+            bundle: resourceBundle,
+            elmResults: elmResults
+          }
+          resolve(results);
         }
-        resolve(results);
       })
-      .catch(function(err){reject(err)});
-    }
+      .catch(function (err) { reject(err) });
+
 
   });
 }
 
 
 function buildResourceBundleFromCommunication(smart, communicationResource) {
-  return new Promise(function(resolve, reject){
-      console.log("Communication-- resource",communicationResource);
-      smart.patient.read().then(
-        pt => {
-          console.log("got pt", pt);
-          sessionStorage['patientObject'] = JSON.stringify(pt)
-          const entryResources = [pt];
-          const docResources = [];
-          communicationResource.payload.forEach((item)=>{
-            if(item.extension[0].hasOwnProperty("valueCodeableConcept")){
-              console.log("payload---attachment--- ",item.contentAttachment)
-              let docRef =       {
-                        "resourceType": "DocumentReference",
-                        "identifier": [
-                          {
-                            "system": "urn:ietf:rfc:3986",
-                            "value": "urn:oid:1.3.6.1.4.1.21367.2005.3.7.1234"
-                          }
-                        ],
-                        "status": "current",
-                        "docStatus": "preliminary",
-                        "type": item.extension[0].valueCodeableConcept,
-                        "subject": {
-                          "reference": "Patient/"+pt.id
-                        },
-                        "date": "2005-12-24T09:43:41+11:00",
-                        "description": "Physical",
-                        "content": [
-                          {
-                            "attachment": item.contentAttachment
-                          }
-                        ]
-                      }
-              docResources.push(docRef);
+  return new Promise(function (resolve, reject) {
+    console.log("Communication-- resource", communicationResource);
+    const docResources = [];
+    let entryResources = [];
+    communicationResource.payload.forEach((item) => {
+      if (item.extension[0].hasOwnProperty("valueCodeableConcept")) {
+        console.log("payload---attachment--- ", item.contentAttachment)
+        let docRef = {
+          "resourceType": "DocumentReference",
+          "identifier": [
+            {
+              "system": "urn:ietf:rfc:3986",
+              "value": "urn:oid:1.3.6.1.4.1.21367.2005.3.7.1234"
             }
+          ],
+          "status": "current",
+          "docStatus": "preliminary",
+          "type": item.extension[0].valueCodeableConcept,
+          "subject": {
+            "reference": "Patient/" + sessionStorage["patientId"]
+          },
+          "date": "2005-12-24T09:43:41+11:00",
+          "description": "Physical",
+          "content": [
+            {
+              "attachment": item.contentAttachment
+            }
+          ]
+        }
+        docResources.push(docRef);
+      }
 
-            // console.log("ITEMMM", item ,item.extension[0].hasOwnProperty("valueString"));
-            if(item.extension[0].hasOwnProperty("valueString")){
-              // console.log("payload---resource--- ",item.contentAttachment.data)
-              let resourceBundle = JSON.parse(base64.decode(item.contentAttachment.data))
-              console.log("BUNdle!!!!",resourceBundle)
-              if(resourceBundle.total > 0){
-                let entryArray = resourceBundle.entry
-                for (var i = entryArray.length - 1; i >= 0; i--) {
-                  entryResources.push(entryArray[i].resource);
-                }
-              }
+      // console.log("ITEMMM", item ,item.extension[0].hasOwnProperty("valueString"));
+      if (item.extension[0].hasOwnProperty("valueString")) {
+        // console.log("payload---resource--- ",item.contentAttachment.data)
+        if (base64.decode(item.contentAttachment.data) !== undefined) {
+          let resourceBundle = JSON.parse(base64.decode(item.contentAttachment.data))
+          console.log("BUNdle!!!!", resourceBundle)
+          if (resourceBundle.total > 0) {
+            let entryArray = resourceBundle.entry
+            for (var i = entryArray.length - 1; i >= 0; i--) {
+              entryResources.push(entryArray[i].resource);
             }
-          })
-          sessionStorage['docResources'] = JSON.stringify(docResources);
-          console.log("entryResources",entryResources)
-          const bundle = {
-            resourceType: "Bundle",
-            type: "collection",
-            entry: entryResources.map(r => ({ resource: r }))
-          };
-          resolve(bundle);
-        })
-     
+          }
+        }
+      }
+    })
+    sessionStorage['docResources'] = JSON.stringify(docResources);
+    console.log("entryResources", entryResources)
+    resolve(entryResources.map(r => ({ resource: r })));
   })
 }
 

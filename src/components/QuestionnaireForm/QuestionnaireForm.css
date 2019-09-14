@@ -17,6 +17,24 @@
     color: white;
 }
 
+.alert-success {
+  border-left-color: green;
+}
+
+.decision-card {
+  padding: 15px;
+  margin: 10px;
+  background: #fcfcfc;
+  border: 2px solid #ddd;
+  border-radius: 4px;
+  border-left-width: 3px;
+}
+.alert-success {
+  color: #3c763d;
+  background-color: #dff0d8;
+  border-color: #d6e9c6;
+}
+
 .header-input {
     text-align: left;
     margin-bottom: 5px;
