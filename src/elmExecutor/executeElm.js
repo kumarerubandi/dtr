@@ -26,7 +26,7 @@ function executeElm(smart, fhirVersion, executionInputs, consoleLog) {
     const patientSource = getPatientSource(fhirVersion)
     console.log("SssnStorage",sessionStorage)
     if(sessionStorage.hasOwnProperty("communicationRequest")){
-      smart.patient.api.search({type: "Communication", query:{"based-on":sessionStorage["communicationRequest"]}})
+      smart.api.search({type: "Communication", query:{"based-on":sessionStorage["communicationRequest"]}})
       .then(response => {
         console.log("response",response)
         let communication = response.data;
