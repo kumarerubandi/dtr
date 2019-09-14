@@ -1215,32 +1215,26 @@ export default class QuestionnaireForm extends Component {
             this.setState({ turnOffValues: returnArray });
         }
     }
+    randomString() {
+        var chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz";
+        var string_length = 8;
+        var randomstring = '';
+        for (var i = 0; i < string_length; i++) {
+            var rnum = Math.floor(Math.random() * chars.length);
+            randomstring += chars.substring(rnum, rnum + 1);
+        }
+        return randomstring
+    }
     submitCommunicationRequest() {
 
         console.log(JSON.parse(sessionStorage['patientObject']), 'queries', this.state.providerQueries)
         var patient = JSON.parse(sessionStorage['patientObject'])
         var providerQueries = this.state.providerQueries
-        var valueCodeableConcept = {
-            "coding": [
-                {
-                    "system": "http://loinc.org",
-                }
-            ]
-        }
-        var value
-        var contentStringJson = {
-            "extension": [
-                {
-                    "url": "http://hl7.org/fhir/us/davinci-cdex/StructureDefinition/cdex-payload-clinical-note-type",
-                }
-            ],
-        }
-        var contentString = "Please provide Progress Note recorded during 2018-09-05 - 2019-09-13"
-        var arr = []
-        for (var i = 0; i < providerQueries.length; i++) {
-            if (providerQueries[i].checked === true) {
-                if (providerQueries[i].type === 'attachment') {
-                    for (var j = 0; j < providerQueries[i].code.coding.length; j++) {
+        var arr=[]
+        for(var i = 0; i<providerQueries.length;i++){
+            if(providerQueries[i].checked=== true){
+                if(providerQueries[i].type=== 'attachment'){
+                    for(var j =0;j<providerQueries[i].code.coding.length;j++){
                         arr.push({
                             "extension": [
                                 {
@@ -1266,7 +1260,7 @@ export default class QuestionnaireForm extends Component {
                             "extension": [
                                 {
                                     "url": "http://hl7.org/fhir/us/davinci-cdex/StructureDefinition/cdex-payload-clinical-note-type",
-                                    "valueString": providerQueries[i].name + "?patient=" + patient.id + "&" + providerQueries[i].code
+                                    "valueString": providerQueries[i].name + "?" + providerQueries[i].code
                                 }
                             ],
                             "contentString": "Please provide " + providerQueries[i].name + " recorded during 2018-09-05 - 2019-09-13"
@@ -1304,7 +1298,7 @@ export default class QuestionnaireForm extends Component {
                         "identifier": [
                             {
                                 "system": "http://www.jurisdiction.com/insurer/123456",
-                                "value": 795960864
+                                "value": this.randomString()
                             }
                         ],
                         "connectionType": {
@@ -1371,7 +1365,7 @@ export default class QuestionnaireForm extends Component {
                         "identifier": [
                             {
                                 "system": "http://www.jurisdiction.com/insurer/123456",
-                                "value": 901382527
+                                "value": this.randomString()
                             }
                         ],
                         "contained": [
