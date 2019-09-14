@@ -97,7 +97,7 @@ export default class QuestionnaireForm extends Component {
         if (values.length > 0) {
             this.setState({ "providerSource": values[0].value });
             sessionStorage["providerSource"] = values[0].value;
-            sessionStorage["serviceUri"] = values[0].url;
+            // sessionStorage["serviceUri"] = values[0].url;
         }
     }
 
