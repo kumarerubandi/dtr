@@ -749,7 +749,7 @@ export default class QuestionnaireForm extends Component {
                   sequence: 1,
                   productOrService: this.props.deviceRequest.codeCodeableConcept,
                   quantity: {
-                    value: 30
+                    value: this.props.deviceRequest.parameter[0].valueQuantity.value
                   }
                 }
               ],
