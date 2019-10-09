@@ -17,15 +17,15 @@ import { isTSEnumMember } from '@babel/types';
 import Select from "react-dropdown-select";
 import providerOptions from "../../providerOptions.json";
 import { faCarrot } from '@fortawesome/free-solid-svg-icons';
+import Loader from 'react-loader-spinner';
 
-
-const state = urlUtils.getUrlParameter("state"); // session key
-const code = urlUtils.getUrlParameter("code"); // authorization code
-console.log(state);
-const params = JSON.parse(sessionStorage[state]); // load app session
-const tokenUri = params.tokenUri;
-const clientId = params.clientId;
-const secret = params.secret;
+// const state = urlUtils.getUrlParameter("state"); // session key
+// const code = urlUtils.getUrlParameter("code"); // authorization code
+// console.log(state);
+// const params = JSON.parse(sessionStorage[state]); // load app session
+// const tokenUri = params.tokenUri;
+// const clientId = params.clientId;
+// const secret = params.secret;
 
 export default class QuestionnaireForm extends Component {
     constructor(props) {
@@ -54,6 +54,8 @@ export default class QuestionnaireForm extends Component {
             providerQueries: [],
             communicationRequestId: '',
             providerSource: sessionStorage["providerSource"],
+            loading: false,
+            resloading: false
         };
 
         this.updateQuestionValue = this.updateQuestionValue.bind(this);
@@ -98,12 +100,12 @@ export default class QuestionnaireForm extends Component {
         if (values.length > 0) {
             this.setState({ "providerSource": values[0].value });
             sessionStorage["providerSource"] = values[0].value;
-            console.log("options---",providerOptions)
-            providerOptions.forEach((p)=>{
-                if (p.value === values[0].value){
-                    this.setState({"otherProviderName": p.label});
+            console.log("options---", providerOptions)
+            providerOptions.forEach((p) => {
+                if (p.value === values[0].value) {
+                    this.setState({ "otherProviderName": p.label });
                     sessionStorage["otherProviderUrl"] = p.url;
-                    console.log("Selected PRovider URi",p.url)  
+                    console.log("Selected PRovider URi", p.url)
                 }
             })
             // sessionStorage["serviceUri"] = values[0].url;
@@ -178,9 +180,10 @@ export default class QuestionnaireForm extends Component {
 
     reloadClaimResponse() {
         var self = this
+        this.setState({ resloading: true });
         const Http = new XMLHttpRequest();
-        // const priorAuthUrl = "http://cmsfhir.mettles.com:8080/drfp/fhir/ClaimResponse/" + this.state.claimResponse.id;
-        const priorAuthUrl = "http://cdex.mettles.com:9000/fhir/ClaimResponse/" + this.state.claimResponse.id;
+        const priorAuthUrl = "http://cmsfhir.mettles.com:8080/drfp/fhir/ClaimResponse/" + this.state.claimResponse.id;
+        // const priorAuthUrl = "http://cdex.mettles.com:9000/fhir/ClaimResponse/" + this.state.claimResponse.id;
         Http.open("GET", priorAuthUrl);
         Http.setRequestHeader("Content-Type", "application/fhir+json");
         Http.send();
@@ -198,7 +201,7 @@ export default class QuestionnaireForm extends Component {
                     this.setState({ "claimMessage": "Prior Authorization Request Failed." })
                     message = "Prior Authorization Request Failed."
                 }
-
+                self.setState({ resloading: false });
                 console.log(message);
                 //alert(message);
                 console.log(this.responseText);
@@ -564,6 +567,7 @@ export default class QuestionnaireForm extends Component {
 
     // create the questionnaire response based on the current state
     outputResponse(status) {
+        this.setState({ loading: true });
         console.log(this.state.sectionLinks);
         const today = new Date();
         const dd = String(today.getDate()).padStart(2, '0');
@@ -703,13 +707,13 @@ export default class QuestionnaireForm extends Component {
             },
             subType: {
                 coding: [
-                  {
-                    system: "https://www.cms.gov/codes/billtype",
-                    code: "41",
-                    display: "Hospital Outpatient Surgery performed in an Ambulatory ​Surgical Center"
-                  }
+                    {
+                        system: "https://www.cms.gov/codes/billtype",
+                        code: "41",
+                        display: "Hospital Outpatient Surgery performed in an Ambulatory ​Surgical Center"
+                    }
                 ]
-              },
+            },
             use: "preauthorization",
             patient: { reference: this.makeReference(priorAuthBundle, "Patient") },
             created: authored,
@@ -721,19 +725,19 @@ export default class QuestionnaireForm extends Component {
             supportingInfo: [{
                 sequence: 1,
                 category: {
-                  coding: [
-                    {
-                      "system": "http://hl7.org/us/davinci-pas/CodeSystem/PASSupportingInfoType",
-                      "code": "patientEvent"
-                    }
-                  ]
+                    coding: [
+                        {
+                            "system": "http://hl7.org/us/davinci-pas/CodeSystem/PASSupportingInfoType",
+                            "code": "patientEvent"
+                        }
+                    ]
                 },
                 timingPeriod: {
-                  start: "2019-01-05T00:00:00-07:00",
-                  end: "2019-03-05T00:00:00-07:00"
+                    start: "2019-01-05T00:00:00-07:00",
+                    end: "2019-03-05T00:00:00-07:00"
                 }
-              },
-               {
+            },
+            {
                 sequence: 2,
                 category: {
                     coding: [{
@@ -746,25 +750,25 @@ export default class QuestionnaireForm extends Component {
             }],
             item: [
                 {
-                  sequence: 1,
-                  productOrService: this.props.deviceRequest.codeCodeableConcept,
-                  quantity: {
-                    value: this.props.deviceRequest.parameter[0].valueQuantity.value
-                  }
-                }
-              ],
-              careTeam: [
-                {
-                  sequence: 1,
-                  provider: { reference: this.makeReference(priorAuthBundle, "Practitioner") },
-                  extension: [
-                    {
-                      url: "http://terminology.hl7.org/ValueSet/v2-0912",
-                      valueCode: "OP"
+                    sequence: 1,
+                    productOrService: this.props.deviceRequest.codeCodeableConcept,
+                    quantity: {
+                        value: this.props.deviceRequest.parameter[0].valueQuantity.value
                     }
-                  ]
                 }
-              ],
+            ],
+            careTeam: [
+                {
+                    sequence: 1,
+                    provider: { reference: this.makeReference(priorAuthBundle, "Practitioner") },
+                    extension: [
+                        {
+                            url: "http://terminology.hl7.org/ValueSet/v2-0912",
+                            valueCode: "OP"
+                        }
+                    ]
+                }
+            ],
             diagnosis: [],
             insurance: [{
                 sequence: 1,
@@ -781,7 +785,7 @@ export default class QuestionnaireForm extends Component {
                 });
             }
         })
-        console.log(priorAuthClaim, 'HEREEE', tokenUri);
+        // console.log(priorAuthClaim, 'HEREEE', tokenUri);
         console.log(JSON.stringify(priorAuthClaim));
         if (sessionStorage.hasOwnProperty("docResources")) {
             if (sessionStorage["docResources"]) {
@@ -793,435 +797,72 @@ export default class QuestionnaireForm extends Component {
         priorAuthBundle.entry.unshift({ resource: priorAuthClaim })
 
         /*creating token */
-        const tokenPost = new XMLHttpRequest();
-        var auth_response;
-        tokenPost.open("POST", tokenUri);
-        tokenPost.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-        var data = `client_id=${clientId}&grant_type=password&username=john&password=john123`
+        // const tokenPost = new XMLHttpRequest();
+        // var auth_response;
+        // tokenPost.open("POST", tokenUri);
+        // tokenPost.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        // var data = `client_id=${clientId}&grant_type=password&username=john&password=john123`
 
-        tokenPost.onload = function () {
-            if (tokenPost.status === 200) {
-                try {
-                    auth_response = JSON.parse(tokenPost.responseText);
-                    console.log("auth res--1243-", auth_response);
-                } catch (e) {
-                    const errorMsg = "Failed to parse auth response";
-                    document.body.innerText = errorMsg;
-                    console.error(errorMsg);
-                    return;
-                }
-                /** creating cliam  */
-                const Http = new XMLHttpRequest();
-                // const priorAuthUrl = "https://davinci-prior-auth.logicahealth.org/fhir/Claim/$submit";
-                const priorAuthUrl = "http://cmsfhir.mettles.com:8080/drfp/fhir/Claim/$submit";
-                // const priorAuthUrl = "http://cdex.mettles.com:9000/fhir/Claim/$submit";
-                	    const pBundle = {
-                   "resourceType":"Bundle",
-                   "id": "1234567890",
-                   "type":"collection",
-                   "entry":[
-                      {
-                         "resource":{
-                            "resourceType":"Claim",
-                            "status":"active",
-                            "type":{
-                               "coding":[
-                                  {
-                                     "system":"http://terminology.hl7.org/CodeSystem/claim-type",
-                                     "code":"institutional",
-                                     "display":"Institutional"
-                                  }
-                               ]
-                            },
-                            "subType":{
-                               "coding":[
-                                  {
-                                     "system":"https://www.cms.gov/codes/billtype",
-                                     "code":"32",
-                                     "display":"Hospital Outpatient Surgery performed in an Ambulatory ​Surgical Center"
-                                  }
-                               ]
-                            },
-                            "use":"preauthorization",
-                            "patient":{
-                               "reference":"Patient/1"
-                            },
-                            "created":"2019-07-12",
-                            "provider":{
-                               "reference":"Organization/516"
-                            },
-                            "insurer":{
-                               "reference":"Organization/415"
-                            },
-                            "facility":{
-                               "reference":"Location/235"
-                            },
-                            "priority":{
-                               "coding":[
-                                  {
-                                     "code":"normal"
-                                  }
-                               ]
-                            },
-                            "supportingInfo":[
-                               {
-                                  "sequence":1,
-                                  "category":{
-                                     "coding":[
-                                        {
-                                           "system":"http://hl7.org/us/davinci-pas/CodeSystem/PASSupportingInfoType",
-                                           "code":"patientEvent"
-                                        }
-                                     ]
-                                  },
-                                  "timingPeriod":{
-                                        "start": "2015-10-01T00:00:00-07:00",
-                                        "end":"2015-10-05T00:00:00-07:00"
-                                  }
-                               }
-                            ],
-                            "item":[
-                               {
-                                  "sequence":3456,
-                                  "productOrService":{
-                                     "coding":[
-                                        {
-                                           "system":"http://www.ama-assn.org/go/cpt",
-                                           "code":"G0299"
-                                        }
-                                     ]
-                                  },
-                                  "quantity":{
-                                       "value":5
-                                  }
-                               }
-                            ],
-                            "careTeam":[
-                               {
-                                  "sequence":1,
-                                  "provider":{
-                                     "reference":"Practitioner/386"
-                                  },
-                                  "extension":[
-                				  {
-                                     "url":"http://terminology.hl7.org/ValueSet/v2-0912",
-                                     "valueCode":"AT"
-                                  }
-                				  ]
-                               },
-                               {
-                                  "sequence":2,
-                                  "provider":{
-                                     "reference":"Practitioner/386"
-                                  },
-                                  "extension":[
-                                   {
-                                     "url":"http://terminology.hl7.org/ValueSet/v2-0912",
-                                     "valueCode":"OP"
-                                  }
-                				 ]
-                               }
-                            ],
-                            "diagnosis":[
-                               {
-                                  "sequence":123,
-                                  "diagnosisReference":{
-                                  	 "reference":"Condition/234"
+        // tokenPost.onload = function () {
+        //     if (tokenPost.status === 200) {
+        //         try {
+        //             auth_response = JSON.parse(tokenPost.responseText);
+        //             console.log("auth res--1243-", auth_response);
+        //         } catch (e) {
+        //             const errorMsg = "Failed to parse auth response";
+        //             document.body.innerText = errorMsg;
+        //             console.error(errorMsg);
+        //             return;
+        //         }
+        /** creating cliam  */
+        const Http = new XMLHttpRequest();
+        // const priorAuthUrl = "https://davinci-prior-auth.logicahealth.org/fhir/Claim/$submit";
+        const priorAuthUrl = "http://cmsfhir.mettles.com:8080/drfp/fhir/Claim/$submit";
+        // const priorAuthUrl = "http://cdex.mettles.com:9000/fhir/Claim/$submit";
 
-                                  }
-
-                               }
-                            ],
-                            "insurance":[
-                               {
-                                  "sequence":1,
-                                  "focal":true,
-                                  "coverage":{
-                                     "reference":"Coverage/29956"
-                                  }
-                               }
-                            ]
-                         }
-                      },
-                      {
-                         "resource":{
-                            "resourceType":"Condition",
-                            "id":"234",
-                            "code":{
-                                         "coding": [
-                               {
-                                  "code":"G1221",
-                                  "system":"http://hl7.org/fhir/sid/icd-10-cm",
-                                  "display":"G1221,Amyotrophic lateral sclerosis"
-                               }
-                			   ]
-
-                         },
-                         "subject":{
-                            "reference":"Patient/1"
-                         }
-                      }
-                      },
-                      {
-                         "resource":{
-
-
-                            "resourceType":"Patient",
-                            "id":"1",
-                             "identifier":[
-                               {
-                                  "use":"usual",
-                                  "type":{
-                                     "coding":[
-                                        {
-                                           "system":"http://hl7.org/fhir/sid/us-medicare",
-                                           "code":"MC"
-                                        }
-                                     ]
-                                  },
-                                  "value":"525697298M"
-                               }
-                            ],
-                            "active":true,
-                            "name":[
-                               {
-                                  "use":"official",
-                                  "family":"Miami",
-                                  "given":[
-                                     "Michael"
-                                  ]
-                               }
-                            ],
-                            "gender":"male",
-                            "birthDate":"1938-08-11",
-                            "_birthDate":{
-                               "extension":[
-                                  {
-                                     "url":"http://hl7.org/fhir/StructureDefinition/patient-birthTime",
-                                     "valueDateTime":"1972-05-12T14:02:45-04:00"
-                                  }
-                               ]
-                            },
-                            "deceasedBoolean":false,
-                            "address":[
-                               {
-                                  "line":[
-                                     "1763 Pitkin Cir"
-                                  ],
-                                  "city":"Aurora",
-                                  "state":"CO",
-                                  "postalCode":"80017",
-                                  "country":"US"
-                               }
-                            ]
-                         }
-                      },
-                      {
-                                   "resource":{
-                         "resourceType":"Organization",
-                         "id":"415",
-                          "identifier":[
-                            {
-                               "system":"urn:ietf:rfc:3986",
-                               "value":"2.16.840.1.113883.13.34.110.1.110.99"
+        console.log("claim final--", JSON.stringify(priorAuthBundle));
+        Http.open("POST", priorAuthUrl);
+        Http.setRequestHeader("Content-Type", "application/fhir+json");
+        // Http.setRequestHeader("Authorization", "Bearer " + auth_response.access_token);
+        // Http.send(JSON.stringify(pBundle));
+        Http.send(JSON.stringify(priorAuthBundle));
+        Http.onreadystatechange = function () {
+            if (this.readyState === XMLHttpRequest.DONE) {
+                var message = "";
+                self.setState({ displayQuestionnaire: false })
+                if (this.status === 200) {
+                    var claimResponse = JSON.parse(this.responseText);
+                    console.log("lllllll")
+                    let result = claimResponse;
+                    if (claimResponse.hasOwnProperty('entry')) {
+                        claimResponse.entry.forEach((res) => {
+                            if (res.resource.resourceType === "ClaimResponse") {
+                                result = res.resource;
                             }
-                         ],
-                         "name":"MGS123"
-                          }
-                      },
-                      {
-                                           "resource":{
-                         "resourceType":"Location",
-                         "id":"235",
-
-                         "type":[
-                		 {
-                        "coding":[
-                            {
-                               "system":"http://terminology.hl7.org/CodeSystem/v3-RoleCode",
-                               "code":"PTRES",
-                               "display":"Patient's Residence"
-                            }
-                         ]
-                          }
-                         ],
-
-                         "managingOrganization":{
-                            "reference":"Organization/516"
-                         }
-                      }
-                	  },
-                      {
-                                 "resource":{
-                         "resourceType":"Organization",
-                         "id":"516",
-                         "identifier":[
-                            {
-                               "system":"http://hl7.org.fhir/sid/us-npi",
-                               "value":"1427862956"
-                            }
-                         ],
-                         "name":"Home Health Services",
-                         "address":[
-                            {
-                               "use":"work",
-                               "line":[
-                                  "106 19th Ave 101"
-                               ],
-                               "city":"Moline",
-                               "state":"IL",
-                               "postalCode":"61265"
-                            }
-                         ],
-                         "contact":[
-                            {
-                               "name":[
-                                  {
-                                     "use":"official",
-                                     "family":"Dow",
-                                     "given":[
-                                        "Jones"
-                                     ]
-                                  }
-                               ],
-                               "telecom":[
-                                  {
-                                     "system":"phone",
-                                     "value":"555-555-5555",
-                                     "use":"home"
-                                  }
-                               ]
-                            }
-                         ]
-                      }
-                       },
-                      {
-                         "resource":{
-                            "resourceType":"Practitioner",
-                            "id":"386",
-                            "identifier":[
-                               {
-                                  "system":"http://hl7.org.fhir/sid/us-npi",
-                                  "value":"1234567890"
-                               }
-                            ],
-                            "name":[
-                			{
-                               "use":"official",
-                               "family":"Uber",
-                               "given":[
-                                  "Kathy"
-                               ]
-                            }
-                			],
-                            "address":[
-                               {
-                                  "use":"work",
-                                  "line":[
-                                     "610 S Maple Ave"
-                                  ],
-                                  "city":"Oak Park",
-                                  "state":"IL",
-                                  "postalCode":"60304"
-                               }
-                            ]
-                         }
-                      },
-                      {
-                         "resource":{
-                            "resourceType":"Coverage",
-                            "id":"29956",
-                            "meta":{
-                               "versionId":"1",
-                               "lastUpdated":"2019-07-11T06:27:08.949+00:00",
-                               "profile":[
-                                  "http://hl7.org/fhir/us/davinci-deqm/STU3/StructureDefinition/coverage-deqm"
-                               ]
-                            },
-                            "identifier":[
-                               {
-                                  "system":"http://benefitsinc.com/certificate",
-                                  "value":"10138556"
-                               }
-                            ],
-                            "status":"active",
-                            "type":{
-                               "coding":[
-                                  {
-                                     "system":"http://terminology.hl7.org/CodeSystem/v3-ActCode",
-                                     "code":"HIP",
-                                     "display":"health insurance plan policy"
-                                  }
-                               ]
-                            },
-                            "policyHolder":{
-                               "reference":"Patient/1"
-                            },
-                            "subscriber":{
-                               "reference":"Patient/1"
-                            },
-                            "subscriberId":"525697298M",
-                            "beneficiary":{
-                               "reference":"Patient/1"
-                            },
-                            "relationship":{
-                               "coding":[
-                                  {
-                                     "code":"self"
-                                  }
-                               ]
-                            },
-                            "payor":[
-                               {
-                                  "reference":"Organization/415"
-                               }
-                            ]
-                         }
-                      }
-                   ]
-                };
-                console.log("claim final--",JSON.stringify(priorAuthBundle));
-                Http.open("POST", priorAuthUrl);
-                Http.setRequestHeader("Content-Type", "application/fhir+json");
-                // Http.setRequestHeader("Authorization", "Bearer " + auth_response.access_token);
-                // Http.send(JSON.stringify(pBundle));
-                Http.send(JSON.stringify(priorAuthBundle));
-                Http.onreadystatechange = function () {
-                    if (this.readyState === XMLHttpRequest.DONE) {
-                        var message = "";
-                        self.setState({ displayQuestionnaire: false })
-                        if (this.status === 200) {
-                            var claimResponse = JSON.parse(this.responseText);
-                            console.log("lllllll")
-                            let result = claimResponse;
-                            if(claimResponse.hasOwnProperty('entry')){
-                                claimResponse.entry.forEach((res)=>{
-                                    if(res.resource.resourceType === "ClaimResponse"){
-                                        result = res.resource;
-                                    }
-                                })
-                            }
-                            self.setState({ claimResponse: result })
-                            self.setState({ claimMessage: "Prior Authorization has been submitted successfully" })
-                            message = "Prior Authorization " + claimResponse.disposition + "\n";
-                            message += "Prior Authorization Number: " + claimResponse.preAuthRef;
-                        } else {
-                            self.setState({ "claimMessage": "Prior Authorization Request Failed." })
-                            message = "Prior Authorization Request Failed."
-                        }
-                        console.log(message);
-                        //alert(message);
-                        console.log(this.responseText);
+                        })
                     }
+                    self.setState({ claimResponse: result })
+                    self.setState({ claimMessage: "Prior Authorization has been submitted successfully" })
+                    message = "Prior Authorization " + claimResponse.disposition + "\n";
+                    message += "Prior Authorization Number: " + claimResponse.preAuthRef;
+                } else {
+                    self.setState({ "claimMessage": "Prior Authorization Request Failed." })
+                    message = "Prior Authorization Request Failed."
                 }
-            } else {
-                const errorMsg = "Token post request failed. Returned status: " + tokenPost.status;
-                document.body.innerText = errorMsg;
-                console.error(errorMsg);
-                return;
+                self.setState({ loading: false });
+                console.log(message);
+                //alert(message);
+                console.log(this.responseText);
             }
-        };
-        tokenPost.send(data)
+        }
+        //     } else {
+        //         const errorMsg = "Token post request failed. Returned status: " + tokenPost.status;
+        //         document.body.innerText = errorMsg;
+        //         console.error(errorMsg);
+        //         return;
+        //     }
+        // };
+        // tokenPost.send(data)
         // const Http = new XMLHttpRequest();
         // // const priorAuthUrl = "https://davinci-prior-auth.logicahealth.org/fhir/Claim/$submit";
         // const priorAuthUrl = "http://54.227.218.17:9000/fhir/Claim/$submit";
@@ -1291,319 +932,8 @@ export default class QuestionnaireForm extends Component {
         return randomstring
     }
     submitCommunicationRequest() {
-
-        console.log(JSON.parse(sessionStorage['patientObject']), 'queries', this.state.providerQueries)
-        var patient = JSON.parse(sessionStorage['patientObject'])
-        var providerQueries = this.state.providerQueries
-        var arr=[]
-        for(var i = 0; i<providerQueries.length;i++){
-            if(providerQueries[i].checked=== true){
-                if(providerQueries[i].type=== 'attachment'){
-                    for(var j =0;j<providerQueries[i].code.coding.length;j++){
-                        arr.push({
-                            "extension": [
-                                {
-                                    "url": "http://hl7.org/fhir/us/davinci-cdex/StructureDefinition/cdex-payload-clinical-note-type",
-                                    "valueCodeableConcept": {
-                                        "coding": [
-                                            {
-                                                "system": "http://loinc.org",
-                                                "code": providerQueries[i].code.coding[j].code
-                                            }
-                                        ]
-                                    }
-                                }
-                            ],
-                            "contentString": "Please provide " + providerQueries[i].code.coding[j].display + " recorded during 2018-09-05 - 2019-09-13"
-                        }
-                        )
-                    }
-                }
-                else if (providerQueries[i].type === "query") {
-                    if (providerQueries[i].code !== "") {
-                        arr.push({
-                            "extension": [
-                                {
-                                    "url": "http://hl7.org/fhir/us/davinci-cdex/StructureDefinition/cdex-payload-clinical-note-type",
-                                    "valueString": providerQueries[i].name + "?" + providerQueries[i].code
-                                }
-                            ],
-                            "contentString": "Please provide " + providerQueries[i].name + " recorded during 2018-09-05 - 2019-09-13"
-                        }
-                        )
-                    }
-                    else {
-                        arr.push({
-                            "extension": [
-                                {
-                                    "url": "http://hl7.org/fhir/us/davinci-cdex/StructureDefinition/cdex-payload-clinical-note-type",
-                                    "valueString": providerQueries[i].name
-                                }
-                            ],
-                            "contentString": "Please provide " + providerQueries[i].name + " recorded during 2018-09-05 - 2019-09-13"
-                        }
-                        )
-
-                    }
-
-                }
-
-            }
-        }
-        console.log(arr, 'please')
-        let json = {
-            "resourceType": "Bundle",
-            "id": "bundle-transaction",
-            "type": "transaction",
-            "entry": [
-                {
-                    "resource": {
-                        "resourceType": "Endpoint",
-                        "id": "Payer-Endpoint-Id",
-                        "identifier": [
-                            {
-                                "system": "http://www.jurisdiction.com/insurer/123456",
-                                "value": this.randomString()
-                            }
-                        ],
-                        "connectionType": {
-                            "system": "http://terminology.hl7.org/CodeSystem/endpoint-connection-type",
-                            "code": "hl7-fhir-rest"
-                        },
-                        "address": "http://auth.mettles.com:8180/hapi-fhir-jpaserver/fhir/Communication"
-                    },
-                    "request": {
-                        "method": "POST",
-                        "url": "Endpoint",
-                        "ifNoneExist": {
-                            "_value": "identifier=http://www.jurisdiction.com/insurer/123456|795960864"
-                        }
-                    }
-                },
-                {
-                    "resource": {
-                        "resourceType": "Organization",
-                        "identifier": [
-                            {
-                                "system": "https://www.maxmddirect.com/fhir/identifier",
-                                "value": "6677829"
-                            }
-                        ],
-                        "id": "Payer-Organization-Id",
-                        "name": "Endocrinology Group of Chicago",
-                        "telecom": [
-                            {
-                                "id": "1",
-                                "system": "phone",
-                                "value": "666444-5555",
-                                "use": "work"
-                            }
-                        ],
-                        "address": [
-                            {
-                                "line": [
-                                    "123 Healthcare Ave."
-                                ],
-                                "city": "Chicago",
-                                "state": "IL",
-                                "postalCode": "60643",
-                                "country": "US"
-                            }
-                        ],
-                        "endpoint": [
-                            {
-                                "reference": "Endpoint/Payer-Endpoint-Id"
-                            }
-                        ]
-                    },
-                    "request": {
-                        "method": "POST",
-                        "url": "Organization",
-                        "ifNoneExist": {
-                            "_value": "identifier%3Dhttps%3A%2F%2Fwww.maxmddirect.com%2Ffhir%2Fidentifier%7C6677829"
-                        }
-                    }
-                },
-                {
-                    "resource": {
-                        "resourceType": "CommunicationRequest",
-                        "identifier": [
-                            {
-                                "system": "http://www.jurisdiction.com/insurer/123456",
-                                "value": this.randomString()
-                            }
-                        ],
-                        "contained": [
-                            {
-                                "resourceType": "Organization",
-                                "id": "Provider-organization-id",
-                                "identifier": [
-                                    {
-                                        "system": "http://www.Anthem.com/edi",
-                                        "value": "DemoPayer"
-                                    },
-                                    {
-                                        "system": "https://www.maxmddirect.com/fhir/identifier",
-                                        "value": "MaxMDDemoPayerOrganizationeval"
-                                    }
-                                ],
-                                "name": "MaxMD Demo Payer Solutions",
-                                "endpoint": [
-                                    {
-                                        "reference": "#END123"
-                                    }
-                                ]
-                            }
-                        ],
-                        "category": [
-                            {
-                                "coding": [
-                                    {
-                                        "system": "http://acme.org/messagetypes",
-                                        "code": "SolicitedAttachmentRequest"
-                                    }
-                                ]
-                            }
-                        ],
-                        "priority": "routine",
-                        "medium": [
-                            {
-                                "coding": [
-                                    {
-                                        "system": "http://terminology.hl7.org/CodeSystem/v3ParticipationMode",
-                                        "code": "WRITTEN",
-                                        "display": "written"
-                                    }
-                                ],
-                                "text": "written"
-                            }
-                        ],
-                        "subject": {
-                            "reference": "Patient?given=" + patient.name[0].given[0] + "&family=" + patient.name[0].family + "&address-postalcode=" + patient.address[0].postalCode + "&birthdate=" + patient.birthDate
-                        },
-                        "requester": {
-                            "reference": "Organization/Payer-Organization-Id"
-                        },
-                        "status": "active",
-                        "recipient": [
-                            {
-                                "reference": "Organization/Payer-Organization-Id"
-                            }
-                        ],
-                        "sender": {
-                            "reference": "#Provider-organization-id"
-                        },
-                        "occurrencePeriod": {
-                            "start": "2018-09-13T05:30:00.000Z",
-                            "end": "2019-09-21T05:29:59.000Z"
-                        },
-                        "authoredOn": "2019-09-13T10:49:27.581Z",
-                        "payload": arr
-                    },
-                    "request": {
-                        "method": "POST",
-                        "url": "CommunicationRequest"
-                    }
-                }
-            ]
-        }
-        let selectedSource = this.state.providerSource
-        let url;
-        for (var k = 0; k < providerOptions.length; k++) {
-            if (providerOptions[k].value === selectedSource) {
-                url = providerOptions[k].url
-            }
-        }
-        var self = this;
-        const tokenPost = new XMLHttpRequest();
-        var auth_response;
-        tokenPost.open("POST", tokenUri);
-        tokenPost.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-        var data = `client_id=${clientId}&grant_type=password&username=john&password=john123`
-        tokenPost.onload = function () {
-            if (tokenPost.status === 200) {
-                try {
-                    auth_response = JSON.parse(tokenPost.responseText);
-                    console.log("auth res--1243-", auth_response);
-                } catch (e) {
-                    const errorMsg = "Failed to parse auth response";
-                    document.body.innerText = errorMsg;
-                    console.error(errorMsg);
-                    return;
-                }
-                /** creating cliam  */
-                const Http = new XMLHttpRequest();
-                // const priorAuthUrl = "https://davinci-prior-auth.logicahealth.org/fhir/Claim/$submit";
-                // const priorAuthUrl = "http://cmsfhir.mettles.com:8080/drfp/fhir/Claim/$submit";
-                Http.open("POST", url);
-                Http.setRequestHeader("Content-Type", "application/fhir+json");
-                Http.setRequestHeader("Authorization", "Bearer " + auth_response.access_token);
-                // Http.send(JSON.stringify(pBundle));
-                Http.send(JSON.stringify(json));
-                Http.onreadystatechange = function () {
-                    if (this.readyState === XMLHttpRequest.DONE) {
-                        var message = "";
-                        // self.setState({ displayQuestionnaire: false })
-                        if (this.status === 200) {
-                            var BundleResponse = JSON.parse(this.responseText);
-                            // console.log("lllllll",BundleResponse)
-                            for (var i = 0; i < BundleResponse.entry.length; i++) {
-                                var resource = BundleResponse.entry[i].response.location.split('/')
-                                console.log(resource[1], 'resource1234')
-                                if (resource[0] === "CommunicationRequest") {
-                                    self.setState({ communicationRequestId: resource[1] })
-                                    sessionStorage['communicationRequest'] = resource[1]
-                                }
-                            }
-                            console.log(sessionStorage['communicationRequest'], self.state.communicationRequestId, 'yes wroking')
-                            // console.log(this.state.communicationRequestId,'ress')
-                            // self.setState({ claimResponse: claimResponse })
-                            // self.setState({ claimMessage: "Prior Authorization has been submitted successfully" })
-                            // message = "Prior Authorization " + claimResponse.disposition + "\n";
-                            // message += "Prior Authorization Number: " + claimResponse.preAuthRef;
-                        } else {
-                            // self.setState({ "CommunicationRequestMessage": "Communication Request Failed." })
-                            message = "Communication Request Failed."
-                        }
-                        console.log(message);
-                        //alert(message);
-                        console.log(this.responseText);
-                    }
-                }
-            } else {
-                const errorMsg = "Token post request failed. Returned status: " + tokenPost.status;
-                document.body.innerText = errorMsg;
-                console.error(errorMsg);
-                // return;
-            }
-        };
-        tokenPost.send(data)
-        // const Http = new XMLHttpRequest();
-        // // const priorAuthUrl = "http://cmsfhir.mettles.com:8080/drfp/fhir/ClaimResponse/" + this.state.claimResponse.id;
-        // const priorAuthUrl = providerSource;
-        // Http.open("POST", url);
-        // Http.setRequestHeader("Content-Type", "application/fhir+json");
-        // // Http.setRequestHeader("Authorization", "Bearer "+token);
-        // Http.send();
-        // Http.onreadystatechange = function () {
-        //     if (this.readyState === XMLHttpRequest.DONE) {
-        //         var message = "";
-        //         self.setState({ displayQuestionnaire: false })
-        //         if (this.status === 200) {
-        //             var claimResponse = JSON.parse(this.responseText);
-        //             self.setState({ claimResponse: claimResponse })
-        //             self.setState({ claimMessage: "Prior Authorization has been submitted successfully" })
-        //             message = "Prior Authoriza  tion " + claimResponse.disposition + "\n";
-        //             message += "Prior Authorization Number: " + claimResponse.preAuthRef;
-        //         } else {
-        //             this.setState({ "claimMessage": "Prior Authorization Request Failed." })
-        //             message = "Prior Authorization Request Failed."
-        //         }
-        //     }
-        // }
+        console.log("in send comm reqiest, removed for this project");
     }
-
-
 
     render() {
         return (
@@ -1614,9 +944,15 @@ export default class QuestionnaireForm extends Component {
                             this.removeFilledFields();
                         }}></input></p>
                     </div>
-                    <h2 className="document-header">{this.props.qform.title}
+                    <div className="container">
+                        <div className="section-header">
+                            <h3>{this.props.qform.title}</h3>
+                            {/* <p>Setup FHIR information and others</p> */}
+                        </div>
+                    </div>
+                    {/* <h2 className="document-header">{this.props.qform.title}
 
-                    </h2>
+                    </h2> */}
 
                     <div className="sidenav">
                         {this.state.orderedLinks.map((e) => {
@@ -1660,12 +996,12 @@ export default class QuestionnaireForm extends Component {
                     <div className="wrapper1">
                         {
                             this.state.items.map((item) => {
-                                if (item.linkId <= (this.state.items.length / 2 + 1)) {
-                                    return this.renderComponent(item, 0);
-                                }
+                                // if (item.linkId <= (this.state.items.length / 2 + 1)) {
+                                return this.renderComponent(item, 0);
+                                // }
                             })
                         }
-                        <div className="section" style={{marginBottom: "30px"}}>
+                        {/* <div className="section" style={{marginBottom: "30px"}}>
                             <div className="section-header">
                                 <input type="checkbox" name="otherProvider" value={this.state.otherProvider} onChange={this.onChangeOtherProvider} />Request from Other Provider
                             </div>
@@ -1685,7 +1021,7 @@ export default class QuestionnaireForm extends Component {
                                     }
                                 </div>
                             }
-                        </div>
+                        </div> */}
                         {/* <div className="section">
                             <h3 className="section-header" style={{ marginLeft: "-15px" }}>Please attach the following documents</h3>
                             <ol>
@@ -1696,8 +1032,20 @@ export default class QuestionnaireForm extends Component {
                         <DocumentInput
                             updateCallback={this.updateDocuments}
                         /> */}
+                        <div className="text-center" style={{marginBottom:"50px"}}>
+                            <button type="button" onClick={this.outputResponse}>Submit Prior Authorization
+                                        <div id="fse" className={"spinner " + (this.state.loading ? "visible" : "invisible")}>
+                                    <Loader
+                                        type="Oval"
+                                        color="#fff"
+                                        height="15"
+                                        width="15"
+                                    />
+                                </div>
+                            </button>
+                        </div>
                     </div>
-                    <div className="wrapper2">
+                    {/* <div className="wrapper2">
 
                         {
                             this.state.items.map((item) => {
@@ -1706,13 +1054,22 @@ export default class QuestionnaireForm extends Component {
                                 }
                             })
                         }
-                        <div> <button className="btn submit-button" onClick={this.outputResponse}>Submit Prior Authorization</button>
+                        <div className="text-center">
+                            <button type="button" onClick={this.outputResponse}>Submit Prior Authorization
+                                        <div id="fse" className={"spinner " + (this.state.loading ? "visible" : "invisible")}>
+                                    <Loader
+                                        type="Oval"
+                                        color="#fff"
+                                        height="15"
+                                        width="15"
+                                    />
+                                </div>
+                            </button>
                         </div>
-                        <br /><hr></hr>
                         <div>
                             <button className="btn refreshButton" onClick={this.relaunch}>Refresh</button>
                         </div>
-                    </div>
+                    </div> */}
 
                 </div>}
 
@@ -1722,7 +1079,16 @@ export default class QuestionnaireForm extends Component {
                             <div style={{ fontSize: "1.5em", background: "#98ce94", padding: "10px" }}> {this.state.claimMessage}</div>
                             <pre style={{ background: "#dee2e6" }}> {JSON.stringify(this.state.claimResponse, null, 2)}</pre>
                             {JSON.stringify(this.state.claimResponse).length > 0 &&
-                                <div><button style={{ marginLeft: "0px" }} className="btn submit-button" onClick={this.reloadClaimResponse} >Reload Claim Response</button></div>
+                                <div><button type="button" onClick={this.reloadClaimResponse} >Reload Claim Response
+                                <div id="fse" className={"spinner " + (this.state.resloading ? "visible" : "invisible")}>
+                                        <Loader
+                                            type="Oval"
+                                            color="#fff"
+                                            height="15"
+                                            width="15"
+                                        />
+                                    </div>
+                                </button></div>
                             }
                         </div>
 

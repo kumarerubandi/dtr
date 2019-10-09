@@ -1,6 +1,7 @@
 .dropdown{
-    display:inline-block;
-
+    display: inline-block;
+    width: 100%;
+    background-color: white;
 }
 .dropdown-input {
 

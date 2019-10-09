@@ -28,7 +28,7 @@ var launchUri = window.location.protocol + "//" + window.location.host + window.
 var redirectUri = launchUri.replace("launch", "index");
 
 // FHIR Service Conformance Statement URL
-var conformanceUri = serviceUri + "/metadata?_format=json";
+var conformanceUri = serviceUri + "/metadata";
 
 sessionStorage["serviceUri"] = serviceUri
 sessionStorage["launchContextId"] = launchContextId

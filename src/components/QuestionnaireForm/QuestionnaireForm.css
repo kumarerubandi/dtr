@@ -3,12 +3,6 @@
   margin-left:15px;
 } */
 
-.section-header {
-    margin-top: 20px;
-    color: #8a6d3b;
-    font-weight: bold;
-    font-size: 20px;
-}
 
 .document-header {
 /*    margin-left: 55px;
@@ -59,17 +53,19 @@
 }
 
 .wrapper1{
-  width: 50%;
+  width: 70%;
   float: left;
   display: block;
-  margin-left: 15px;
-  border-right: 1px solid #ccc;
+  margin-left: 13%;
+
+  /* border-right: 1px solid #ccc; */
 }
 .wrapper2{
   width:50%;
   float:left;
   display:block;
   margin-left:-20px;
+  margin-bottom: 50px;
 }
 html {
   scroll-behavior: smooth;

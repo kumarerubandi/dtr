@@ -25,6 +25,7 @@ function executeElm(smart, fhirVersion, executionInputs, consoleLog) {
   return new Promise(function (resolve, reject) {
     const patientSource = getPatientSource(fhirVersion)
     console.log("SssnStorage", sessionStorage)
+    
     const neededResources = extractFhirResourcesThatNeedFetching(executionInputs.dataRequirement);
     consoleLog("need to fetch resources", "infoClass");
     console.log("We need to fetch these resources:", neededResources);
@@ -43,10 +44,11 @@ function executeElm(smart, fhirVersion, executionInputs, consoleLog) {
               if (communication.total > 0) {
                 buildResourceBundleFromCommunication(smart, communication.entry[0].resource)
                   .then(function (otherResourceBundle) {
-                    otherResourceBundle.forEach((resource) => {
-                      resourceBundle.entry.push(resource);
-                    })
-                    console.log("other resource Bule---", otherResourceBundle);
+                    // otherResourceBundle.forEach((resource) => {
+
+                    //   resourceBundle.entry.push(resource);
+                    // })
+                    console.log("final resource Bundle---", resourceBundle);
                     // let finalBundle = resourceBundle.push(otherResourceBundle);
                     patientSource.loadBundles([resourceBundle]);
                     const elmResults = executeElmAgainstPatientSource(executionInputs, patientSource);

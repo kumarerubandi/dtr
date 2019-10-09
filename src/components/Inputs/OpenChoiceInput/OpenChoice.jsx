@@ -38,7 +38,6 @@ export default class OpenChoice extends Component {
             }
             this.props.updateCallback(this.props.item.linkId, returnAnswer,"values");
         }
-        
     }
 
     componentDidMount() {
@@ -54,20 +53,20 @@ export default class OpenChoice extends Component {
 
     autofill(choices, values) {
         const options = []
-        values && values.forEach((value) => {
-            choices.forEach((choice) => {
-                if(value.code) {
-                    value = value.code;
-                }
-                if(choice.code === value) { 
-                    options.push(choice);
-                }
-            })
-            if(value.valueTypeFinal==="valueString") {
-                // manually entered info
-                options.push(value);
-            }
-        })
+        // values && values.forEach((value) => {
+        //     choices.forEach((choice) => {
+        //         if(value.code) {
+        //             value = value.code;
+        //         }
+        //         if(choice.code === value) { 
+        //             options.push(choice);
+        //         }
+        //     })
+        //     if(value.valueTypeFinal==="valueString") {
+        //         // manually entered info
+        //         options.push(value);
+        //     }
+        // })
         this.addOption(options);
     }
 
@@ -174,7 +173,7 @@ export default class OpenChoice extends Component {
                         <input 
                         ref={(ip)=>this.myInp = ip}
                         value = {this.state.display} 
-                        style={{width:this.state.display.length+2 + "ch"}}
+                        style={{width:this.state.display.length+4 + "ch",backgroundColor: "white",fontFamily: "inherit"}}
                         className={"input-block top-block " + (this.props.item.repeats?"repeated-input":"")}
                         spellCheck="false"
                         onChange={this.onInputChange}

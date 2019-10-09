@@ -21,55 +21,74 @@ class App extends Component {
     this.consoleLog = this.consoleLog.bind(this);
   }
 
-  componentDidMount(){
+  componentDidMount() {
     const fhirWrapper = cqlfhir.FHIRWrapper.FHIRv300();
     this.consoleLog("fetching artifacts", "infoClass");
     fetchArtifacts(this.props.FHIR_URI_PREFIX, this.props.questionnaireUri, this.smart, this.props.filepath, this.consoleLog)
-    .then(artifacts => {
-      console.log("fetched needed artifacts:", artifacts)
-      this.setState({questionnaire: artifacts.questionnaire})
-      this.setState({deviceRequest: this.props.deviceRequest})
-      const executionInputs = {
-        dataRequirement: artifacts.dataRequirement,
-        elm: artifacts.mainLibraryElm,
-        elmDependencies: artifacts.dependentElms,
-        valueSetDB: {},
-        parameters: {device_request: fhirWrapper.wrap(this.props.deviceRequest)}
-      }
-      
-      this.consoleLog("executing elm", "infoClass");
-      return executeElm(this.smart, "stu3", executionInputs, this.consoleLog);
-      //return true;
-})
-   .then(cqlResults => {
-      this.consoleLog("executed cql, result:"+JSON.stringify(cqlResults),"infoClass");
-      this.setState({bundle: cqlResults.bundle})
-      this.setState({cqlPrepoulationResults: cqlResults.elmResults})
-    });
+      .then(artifacts => {
+        console.log("fetched needed artifacts:", artifacts)
+        this.setState({ questionnaire: artifacts.questionnaire })
+        this.setState({ deviceRequest: this.props.deviceRequest })
+        console.log("device request--", this.props.deviceRequest, artifacts.dataRequirement);
+        if (this.props.deviceRequest) {
+          var filtered = artifacts.dataRequirement.filter(function (value, index, arr) {
+            return value.type !== "Procedure";
+          });
+          console.log("filtered requirements", filtered);
+          this.props.deviceRequest.parameter.forEach(code => {
+            console.log(code);
+            if (code.code.coding[0].code) {
+              let obj = {
+                type: "Procedure",
+                "codeFilter": [{ path: "code", valueSetString: code.code.coding[0].code }]
+                
+              }
+              filtered.push(obj);
+            }
+          });
+          console.log("requirements---",filtered);
+        }
+        const executionInputs = {
+          dataRequirement: filtered || artifacts.dataRequirement,
+          elm: artifacts.mainLibraryElm,
+          elmDependencies: artifacts.dependentElms,
+          valueSetDB: {},
+          parameters: { device_request: fhirWrapper.wrap(this.props.deviceRequest) }
+        }
+
+        this.consoleLog("executing elm", "infoClass");
+        return executeElm(this.smart, "stu3", executionInputs, this.consoleLog);
+        //return true;
+      })
+      .then(cqlResults => {
+        this.consoleLog("executed cql, result:" + JSON.stringify(cqlResults), "infoClass");
+        this.setState({ bundle: cqlResults.bundle })
+        this.setState({ cqlPrepoulationResults: cqlResults.elmResults })
+      });
   }
 
   consoleLog(content, type) {
     let jsonContent = {
-        content: content,
-        type: type
+      content: content,
+      type: type
     }
     this.setState(prevState => ({
-        logs: [...prevState.logs, jsonContent]
+      logs: [...prevState.logs, jsonContent]
     }))
-   }
+  }
 
   render() {
-    if (this.state.questionnaire && this.state.cqlPrepoulationResults && this.state.bundle){
+    if (this.state.questionnaire && this.state.cqlPrepoulationResults && this.state.bundle) {
       return (
         <div className="App">
-          <QuestionnaireForm smart={this.smart}  qform = {this.state.questionnaire} cqlPrepoulationResults= {this.state.cqlPrepoulationResults} deviceRequest = {this.state.deviceRequest} bundle = {this.state.bundle} />
+          <QuestionnaireForm smart={this.smart} qform={this.state.questionnaire} cqlPrepoulationResults={this.state.cqlPrepoulationResults} deviceRequest={this.state.deviceRequest} bundle={this.state.bundle} />
         </div>
       );
     } else {
       return (
         <div className="App">
-            <p>Loading...</p>
-            <Testing logs = {this.state.logs}/>
+          <p>Loading...</p>
+          <Testing logs={this.state.logs} />
         </div>
       );
     }

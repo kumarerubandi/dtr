@@ -5,7 +5,7 @@
   "scripts": {
     "build": "webpack --config ./webpack.config.prod.js --progress --colors",
     "start": "webpack-dev-server --config ./webpack.config.dev.js  --host 0.0.0.0  --public localhost",
-    "startDev": "webpack-dev-server --config ./webpack.config.dev.js --port  3005",
+    "startDev": "webpack-dev-server --config ./webpack.config.dev.js --port  3007",
     "startProd": "webpack-dev-server --config ./webpack.config.prod.js",
     "startTemplate": "webpack-dev-server --config ./webpack.config.run.js",
     "lint": "node ./node_modules/.bin/eslint --ext .js ./"
@@ -50,8 +50,10 @@
     "react-dropdown-select": "^3.5.0",
     "react-dropzone": "^10.1.4",
     "react-fileupload": "^2.4.0",
+    "react-loader-spinner": "^3.1.4",
     "react-scripts": "^3.1.1",
     "regenerator-runtime": "^0.12.1",
+    "semantic-ui-react": "^0.88.1",
     "whatwg-fetch": "^3.0.0"
   },
   "browsersList": [

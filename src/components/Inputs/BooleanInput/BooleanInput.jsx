@@ -50,8 +50,8 @@ export default class BooleanInput extends Component {
     render() {
         return (
             <div className="text-input" ref={this.ref}>
-                <div className="toggle">
-                    <div>
+                <div className="toggle row" style={{paddingTop:"15px"}}>
+                    <div className="col-6">
                         <button
                             className={"boolButton true btn " + (this.state.value?"selected":null)}
                             onClick={()=>{
@@ -60,7 +60,7 @@ export default class BooleanInput extends Component {
                         </button>
                         <span>true</span>
                     </div>
-                    <div>
+                    <div className="col-6">
                         <button
                             className={"boolButton false btn " + (this.state.value===false?"selected":null)}
                             onClick={()=>{

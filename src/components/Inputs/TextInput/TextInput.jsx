@@ -91,13 +91,13 @@ export default class TextInput extends Component {
                 <div className="text-input-label">{this.props.inputTypeDisplay}</div>
                 {this.state.area?
                     <textarea 
-                        className="text-input-box" 
+                        className="form-control" 
                         value = {this.state.value} 
                         onChange={this.onInputChange}>
                     </textarea>
                     :
 		    
-                    <input className="text-input-box" 
+                    <input className="form-control" 
                         type={this.props.inputType} 
                         value = {this.state.value} 
                         onChange={this.onInputChange}
