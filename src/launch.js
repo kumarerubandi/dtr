@@ -1,7 +1,7 @@
 import urlUtils from "./util/url";
 
 // Change this to the ID of the client that you registered with the SMART on FHIR authorization server.
-var clientId = "app-login"; // local client
+var clientId = "f7883dd8-5c7e-44de-be4b-c93c683bb8c7"; // local client
 // For demonstration purposes, if you registered a confidential client
 // you can enter its secret here. The demo app will pretend it's a confidential
 // app (in reality it cannot be confidential, since it cannot keep secrets in the
@@ -10,18 +10,18 @@ var secret = null; // set me, if confidential
 
 // These parameters will be received at launch time in the URL
 var serviceUri = urlUtils.getUrlParameter("iss");
-var launchContextId = urlUtils.getUrlParameter("launch");
-
+// var launchContextId = urlUtils.getUrlParameter("launch");
+var launchContextId = "6c05e468-9050-47d0-992d-38151166b9be"
 // The scopes that the app will request from the authorization server
 // encoded in a space-separated string:
 //      1. permission to read all of the patient's record
 //      2. permission to launch the app in the specific context
-var scope = ["launch"].join(" ");
+var scope = ["launch","user/Patient.read","user/Patient.write","user/Procedure.read","user/Practitioner.read","user/Condition.read",""].join(" ");
 
 // Generate a unique session key string (here we just generate a random number
 // for simplicity, but this is not 100% collision-proof)
-var state = Math.round(Math.random() * 100000000).toString();
-
+// var state = Math.round(Math.random() * 100000000).toString();
+var state = urlUtils.getUrlParameter("launchContextId");
 // To keep things flexible, let's construct the launch URL by taking the base of the
 // current URL and replace "launch.html" with "index.html".
 var launchUri = window.location.protocol + "//" + window.location.host + window.location.pathname;
@@ -44,7 +44,6 @@ conformanceGet.setRequestHeader("Accept", "application/json");
 conformanceGet.onload = function() {
   if (conformanceGet.status === 200) {
     try {
-
       conformanceStatement = JSON.parse(conformanceGet.responseText);
     } catch (e) {
       const errorMsg = "Unable to parse conformance statement.";
@@ -63,6 +62,7 @@ conformanceGet.onload = function() {
 conformanceGet.send();
 
 function redirect(conformanceStatement) {
+
   var authUri, tokenUri;
   if (serviceUri.search('cdex.mettles.com') > 0) {
       authUri = "https://auth.mettles.com:8443/auth/realms/ProviderCredentials/protocol/openid-connect/auth";
@@ -72,7 +72,7 @@ function redirect(conformanceStatement) {
         return e.url === "http://fhir-registry.smarthealthit.org/StructureDefinition/oauth-uris";
       });
 
-      smartExtension[0].extension.forEach(function(arg) {
+      smartExtension[0].extension.forEach(function(arg) { 
         if (arg.url === "authorize") {
           authUri = arg.valueUri;
         } else if (arg.url === "token") {
@@ -90,7 +90,6 @@ function redirect(conformanceStatement) {
     tokenUri: tokenUri,
     launchContextId: launchContextId
   });
-  console.log(authUri);
   // finally, redirect the browser to the authorizatin server and pass the needed
   // parameters for the authorization request in the URL
   window.location.href =

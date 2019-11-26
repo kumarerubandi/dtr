@@ -41,7 +41,6 @@ class App extends Component {
               let obj = {
                 type: "Procedure",
                 "codeFilter": [{ path: "code", valueSetString: code.code.coding[0].code }]
-                
               }
               filtered.push(obj);
             }
