@@ -1,7 +1,8 @@
 import urlUtils from "./util/url";
 
 // Change this to the ID of the client that you registered with the SMART on FHIR authorization server.
-var clientId = "f7883dd8-5c7e-44de-be4b-c93c683bb8c7"; // local client
+// var clientId = "f7883dd8-5c7e-44de-be4b-c93c683bb8c7"; // local client
+var clientId = "app-login";
 // For demonstration purposes, if you registered a confidential client
 // you can enter its secret here. The demo app will pretend it's a confidential
 // app (in reality it cannot be confidential, since it cannot keep secrets in the

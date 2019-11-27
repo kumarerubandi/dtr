@@ -192,8 +192,8 @@ function updatePatient(auth_response, patientRes) {
     headers: {
       'Content-Type': 'application/json',
       'Accept': 'application/json+fhir',
-      // 'Accept-Encoding': 'gzip, deflate, sdch, br',
-      // 'Accept-Language': 'en-US,en;q=0.8',
+      'Accept-Encoding': 'gzip, deflate, sdch, br',
+      'Accept-Language': 'en-US,en;q=0.8',
       'Authorization': 'Bearer ' + auth_response.access_token
     }
   }).then((response) => {
@@ -247,7 +247,14 @@ tokenPost.onload = function () {
       return;
     }
 
-    var tempURL = params.serviceUri + "/Patient/" + auth_response.patient;
+    if (auth_response.hasOwnProperty("patient")) {
+      var tempURL = params.serviceUri + "/Patient/" + auth_response.patient;
+      var patient = auth_response.patient;
+    } else {
+      var tempURL = params.serviceUri + "/Patient";
+      var patient = "";
+    }
+
 
     fetch(tempURL, {
       method: 'GET',
@@ -264,17 +271,20 @@ tokenPost.onload = function () {
       console.log("launchdataurl----", launchDataURL);
       fetch(launchDataURL).then(handleFetchErrors).then(r => r.json())
         .then(launchContext => {
-          var patient = auth_response.patient
-          sessionStorage["patientId"] = patient;
-          console.log("launch context---",launchContext[state].request);
-          const appContext = {
-                  template: launchContext[state].template,
-                  request: launchContext[state].request,
-                  filepath: null,
-                  patientId: auth_response.patient
-                }
-          console.log("launch context json", appContext);
+          if (!auth_response.hasOwnProperty("patient")) {
+            // patient = launchContext[state].patientId;
+            patient = "20198"
+          }
 
+          console.log("launch context---", launchContext[state]);
+          const appContext = {
+            template: launchContext[state].template,
+            request: launchContext[state].request,
+            filepath: null,
+            patientId: patient
+          }
+          console.log("launch context json", appContext);
+          sessionStorage["patientId"] = patient;
           var smart = FHIR.client({
             serviceUrl: serviceUri,
             patientId: appContext.patientId,
@@ -305,49 +315,49 @@ tokenPost.onload = function () {
       // updatePatient(auth_response,response);
 
       /** Below code is for getting appcontext from Message definition form FHIR */
-    //   response.description = "template%3Durn%3Ahl7%3Adavinci%3Acrd%3AAmbulatoryTransportService%26request%3D%7B%22requester%22%3A%7B%22reference%22%3A%22Practitioner%3Fidentifier%3D1932102951%22%7D%2C%22identifier%22%3A%5B%7B%22value%22%3A18631431%7D%5D%2C%22subject%22%3A%7B%22reference%22%3A%22Patient%3Fidentifier%3D20198%22%7D%2C%22parameter%22%3A%5B%7B%22code%22%3A%7B%22coding%22%3A%5B%7B%22system%22%3A%22http%3A%2F%2Floinc.org%22%2C%22code%22%3A%22A0428%22%2C%22display%22%3A%22Ambulance%20service%2C%20Basic%20Life%20Support%20(BLS)%2C%20non-emergency%20transport%20The%20mileage%20code%22%7D%5D%2C%22text%22%3A%22Ambulance%20service%2C%20Basic%20Life%20Support%20(BLS)%2C%20non-emergency%20transport%20The%20mileage%20code%22%7D%7D%5D%2C%22priority%22%3A%22routine%22%2C%22intent%22%3A%22instance-order%22%2C%22resourceType%22%3A%22DeviceRequest%22%2C%22status%22%3A%22active%22%7D%26patient%3D20198";
-    //   if (appContext != undefined) {
-    //     console.log("App Context--", decodeURIComponent(response.description));
-    //     let resp = decodeURIComponent(response.description);
-    //     var request = getParameterByName('request', resp)
-    //     var patient = auth_response.patient
-    //     console.log(patient, 'too')
-    //     sessionStorage["patientId"] = patient;
-    //     const appContext = {
-    //       template: resp.split("&")[0].split("=")[1],
-    //       request: JSON.parse(request),
-    //       filepath: null,
-    //       patientId: patient
-    //     }
-    //     console.log("Appcontext--",appContext);
-    //     var smart = FHIR.client({
-    //       serviceUrl: serviceUri,
-    //       patientId: appContext.patientId,
-    //       auth: {
-    //         type: "bearer",
-    //         token: auth_response.access_token
+      //   response.description = "template%3Durn%3Ahl7%3Adavinci%3Acrd%3AAmbulatoryTransportService%26request%3D%7B%22requester%22%3A%7B%22reference%22%3A%22Practitioner%3Fidentifier%3D1932102951%22%7D%2C%22identifier%22%3A%5B%7B%22value%22%3A18631431%7D%5D%2C%22subject%22%3A%7B%22reference%22%3A%22Patient%3Fidentifier%3D20198%22%7D%2C%22parameter%22%3A%5B%7B%22code%22%3A%7B%22coding%22%3A%5B%7B%22system%22%3A%22http%3A%2F%2Floinc.org%22%2C%22code%22%3A%22A0428%22%2C%22display%22%3A%22Ambulance%20service%2C%20Basic%20Life%20Support%20(BLS)%2C%20non-emergency%20transport%20The%20mileage%20code%22%7D%5D%2C%22text%22%3A%22Ambulance%20service%2C%20Basic%20Life%20Support%20(BLS)%2C%20non-emergency%20transport%20The%20mileage%20code%22%7D%7D%5D%2C%22priority%22%3A%22routine%22%2C%22intent%22%3A%22instance-order%22%2C%22resourceType%22%3A%22DeviceRequest%22%2C%22status%22%3A%22active%22%7D%26patient%3D20198";
+      //   if (appContext != undefined) {
+      //     console.log("App Context--", decodeURIComponent(response.description));
+      //     let resp = decodeURIComponent(response.description);
+      //     var request = getParameterByName('request', resp)
+      //     var patient = auth_response.patient
+      //     console.log(patient, 'too')
+      //     sessionStorage["patientId"] = patient;
+      //     const appContext = {
+      //       template: resp.split("&")[0].split("=")[1],
+      //       request: JSON.parse(request),
+      //       filepath: null,
+      //       patientId: patient
+      //     }
+      //     console.log("Appcontext--",appContext);
+      //     var smart = FHIR.client({
+      //       serviceUrl: serviceUri,
+      //       patientId: appContext.patientId,
+      //       auth: {
+      //         type: "bearer",
+      //         token: auth_response.access_token
 
-    //       }
-    //     });
-    //     ReactDOM.render(
-    //       <App
-    //         FHIR_URI_PREFIX={FHIR_URI_PREFIX}
-    //         questionnaireUri={appContext.template}
-    //         smart={smart}
-    //         deviceRequest={appContext.request}
-    //         filepath={appContext.filepath}
-    //       />,
-    //       document.getElementById("root")
-    //     );
-    //     const patientId = appContext.patientId;
-    //     if (patientId == null) {
-    //       const errorMsg = "Failed to get a patientId from the app params or the authorization response.";
-    //       document.body.innerText = errorMsg;
-    //       console.error(errorMsg);
-    //       return;
-    //     }
-    //     return patientId;
-    // }
+      //       }
+      //     });
+      //     ReactDOM.render(
+      //       <App
+      //         FHIR_URI_PREFIX={FHIR_URI_PREFIX}
+      //         questionnaireUri={appContext.template}
+      //         smart={smart}
+      //         deviceRequest={appContext.request}
+      //         filepath={appContext.filepath}
+      //       />,
+      //       document.getElementById("root")
+      //     );
+      //     const patientId = appContext.patientId;
+      //     if (patientId == null) {
+      //       const errorMsg = "Failed to get a patientId from the app params or the authorization response.";
+      //       document.body.innerText = errorMsg;
+      //       console.error(errorMsg);
+      //       return;
+      //     }
+      //     return patientId;
+      // }
     }).catch(err => err);
   } else {
     const errorMsg = "Token post request failed. Returned status: " + tokenPost.status;
