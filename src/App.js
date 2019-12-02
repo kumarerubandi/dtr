@@ -13,7 +13,7 @@ class App extends Component {
     this.state = {
       questionnaire: null,
       cqlPrepoulationResults: null,
-      deviceRequest: null,
+      serviceRequest: null,
       bundle: null,
       logs: []
     }
@@ -28,14 +28,14 @@ class App extends Component {
       .then(artifacts => {
         console.log("fetched needed artifacts:", artifacts)
         this.setState({ questionnaire: artifacts.questionnaire })
-        this.setState({ deviceRequest: this.props.deviceRequest })
-        console.log("device request--", this.props.deviceRequest, artifacts.dataRequirement);
-        if (this.props.deviceRequest) {
+        this.setState({ serviceRequest: this.props.serviceRequest })
+        console.log("device request--", this.props.serviceRequest, artifacts.dataRequirement);
+        if (this.props.serviceRequest) {
           var filtered = artifacts.dataRequirement.filter(function (value, index, arr) {
             return value.type !== "Procedure";
           });
           console.log("filtered requirements", filtered);
-          this.props.deviceRequest.parameter.forEach(code => {
+          this.props.serviceRequest.category.forEach(code => {
             console.log(code);
             if (code.code.coding[0].code) {
               let obj = {
@@ -52,7 +52,7 @@ class App extends Component {
           elm: artifacts.mainLibraryElm,
           elmDependencies: artifacts.dependentElms,
           valueSetDB: {},
-          parameters: { device_request: fhirWrapper.wrap(this.props.deviceRequest) }
+          parameters: { device_request: fhirWrapper.wrap(this.props.serviceRequest) }
         }
 
         this.consoleLog("executing elm", "infoClass");
@@ -80,7 +80,7 @@ class App extends Component {
     if (this.state.questionnaire && this.state.cqlPrepoulationResults && this.state.bundle) {
       return (
         <div className="App">
-          <QuestionnaireForm smart={this.smart} qform={this.state.questionnaire} cqlPrepoulationResults={this.state.cqlPrepoulationResults} deviceRequest={this.state.deviceRequest} bundle={this.state.bundle} />
+          <QuestionnaireForm smart={this.smart} qform={this.state.questionnaire} cqlPrepoulationResults={this.state.cqlPrepoulationResults} serviceRequest={this.state.serviceRequest} bundle={this.state.bundle} />
         </div>
       );
     } else {
