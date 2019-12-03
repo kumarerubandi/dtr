@@ -22,11 +22,12 @@ import Loader from 'react-loader-spinner';
 // const state = urlUtils.getUrlParameter("state"); // session key
 // const code = urlUtils.getUrlParameter("code"); // authorization code
 // console.log(state);
+// const state = sessionStorage["launchContextId"]
 // const params = JSON.parse(sessionStorage[state]); // load app session
 // const tokenUri = params.tokenUri;
 // const clientId = params.clientId;
 // const secret = params.secret;
-
+const tokenUri = "https://auth.mettles.com:8443/auth/realms/ProviderCredentials/protocol/openid-connect/token";
 export default class QuestionnaireForm extends Component {
     constructor(props) {
         super(props);
@@ -717,8 +718,8 @@ export default class QuestionnaireForm extends Component {
             use: "preauthorization",
             patient: { reference: this.makeReference(priorAuthBundle, "Patient") },
             created: authored,
-            provider: { reference: this.makeReference(priorAuthBundle, "Organization") },
-            insurer: { reference: this.makeReference(priorAuthBundle, "Organization") },
+            // provider:    { reference: this.makeReference(priorAuthBundle, "Organization") },
+            // insurer: { reference: this.makeReference(priorAuthBundle, "Organization") },
             facility: { reference: this.makeReference(priorAuthBundle, "Location") },
             priority: { coding: [{ "code": "normal" }] },
             // presciption: { reference: this.makeReference(priorAuthBundle, "DeviceRequest") },
@@ -748,15 +749,15 @@ export default class QuestionnaireForm extends Component {
                 },
                 valueReference: { reference: this.makeReference(priorAuthBundle, "QuestionnaireResponse") }
             }],
-            item: [
-                {
-                    sequence: 1,
-                    productOrService: this.props.deviceRequest.codeCodeableConcept,
-                    quantity: {
-                        value: this.props.deviceRequest.parameter[0].valueQuantity.value
-                    }
-                }
-            ],
+            // item: [
+            //     {
+            //         sequence: 1,
+            //         productOrService: this.props.deviceRequest.codeCodeableConcept,
+            //         quantity: {
+            //             value: this.props.deviceRequest.parameter[0].valueQuantity.value
+            //         }
+            //     }
+            // ],
             careTeam: [
                 {
                     sequence: 1,
@@ -778,11 +779,13 @@ export default class QuestionnaireForm extends Component {
         }
         var sequence = 1;
         priorAuthBundle.entry.forEach(function (entry, index) {
-            if (entry.resource.resourceType == "Condition") {
-                priorAuthClaim.diagnosis.push({
-                    sequence: sequence++,
-                    diagnosisReference: { reference: "Condition/" + entry.resource.id }
-                });
+            if (entry.resource !== undefined) {
+                if (entry.resource.resourceType == "Condition") {
+                    priorAuthClaim.diagnosis.push({
+                        sequence: sequence++,
+                        diagnosisReference: { reference: "Condition/" + entry.resource.id }
+                    });
+                }
             }
         })
         // console.log(priorAuthClaim, 'HEREEE', tokenUri);
@@ -797,33 +800,34 @@ export default class QuestionnaireForm extends Component {
         priorAuthBundle.entry.unshift({ resource: priorAuthClaim })
 
         /*creating token */
-        // const tokenPost = new XMLHttpRequest();
-        // var auth_response;
-        // tokenPost.open("POST", tokenUri);
-        // tokenPost.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-        // var data = `client_id=${clientId}&grant_type=password&username=john&password=john123`
-
-        // tokenPost.onload = function () {
-        //     if (tokenPost.status === 200) {
-        //         try {
-        //             auth_response = JSON.parse(tokenPost.responseText);
-        //             console.log("auth res--1243-", auth_response);
-        //         } catch (e) {
-        //             const errorMsg = "Failed to parse auth response";
-        //             document.body.innerText = errorMsg;
-        //             console.error(errorMsg);
-        //             return;
-        //         }
+        const tokenPost = new XMLHttpRequest();
+        var auth_response;
+        tokenPost.open("POST", tokenUri);
+        tokenPost.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        var data = `client_id=app-login&grant_type=password&username=john&password=john123`
+        tokenPost.send(data);
+        tokenPost.onload = function () {
+                if (tokenPost.status === 200) {
+                try {
+                    auth_response = JSON.parse(tokenPost.responseText);
+                    console.log("auth res--1243-", auth_response);
+                } catch (e) {
+                    const errorMsg = "Failed to parse auth response";
+                    document.body.innerText = errorMsg;
+                    console.error(errorMsg);
+                    return;
+                }
         /** creating cliam  */
         const Http = new XMLHttpRequest();
         // const priorAuthUrl = "https://davinci-prior-auth.logicahealth.org/fhir/Claim/$submit";
-        const priorAuthUrl = "http://cmsfhir.mettles.com:8080/drfp/fhir/Claim/$submit";
+        // const priorAuthUrl = "http://cmsfhir.mettles.com:8080/drfp/fhir/Claim/$submit";
         // const priorAuthUrl = "http://cdex.mettles.com:9000/fhir/Claim/$submit";
+        const priorAuthUrl = "http://cdex.mettles.com:8180/hapi-fhir-jpaserver/fhir/Claim/$submit";
 
         console.log("claim final--", JSON.stringify(priorAuthBundle));
         Http.open("POST", priorAuthUrl);
         Http.setRequestHeader("Content-Type", "application/fhir+json");
-        // Http.setRequestHeader("Authorization", "Bearer " + auth_response.access_token);
+        Http.setRequestHeader("Authorization", "Bearer " + auth_response.access_token);
         // Http.send(JSON.stringify(pBundle));
         Http.send(JSON.stringify(priorAuthBundle));
         Http.onreadystatechange = function () {
@@ -855,13 +859,13 @@ export default class QuestionnaireForm extends Component {
                 console.log(this.responseText);
             }
         }
-        //     } else {
-        //         const errorMsg = "Token post request failed. Returned status: " + tokenPost.status;
-        //         document.body.innerText = errorMsg;
-        //         console.error(errorMsg);
-        //         return;
-        //     }
-        // };
+            } else {
+                const errorMsg = "Token post request failed. Returned status: " + tokenPost.status;
+                document.body.innerText = errorMsg;
+                console.error(errorMsg);
+                return;
+            }
+        };
         // tokenPost.send(data)
         // const Http = new XMLHttpRequest();
         // // const priorAuthUrl = "https://davinci-prior-auth.logicahealth.org/fhir/Claim/$submit";
@@ -900,7 +904,9 @@ export default class QuestionnaireForm extends Component {
     makeReference(bundle, resourceType) {
 
         var entry = bundle.entry.find(function (entry) {
-            return (entry.resource.resourceType == resourceType);
+            if (entry.resource !== undefined) {
+                return (entry.resource.resourceType == resourceType);
+            }
         });
         if (entry.resource.hasOwnProperty("id")) {
             return resourceType + "/" + entry.resource.id;
@@ -1032,7 +1038,7 @@ export default class QuestionnaireForm extends Component {
                         <DocumentInput
                             updateCallback={this.updateDocuments}
                         /> */}
-                        <div className="text-center" style={{marginBottom:"50px"}}>
+                        <div className="text-center" style={{ marginBottom: "50px" }}>
                             <button type="button" onClick={this.outputResponse}>Submit Prior Authorization
                                         <div id="fse" className={"spinner " + (this.state.loading ? "visible" : "invisible")}>
                                     <Loader
