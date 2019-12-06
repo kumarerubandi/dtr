@@ -32,13 +32,14 @@ function doSearch(smart, type, q, callback) {
         break;
       default:
       //nothing
-    }
+    } 
   }
   if (type === "SupplyRequest"){
     smart.api
     .search({type: type, query: q})
     .then(processSuccess(smart, [], callback), processError(smart, callback));
   } else {
+    console.log("resource typw patuent search---",type, q);
     smart.patient.api
       .search({type: type, query: q})
       .then(processSuccess(smart, [], callback), processError(smart, callback));

@@ -49,6 +49,7 @@ export default class QuestionnaireForm extends Component {
             communicationJson: {},
             displayQuestionnaire: true,
             claimResponse: {},
+            claimResponseBundle: {},
             claimMessage: "",
             otherProvider: false,
             otherProviderName: "",
@@ -56,7 +57,9 @@ export default class QuestionnaireForm extends Component {
             communicationRequestId: '',
             providerSource: sessionStorage["providerSource"],
             loading: false,
-            resloading: false
+            resloading: false,
+            showBundle: false,
+
         };
 
         this.updateQuestionValue = this.updateQuestionValue.bind(this);
@@ -73,6 +76,7 @@ export default class QuestionnaireForm extends Component {
         this.setProviderSource = this.setProviderSource.bind(this);
         this.submitCommunicationRequest = this.submitCommunicationRequest.bind(this);
         this.relaunch = this.relaunch.bind(this);
+        this.handleShowBundle = this.handleShowBundle.bind(this);
     }
 
     relaunch() {
@@ -96,6 +100,10 @@ export default class QuestionnaireForm extends Component {
         this.getProviderQueries(items);
     }
 
+    handleShowBundle() {
+        var showBundle = this.state.showBundle;
+        this.setState({ showBundle: !showBundle });
+    }
     setProviderSource(values) {
         console.log(this.state);
         if (values.length > 0) {
@@ -183,8 +191,9 @@ export default class QuestionnaireForm extends Component {
         var self = this
         this.setState({ resloading: true });
         const Http = new XMLHttpRequest();
-        const priorAuthUrl = "http://cmsfhir.mettles.com:8080/drfp/fhir/ClaimResponse/" + this.state.claimResponse.id;
+        // const priorAuthUrl = "http://cmsfhir.mettles.com:8080/drfp/fhir/ClaimResponse/" + this.state.claimResponse.id;
         // const priorAuthUrl = "http://cdex.mettles.com:9000/fhir/ClaimResponse/" + this.state.claimResponse.id;
+        const priorAuthUrl = "http://cdex.mettles.com:8180/hapi-fhir-jpaserver/fhir/ClaimResponse/" + this.state.claimResponse.id;
         Http.open("GET", priorAuthUrl);
         Http.setRequestHeader("Content-Type", "application/fhir+json");
         Http.send();
@@ -692,8 +701,44 @@ export default class QuestionnaireForm extends Component {
         });
         console.log(response);
         const priorAuthBundle = JSON.parse(JSON.stringify(this.props.bundle));
-        priorAuthBundle.entry.unshift({ resource: this.props.deviceRequest })
         priorAuthBundle.entry.unshift({ resource: response })
+        priorAuthBundle.entry.unshift({ resource: this.props.serviceRequest })
+        const organizationResource = {
+            "resourceType": "Organization",
+            "id": "20114",
+            "meta": {
+                "versionId": "1",
+                "lastUpdated": "2019-09-13T18:52:12.558+00:00"
+            },
+            "identifier": [
+                {
+                    "system": "https://www.maxmddirect.com/fhir/identifier",
+                    "value": "6677829"
+                }
+            ],
+            "name": "UHC",
+            "telecom": [
+                {
+                    "id": "1",
+                    "system": "phone",
+                    "value": "666444-5555",
+                    "use": "work"
+                }
+            ],
+            "address": [
+                {
+                    "line": [
+                        "123 Healthcare Ave."
+                    ],
+                    "city": "Chicago",
+                    "state": "IL",
+                    "postalCode": "60643",
+                    "country": "US"
+                }
+            ]
+        }
+        priorAuthBundle.entry.unshift({ resource: organizationResource })
+        
         console.log(priorAuthBundle);
 
         const priorAuthClaim = {
@@ -702,27 +747,27 @@ export default class QuestionnaireForm extends Component {
             type: {
                 coding: [{
                     system: "http://terminology.hl7.org/CodeSystem/claim-type",
-                    code: "professional",
-                    display: "Professional"
+                    code: "institutional",
+                    display: "Institutional"
                 }]
             },
-            subType: {
-                coding: [
-                    {
-                        system: "https://www.cms.gov/codes/billtype",
-                        code: "41",
-                        display: "Hospital Outpatient Surgery performed in an Ambulatory ​Surgical Center"
-                    }
-                ]
-            },
+            // subType: {
+            //     coding: [
+            //         {
+            //             system: "https://www.cms.gov/codes/billtype",
+            //             code: "41",
+            //             display: "Hospital Outpatient Surgery performed in an Ambulatory ​Surgical Center"
+            //         }
+            //     ]
+            // },
             use: "preauthorization",
             patient: { reference: this.makeReference(priorAuthBundle, "Patient") },
             created: authored,
-            // provider:    { reference: this.makeReference(priorAuthBundle, "Organization") },
-            // insurer: { reference: this.makeReference(priorAuthBundle, "Organization") },
-            facility: { reference: this.makeReference(priorAuthBundle, "Location") },
+            provider: { reference: this.makeReference(priorAuthBundle, "Practitioner") },
+            insurer: { reference: this.makeReference(priorAuthBundle, "Organization") },
+            // facility: { reference: this.makeReference(priorAuthBundle, "Location") },
             priority: { coding: [{ "code": "normal" }] },
-            // presciption: { reference: this.makeReference(priorAuthBundle, "DeviceRequest") },
+            presciption: { reference: this.makeReference(priorAuthBundle, "ServiceRequest") },
             supportingInfo: [{
                 sequence: 1,
                 category: {
@@ -807,7 +852,7 @@ export default class QuestionnaireForm extends Component {
         var data = `client_id=app-login&grant_type=password&username=john&password=john123`
         tokenPost.send(data);
         tokenPost.onload = function () {
-                if (tokenPost.status === 200) {
+            if (tokenPost.status === 200) {
                 try {
                     auth_response = JSON.parse(tokenPost.responseText);
                     console.log("auth res--1243-", auth_response);
@@ -817,48 +862,50 @@ export default class QuestionnaireForm extends Component {
                     console.error(errorMsg);
                     return;
                 }
-        /** creating cliam  */
-        const Http = new XMLHttpRequest();
-        // const priorAuthUrl = "https://davinci-prior-auth.logicahealth.org/fhir/Claim/$submit";
-        // const priorAuthUrl = "http://cmsfhir.mettles.com:8080/drfp/fhir/Claim/$submit";
-        // const priorAuthUrl = "http://cdex.mettles.com:9000/fhir/Claim/$submit";
-        const priorAuthUrl = "http://cdex.mettles.com:8180/hapi-fhir-jpaserver/fhir/Claim/$submit";
+                /** creating cliam  */
+                const Http = new XMLHttpRequest();
+                // const priorAuthUrl = "https://davinci-prior-auth.logicahealth.org/fhir/Claim/$submit";
+                // const priorAuthUrl = "http://cmsfhir.mettles.com:8080/drfp/fhir/Claim/$submit";
+                // const priorAuthUrl = "http://cdex.mettles.com:9000/fhir/Claim/$submit";
+                const priorAuthUrl = "http://cdex.mettles.com:8180/hapi-fhir-jpaserver/fhir/Claim/$submit";
 
-        console.log("claim final--", JSON.stringify(priorAuthBundle));
-        Http.open("POST", priorAuthUrl);
-        Http.setRequestHeader("Content-Type", "application/fhir+json");
-        Http.setRequestHeader("Authorization", "Bearer " + auth_response.access_token);
-        // Http.send(JSON.stringify(pBundle));
-        Http.send(JSON.stringify(priorAuthBundle));
-        Http.onreadystatechange = function () {
-            if (this.readyState === XMLHttpRequest.DONE) {
-                var message = "";
-                self.setState({ displayQuestionnaire: false })
-                if (this.status === 200) {
-                    var claimResponse = JSON.parse(this.responseText);
-                    console.log("lllllll")
-                    let result = claimResponse;
-                    if (claimResponse.hasOwnProperty('entry')) {
-                        claimResponse.entry.forEach((res) => {
-                            if (res.resource.resourceType === "ClaimResponse") {
-                                result = res.resource;
+                console.log("claim final--", JSON.stringify(priorAuthBundle));
+                Http.open("POST", priorAuthUrl);
+                Http.setRequestHeader("Content-Type", "application/fhir+json");
+                Http.setRequestHeader("Authorization", "Bearer " + auth_response.access_token);
+                // Http.send(JSON.stringify(pBundle));
+                Http.send(JSON.stringify(priorAuthBundle));
+                Http.onreadystatechange = function () {
+                    if (this.readyState === XMLHttpRequest.DONE) {
+                        var message = "";
+                        self.setState({ displayQuestionnaire: false })
+                        if (this.status === 200) {
+                            var claimResponseBundle = JSON.parse(this.responseText);
+                            var claimResponse = self.state.claimResponse;
+                            console.log("lllllll")
+                            if (claimResponseBundle.hasOwnProperty('entry')) {
+                                claimResponseBundle.entry.forEach((res) => {
+                                    if (res.resource.resourceType === "ClaimResponse") {
+                                        claimResponse = res.resource;
+                                    }
+                                })
                             }
-                        })
+                            self.setState({ claimResponseBundle })
+                            self.setState({ claimResponse })
+                            console.log(self.state.claimResponseBundle, self.state.claimResponse);
+                            self.setState({ claimMessage: "Prior Authorization has been submitted successfully" })
+                            message = "Prior Authorization " + claimResponse.disposition + "\n";
+                            message += "Prior Authorization Number: " + claimResponse.preAuthRef;
+                        } else {
+                            self.setState({ "claimMessage": "Prior Authorization Request Failed." })
+                            message = "Prior Authorization Request Failed."
+                        }
+                        self.setState({ loading: false });
+                        console.log(message);
+                        //alert(message);
+                        console.log(this.responseText);
                     }
-                    self.setState({ claimResponse: result })
-                    self.setState({ claimMessage: "Prior Authorization has been submitted successfully" })
-                    message = "Prior Authorization " + claimResponse.disposition + "\n";
-                    message += "Prior Authorization Number: " + claimResponse.preAuthRef;
-                } else {
-                    self.setState({ "claimMessage": "Prior Authorization Request Failed." })
-                    message = "Prior Authorization Request Failed."
                 }
-                self.setState({ loading: false });
-                console.log(message);
-                //alert(message);
-                console.log(this.responseText);
-            }
-        }
             } else {
                 const errorMsg = "Token post request failed. Returned status: " + tokenPost.status;
                 document.body.innerText = errorMsg;
@@ -1083,18 +1130,35 @@ export default class QuestionnaireForm extends Component {
                     {!this.state.displayQuestionnaire &&
                         <div>
                             <div style={{ fontSize: "1.5em", background: "#98ce94", padding: "10px" }}> {this.state.claimMessage}</div>
-                            <pre style={{ background: "#dee2e6" }}> {JSON.stringify(this.state.claimResponse, null, 2)}</pre>
+                            <div className="form-row">
+                                <div className="col-3">Status</div>
+                                <div className="col-6">: {this.state.claimResponse.status}</div>
+                            </div>
+                            <div className="form-row">
+                                <div className="col-3">Outcome</div>
+                                <div className="col-6">: {this.state.claimResponse.outcome}</div>
+                            </div>
+                            <div className="form-row">
+                                <div className="col-3">ClaimResponse Reference No</div>
+                                <div className="col-6">: {this.state.claimResponse.preAuthRef}</div>
+                            </div>
                             {JSON.stringify(this.state.claimResponse).length > 0 &&
-                                <div><button type="button" onClick={this.reloadClaimResponse} >Reload Claim Response
+                                <div style={{paddingTop:"10px",paddingBottom:"10px"}}>
+                                    <button style={{float:"right"}} type="button" onClick={this.handleShowBundle}>Show Claim Response Bundle</button>
+
+                                    <button type="button" onClick={this.reloadClaimResponse} >Reload Claim Response
                                 <div id="fse" className={"spinner " + (this.state.resloading ? "visible" : "invisible")}>
-                                        <Loader
-                                            type="Oval"
-                                            color="#fff"
-                                            height="15"
-                                            width="15"
-                                        />
-                                    </div>
-                                </button></div>
+                                            <Loader
+                                                type="Oval"
+                                                color="#fff"
+                                                height="15"
+                                                width="15"
+                                            />
+                                        </div>
+                                    </button></div>
+                            }
+                            {this.state.showBundle &&
+                                <pre style={{ background: "#dee2e6", height:"500px" }}> {JSON.stringify(this.state.claimResponseBundle, null, 2)}</pre>
                             }
                         </div>
 

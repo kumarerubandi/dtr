@@ -2,22 +2,27 @@ import urlUtils from "./util/url";
 
 // Change this to the ID of the client that you registered with the SMART on FHIR authorization server.
 // var clientId = "f7883dd8-5c7e-44de-be4b-c93c683bb8c7"; // local client
-var clientId = "app-login";
+// var clientId = "app-login";
+var clientId = "1602539f-194e-4d22-b82f-a0835725f384"; 
 // For demonstration purposes, if you registered a confidential client
 // you can enter its secret here. The demo app will pretend it's a confidential
 // app (in reality it cannot be confidential, since it cannot keep secrets in the
 // browser)
+console.log("Client Id-----",clientId);
 var secret = null; // set me, if confidential
 
 // These parameters will be received at launch time in the URL
 var serviceUri = urlUtils.getUrlParameter("iss");
 // var launchContextId = urlUtils.getUrlParameter("launch");
-var launchContextId = "6c05e468-9050-47d0-992d-38151166b9be"
+var launchContextId = "cbaec2fb-6428-4182-a976-10cd3354af6c";//local
+// var launchContextId = "10e2e686-a719-42ed-a52a-8332b77a48d6";
 // The scopes that the app will request from the authorization server
 // encoded in a space-separated string:
 //      1. permission to read all of the patient's record
 //      2. permission to launch the app in the specific context
-var scope = ["launch","user/Patient.read","user/Patient.write","user/Procedure.read","user/Practitioner.read","user/Condition.read",""].join(" ");
+var scope = ["launch","user/Patient.read","user/Patient.write","user/Procedure.read",
+            "user/Practitioner.read","patient/Condition.read","patient/Coverage.read",
+            "patient/Organization.read"].join(" ");
 
 // Generate a unique session key string (here we just generate a random number
 // for simplicity, but this is not 100% collision-proof)
@@ -28,6 +33,7 @@ var state = urlUtils.getUrlParameter("launchContextId");
 var launchUri = window.location.protocol + "//" + window.location.host + window.location.pathname;
 var redirectUri = launchUri.replace("launch", "index");
 
+console.log("redirectURI",redirectUri);
 // FHIR Service Conformance Statement URL
 var conformanceUri = serviceUri + "/metadata";
 
