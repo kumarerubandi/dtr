@@ -1,21 +1,22 @@
 import urlUtils from "./util/url";
 
 // Change this to the ID of the client that you registered with the SMART on FHIR authorization server.
-// var clientId = "f7883dd8-5c7e-44de-be4b-c93c683bb8c7"; // local client
+var clientId = "f7883dd8-5c7e-44de-be4b-c93c683bb8c7"; 
 // var clientId = "app-login";
-var clientId = "1602539f-194e-4d22-b82f-a0835725f384"; 
+// var clientId = "1602539f-194e-4d22-b82f-a0835725f384"; 
 // For demonstration purposes, if you registered a confidential client
 // you can enter its secret here. The demo app will pretend it's a confidential
 // app (in reality it cannot be confidential, since it cannot keep secrets in the
 // browser)
+clientId = urlUtils.getUrlParameter("client_id");
 console.log("Client Id-----",clientId);
 var secret = null; // set me, if confidential
 
 // These parameters will be received at launch time in the URL
 var serviceUri = urlUtils.getUrlParameter("iss");
 // var launchContextId = urlUtils.getUrlParameter("launch");
-var launchContextId = "cbaec2fb-6428-4182-a976-10cd3354af6c";//local
-// var launchContextId = "10e2e686-a719-42ed-a52a-8332b77a48d6";
+var launchContextId = "cbaec2fb-6428-4182-a976-10cd3354af6c";
+// var launchContextId = "10e2e686-a719-42ed-a52a-8332b77a48d6"; //local
 // The scopes that the app will request from the authorization server
 // encoded in a space-separated string:
 //      1. permission to read all of the patient's record

@@ -17,7 +17,8 @@ function fetchArtifacts(fhirUriPrefix, questionnaireUri, smart, filepath, consol
       questionnaire: null,
       mainLibraryElm: null,
       dependentElms: [],
-      dataRequirement: []
+      dataRequirement: [],
+      claimEndpoint: null
     }
 
     function resolveIfDone(){
@@ -82,6 +83,7 @@ function fetchArtifacts(fhirUriPrefix, questionnaireUri, smart, filepath, consol
         fetchRelatedElms(libraryResource);
         fetchElmFile(libraryResource, isMain);
         fetchDataRequirements(libraryResource);
+        fetchClaimURL(libraryResource);
         consoleLog("fetched Elm","infoClass");
         pendingFetches -= 1;
       })
@@ -91,6 +93,11 @@ function fetchArtifacts(fhirUriPrefix, questionnaireUri, smart, filepath, consol
     function fetchDataRequirements(libraryResource){
       if (libraryResource.dataRequirement == null) return
       retVal.dataRequirement = libraryResource.dataRequirement
+    }
+    function fetchClaimURL(libraryResource){
+      console.log(libraryResource)
+      if (libraryResource.claimEndpoint == null) return
+      retVal.claimEndpoint = libraryResource.claimEndpoint
     }
     function fetchRelatedElms(libraryResource){
       if (libraryResource.relatedArtifact == null) return

@@ -59,7 +59,9 @@ export default class QuestionnaireForm extends Component {
             loading: false,
             resloading: false,
             showBundle: false,
-
+            priorAuthBundle:{},
+            showPreview:false,
+            previewloading:false
         };
 
         this.updateQuestionValue = this.updateQuestionValue.bind(this);
@@ -68,6 +70,8 @@ export default class QuestionnaireForm extends Component {
         this.renderComponent = this.renderComponent.bind(this);
         this.retrieveValue = this.retrieveValue.bind(this);
         this.outputResponse = this.outputResponse.bind(this);
+        this.previewBundle = this.previewBundle.bind(this);
+        this.generateBundle = this.generateBundle.bind(this);
         this.reloadClaimResponse = this.reloadClaimResponse.bind(this);
         this.onChangeOtherProvider = this.onChangeOtherProvider.bind(this);
         this.getProviderQueries = this.getProviderQueries.bind(this);
@@ -575,367 +579,370 @@ export default class QuestionnaireForm extends Component {
         }
     }
 
+    generateBundle() {
+        
+        var self = this;
+        return new Promise(function (resolve, reject) {
+            console.log(self.state.sectionLinks);
+            const today = new Date();
+            const dd = String(today.getDate()).padStart(2, '0');
+            const mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+            const yyyy = today.getFullYear();
+            const authored = `${yyyy}-${mm}-${dd}`
+            const response = {
+                resourceType: "QuestionnaireResponse",
+                id: "response1",
+                authored: authored,
+                status: "completed", //TODO: Get status from somewhere
+                item: []
+
+            }
+
+
+            let currentItem = response.item;
+            let currentLevel = 0;
+            let currentValues = [];
+            const chain = { 0: { currentItem, currentValues } };
+            self.state.orderedLinks.map((item) => {
+                const itemType = self.state.itemTypes[item];
+
+                if (Object.keys(self.state.sectionLinks).indexOf(item) >= 0) {
+                    currentValues = currentValues.filter((e) => { return e !== item });
+                    if (chain[currentLevel + 1]) {
+                        chain[currentLevel + 1].currentValues = currentValues;
+                    }
+                    const section = self.state.sectionLinks[item];
+                    currentValues = section.values;
+                    // new section
+                    currentItem = chain[section.level].currentItem
+                    const newItem = {
+                        "linkId": item,
+                        "text": section.text,
+                        item: []
+                    };
+                    currentItem.push(newItem);
+                    currentItem = newItem.item;
+                    currentLevel = section.level;
+
+                    // filter out this section
+                    chain[section.level + 1] = { currentItem, currentValues };
+                } else {
+                    // not a new section, so it's an item
+                    if (currentValues.indexOf(item) < 0 && itemType && itemType.enabled) {
+                        // item not in this section, drop a level
+                        const tempLevel = currentLevel;
+
+                        while (chain[currentLevel].currentValues.length === 0 && currentLevel > 0) {
+                            // keep dropping levels until we find an unfinished section
+                            currentLevel--;
+                        }
+
+                        // check off current item
+                        chain[tempLevel].currentValues = currentValues.filter((e) => { return e !== item });
+
+                        currentValues = chain[currentLevel].currentValues;
+                        currentItem = chain[currentLevel].currentItem;
+                    } else {
+                        // item is in this section, check it off
+
+                        currentValues = currentValues.filter((e) => { return e !== item });
+                        chain[currentLevel + 1].currentValues = currentValues;
+                    }
+                }
+                if (itemType && (itemType.enabled || self.state.turnOffValues.indexOf(item) >= 0)) {
+                    const answerItem = {
+                        "linkId": item,
+                        "text": itemType.text,
+                        "answer": []
+                    }
+                    switch (itemType.valueType) {
+                        case "valueAttachment":
+                            console.log("In attachment", self.state.values[item])
+                            const attachment = self.state.values[item]
+                            answerItem.answer.push({ [itemType.valueType]: attachment })
+                            break;
+                        case "valueQuantity":
+                            const quantity = self.state.values[item];
+                            if (quantity && quantity.comparator === "=") {
+                                delete quantity.comparator;
+                            }
+                            answerItem.answer.push({ [itemType.valueType]: quantity })
+                            break;
+                        case "valueDateTime":
+                        case "valueDate":
+                            const date = self.state.values[item];
+                            console.log("date---", date);
+                            if (date != undefined) {
+                                answerItem.answer.push({ [itemType.valueType]: date.toString() });
+                            } else {
+                                answerItem.answer.push({ [itemType.valueType]: "" });
+                            }
+                            break;
+                        default:
+                            const answer = self.state.values[item];
+                            if (Array.isArray(answer)) {
+                                answer.forEach((e) => {
+                                    // possible for an array to contain multiple types
+                                    let finalType;
+                                    if (e.valueTypeFinal) {
+                                        finalType = e.valueTypeFinal;
+                                        delete e.valueTypeFinal;
+                                    } else {
+                                        finalType = itemType.valueType;
+                                    }
+                                    answerItem.answer.push({ [finalType]: e });
+                                })
+                            } else {
+                                answerItem.answer.push({ [itemType.valueType]: answer });
+                            }
+                    }
+                    // FHIR fields are not allowed to be empty or null, so we must prune
+                    if (self.isEmptyAnswer(answerItem.answer)) {
+                        // console.log("Removing empty answer: ", answerItem);
+                        delete answerItem.answer;
+                    }
+                    currentItem.push(answerItem);
+                }
+            });
+            console.log(response);
+            const priorAuthBundle = JSON.parse(JSON.stringify(self.props.bundle));
+            priorAuthBundle.entry.unshift({ resource: response })
+            priorAuthBundle.entry.unshift({ resource: self.props.serviceRequest })
+            const organizationResource = {
+                "resourceType": "Organization",
+                "id": "20114",
+                "meta": {
+                    "versionId": "1",
+                    "lastUpdated": "2019-09-13T18:52:12.558+00:00"
+                },
+                "identifier": [
+                    {
+                        "system": "https://www.maxmddirect.com/fhir/identifier",
+                        "value": "6677829"
+                    }
+                ],
+                "name": "UHC",
+                "telecom": [
+                    {
+                        "id": "1",
+                        "system": "phone",
+                        "value": "666444-5555",
+                        "use": "work"
+                    }
+                ],
+                "address": [
+                    {
+                        "line": [
+                            "123 Healthcare Ave."
+                        ],
+                        "city": "Chicago",
+                        "state": "IL",
+                        "postalCode": "60643",
+                        "country": "US"
+                    }
+                ]
+            }
+            priorAuthBundle.entry.unshift({ resource: organizationResource })
+
+            console.log(priorAuthBundle);
+
+            const priorAuthClaim = {
+                resourceType: "Claim",
+                status: "active",
+                type: {
+                    coding: [{
+                        system: "http://terminology.hl7.org/CodeSystem/claim-type",
+                        code: "institutional",
+                        display: "Institutional"
+                    }]
+                },
+                subType: {
+                    coding: [
+                        {
+                            system: "https://www.cms.gov/codes/billtype",
+                            code: "41",
+                            display: "Hospital Outpatient Surgery performed in an Ambulatory ​Surgical Center"
+                        }
+                    ]
+                },
+                use: "preauthorization",
+                patient: { reference: self.makeReference(priorAuthBundle, "Patient") },
+                created: authored,
+                provider: { reference: self.makeReference(priorAuthBundle, "Practitioner") },
+                insurer: { reference: self.makeReference(priorAuthBundle, "Organization") },
+                // facility: { reference: self.makeReference(priorAuthBundle, "Location") },
+                priority: { coding: [{ "code": "normal" }] },
+                presciption: { reference: self.makeReference(priorAuthBundle, "ServiceRequest") },
+                supportingInfo: [{
+                    sequence: 1,
+                    category: {
+                        coding: [
+                            {
+                                "system": "http://hl7.org/us/davinci-pas/CodeSystem/PASSupportingInfoType",
+                                "code": "patientEvent"
+                            }
+                        ]
+                    },
+                    timingPeriod: {
+                        start: "2019-01-05T00:00:00-07:00",
+                        end: "2019-03-05T00:00:00-07:00"
+                    }
+                },
+                {
+                    sequence: 2,
+                    category: {
+                        coding: [{
+                            system: "http://terminology.hl7.org/CodeSystem/claiminformationcategory",
+                            code: "info",
+                            display: "Information"
+                        }]
+                    },
+                    valueReference: { reference: self.makeReference(priorAuthBundle, "QuestionnaireResponse") }
+                }],
+                // item: [
+                //     {
+                //         sequence: 1,
+                //         productOrService: self.props.deviceRequest.codeCodeableConcept,
+                //         quantity: {
+                //             value: self.props.deviceRequest.parameter[0].valueQuantity.value
+                //         }
+                //     }
+                // ],
+                careTeam: [
+                    {
+                        sequence: 1,
+                        provider: { reference: self.makeReference(priorAuthBundle, "Practitioner") },
+                        extension: [
+                            {
+                                url: "http://terminology.hl7.org/ValueSet/v2-0912",
+                                valueCode: "OP"
+                            }
+                        ]
+                    }
+                ],
+                diagnosis: [],
+                insurance: [{
+                    sequence: 1,
+                    focal: true,
+                    // coverage: { reference: self.makeReference(priorAuthBundle, "Coverage") }
+                }]
+            }
+            var sequence = 1;
+            priorAuthBundle.entry.forEach(function (entry, index) {
+                if (entry.resource !== undefined) {
+                    if (entry.resource.resourceType == "Condition") {
+                        priorAuthClaim.diagnosis.push({
+                            sequence: sequence++,
+                            diagnosisReference: { reference: "Condition/" + entry.resource.id }
+                        });
+                    }
+                }
+            })
+            // console.log(priorAuthClaim, 'HEREEE', tokenUri);
+            console.log(JSON.stringify(priorAuthClaim));
+            if (sessionStorage.hasOwnProperty("docResources")) {
+                if (sessionStorage["docResources"]) {
+                    JSON.parse(sessionStorage["docResources"]).forEach((doc) => {
+                        priorAuthBundle.entry.push({ "resource": doc })
+                    })
+                }
+            }
+            priorAuthBundle.entry.unshift({ resource: priorAuthClaim })
+
+            resolve(priorAuthBundle);
+        });
+
+    }
+    previewBundle(){
+        this.setState({previewloading:true});
+        this.generateBundle().then((priorAuthBundle) => {
+            this.setState({priorAuthBundle});
+            console.log("Prior auth bundle---",this.state.priorAuthBundle)
+            let showPreview = this.state.showPreview;
+            this.setState({showPreview:!showPreview});
+            console.log("Prior auth bundle-preview--",this.state.showPreview)
+            this.setState({previewloading:false});
+        });
+    }
     // create the questionnaire response based on the current state
     outputResponse(status) {
         this.setState({ loading: true });
-        console.log(this.state.sectionLinks);
-        const today = new Date();
-        const dd = String(today.getDate()).padStart(2, '0');
-        const mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-        const yyyy = today.getFullYear();
-        const authored = `${yyyy}-${mm}-${dd}`
-        const response = {
-            resourceType: "QuestionnaireResponse",
-            id: "response1",
-            authored: authored,
-            status: "completed", //TODO: Get status from somewhere
-            item: []
-
-        }
-        var self = this;
-
-        let currentItem = response.item;
-        let currentLevel = 0;
-        let currentValues = [];
-        const chain = { 0: { currentItem, currentValues } };
-        this.state.orderedLinks.map((item) => {
-            const itemType = this.state.itemTypes[item];
-
-            if (Object.keys(this.state.sectionLinks).indexOf(item) >= 0) {
-                currentValues = currentValues.filter((e) => { return e !== item });
-                if (chain[currentLevel + 1]) {
-                    chain[currentLevel + 1].currentValues = currentValues;
-                }
-                const section = this.state.sectionLinks[item];
-                currentValues = section.values;
-                // new section
-                currentItem = chain[section.level].currentItem
-                const newItem = {
-                    "linkId": item,
-                    "text": section.text,
-                    item: []
-                };
-                currentItem.push(newItem);
-                currentItem = newItem.item;
-                currentLevel = section.level;
-
-                // filter out this section
-                chain[section.level + 1] = { currentItem, currentValues };
-            } else {
-                // not a new section, so it's an item
-                if (currentValues.indexOf(item) < 0 && itemType && itemType.enabled) {
-                    // item not in this section, drop a level
-                    const tempLevel = currentLevel;
-
-                    while (chain[currentLevel].currentValues.length === 0 && currentLevel > 0) {
-                        // keep dropping levels until we find an unfinished section
-                        currentLevel--;
+        this.generateBundle().then((priorAuthBundle) => {
+            /*creating token */
+            const tokenPost = new XMLHttpRequest();
+            var auth_response;
+            var self = this;
+            tokenPost.open("POST", tokenUri);
+            tokenPost.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            var data = `client_id=app-login&grant_type=password&username=john&password=john123`
+            tokenPost.send(data);
+            tokenPost.onload = function () {
+                if (tokenPost.status === 200) {
+                    try {
+                        auth_response = JSON.parse(tokenPost.responseText);
+                        console.log("auth res--1243-", auth_response);
+                    } catch (e) {
+                        const errorMsg = "Failed to parse auth response";
+                        document.body.innerText = errorMsg;
+                        console.error(errorMsg);
+                        return;
                     }
-
-                    // check off current item
-                    chain[tempLevel].currentValues = currentValues.filter((e) => { return e !== item });
-
-                    currentValues = chain[currentLevel].currentValues;
-                    currentItem = chain[currentLevel].currentItem;
-                } else {
-                    // item is in this section, check it off
-
-                    currentValues = currentValues.filter((e) => { return e !== item });
-                    chain[currentLevel + 1].currentValues = currentValues;
-                }
-            }
-            if (itemType && (itemType.enabled || this.state.turnOffValues.indexOf(item) >= 0)) {
-                const answerItem = {
-                    "linkId": item,
-                    "text": itemType.text,
-                    "answer": []
-                }
-                switch (itemType.valueType) {
-                    case "valueAttachment":
-                        console.log("In attachment", this.state.values[item])
-                        const attachment = this.state.values[item]
-                        answerItem.answer.push({ [itemType.valueType]: attachment })
-                        break;
-                    case "valueQuantity":
-                        const quantity = this.state.values[item];
-                        if (quantity && quantity.comparator === "=") {
-                            delete quantity.comparator;
-                        }
-                        answerItem.answer.push({ [itemType.valueType]: quantity })
-                        break;
-                    case "valueDateTime":
-                    case "valueDate":
-                        const date = this.state.values[item];
-                        console.log("date---", date);
-                        if (date != undefined) {
-                            answerItem.answer.push({ [itemType.valueType]: date.toString() });
-                        } else {
-                            answerItem.answer.push({ [itemType.valueType]: "" });
-                        }
-                        break;
-                    default:
-                        const answer = this.state.values[item];
-                        if (Array.isArray(answer)) {
-                            answer.forEach((e) => {
-                                // possible for an array to contain multiple types
-                                let finalType;
-                                if (e.valueTypeFinal) {
-                                    finalType = e.valueTypeFinal;
-                                    delete e.valueTypeFinal;
-                                } else {
-                                    finalType = itemType.valueType;
+                    /** creating cliam  */
+                    const Http = new XMLHttpRequest();
+                    // const priorAuthUrl = "https://davinci-prior-auth.logicahealth.org/fhir/Claim/$submit";
+                    // const priorAuthUrl = "http://cmsfhir.mettles.com:8080/drfp/fhir/Claim/$submit";
+                    // const priorAuthUrl = "http://cdex.mettles.com:9000/fhir/Claim/$submit";
+                    var priorAuthUrl = "http://cdex.mettles.com:8180/hapi-fhir-jpaserver/fhir/Claim/$submit";
+                    if (self.props.hasOwnProperty("claimEndpoint") && self.props.claimEndpoint !== null) {
+                        priorAuthUrl = self.props.claimEndpoint;
+                    }
+                    console.log("claim final--", JSON.stringify(priorAuthBundle));
+                    Http.open("POST", priorAuthUrl);
+                    Http.setRequestHeader("Content-Type", "application/fhir+json");
+                    // Http.setRequestHeader("Authorization", "Bearer " + auth_response.access_token);
+                    // Http.send(JSON.stringify(pBundle));
+                    Http.send(JSON.stringify(priorAuthBundle));
+                    Http.onreadystatechange = function () {
+                        if (this.readyState === XMLHttpRequest.DONE) {
+                            var message = "";
+                            self.setState({ displayQuestionnaire: false })
+                            if (this.status === 200) {
+                                var claimResponseBundle = JSON.parse(this.responseText);
+                                var claimResponse = self.state.claimResponse;
+                                console.log("lllllll")
+                                if (claimResponseBundle.hasOwnProperty('entry')) {
+                                    claimResponseBundle.entry.forEach((res) => {
+                                        if (res.resource.resourceType === "ClaimResponse") {
+                                            claimResponse = res.resource;
+                                        }
+                                    })
                                 }
-                                answerItem.answer.push({ [finalType]: e });
-                            })
-                        } else {
-                            answerItem.answer.push({ [itemType.valueType]: answer });
+                                self.setState({ claimResponseBundle })
+                                self.setState({ claimResponse })
+                                console.log(self.state.claimResponseBundle, self.state.claimResponse);
+                                self.setState({ claimMessage: "Prior Authorization has been submitted successfully" })
+                                message = "Prior Authorization " + claimResponse.disposition + "\n";
+                                message += "Prior Authorization Number: " + claimResponse.preAuthRef;
+                            } else {
+                                self.setState({ "claimMessage": "Prior Authorization Request Failed." })
+                                message = "Prior Authorization Request Failed."
+                            }
+                            self.setState({ loading: false });
+                            console.log(message);
+                            //alert(message);
+                            console.log(this.responseText);
                         }
-                }
-                // FHIR fields are not allowed to be empty or null, so we must prune
-                if (this.isEmptyAnswer(answerItem.answer)) {
-                    // console.log("Removing empty answer: ", answerItem);
-                    delete answerItem.answer;
-                }
-                currentItem.push(answerItem);
-            }
-        });
-        console.log(response);
-        const priorAuthBundle = JSON.parse(JSON.stringify(this.props.bundle));
-        priorAuthBundle.entry.unshift({ resource: response })
-        priorAuthBundle.entry.unshift({ resource: this.props.serviceRequest })
-        const organizationResource = {
-            "resourceType": "Organization",
-            "id": "20114",
-            "meta": {
-                "versionId": "1",
-                "lastUpdated": "2019-09-13T18:52:12.558+00:00"
-            },
-            "identifier": [
-                {
-                    "system": "https://www.maxmddirect.com/fhir/identifier",
-                    "value": "6677829"
-                }
-            ],
-            "name": "UHC",
-            "telecom": [
-                {
-                    "id": "1",
-                    "system": "phone",
-                    "value": "666444-5555",
-                    "use": "work"
-                }
-            ],
-            "address": [
-                {
-                    "line": [
-                        "123 Healthcare Ave."
-                    ],
-                    "city": "Chicago",
-                    "state": "IL",
-                    "postalCode": "60643",
-                    "country": "US"
-                }
-            ]
-        }
-        priorAuthBundle.entry.unshift({ resource: organizationResource })
-        
-        console.log(priorAuthBundle);
-
-        const priorAuthClaim = {
-            resourceType: "Claim",
-            status: "active",
-            type: {
-                coding: [{
-                    system: "http://terminology.hl7.org/CodeSystem/claim-type",
-                    code: "institutional",
-                    display: "Institutional"
-                }]
-            },
-            // subType: {
-            //     coding: [
-            //         {
-            //             system: "https://www.cms.gov/codes/billtype",
-            //             code: "41",
-            //             display: "Hospital Outpatient Surgery performed in an Ambulatory ​Surgical Center"
-            //         }
-            //     ]
-            // },
-            use: "preauthorization",
-            patient: { reference: this.makeReference(priorAuthBundle, "Patient") },
-            created: authored,
-            provider: { reference: this.makeReference(priorAuthBundle, "Practitioner") },
-            insurer: { reference: this.makeReference(priorAuthBundle, "Organization") },
-            // facility: { reference: this.makeReference(priorAuthBundle, "Location") },
-            priority: { coding: [{ "code": "normal" }] },
-            presciption: { reference: this.makeReference(priorAuthBundle, "ServiceRequest") },
-            supportingInfo: [{
-                sequence: 1,
-                category: {
-                    coding: [
-                        {
-                            "system": "http://hl7.org/us/davinci-pas/CodeSystem/PASSupportingInfoType",
-                            "code": "patientEvent"
-                        }
-                    ]
-                },
-                timingPeriod: {
-                    start: "2019-01-05T00:00:00-07:00",
-                    end: "2019-03-05T00:00:00-07:00"
-                }
-            },
-            {
-                sequence: 2,
-                category: {
-                    coding: [{
-                        system: "http://terminology.hl7.org/CodeSystem/claiminformationcategory",
-                        code: "info",
-                        display: "Information"
-                    }]
-                },
-                valueReference: { reference: this.makeReference(priorAuthBundle, "QuestionnaireResponse") }
-            }],
-            // item: [
-            //     {
-            //         sequence: 1,
-            //         productOrService: this.props.deviceRequest.codeCodeableConcept,
-            //         quantity: {
-            //             value: this.props.deviceRequest.parameter[0].valueQuantity.value
-            //         }
-            //     }
-            // ],
-            careTeam: [
-                {
-                    sequence: 1,
-                    provider: { reference: this.makeReference(priorAuthBundle, "Practitioner") },
-                    extension: [
-                        {
-                            url: "http://terminology.hl7.org/ValueSet/v2-0912",
-                            valueCode: "OP"
-                        }
-                    ]
-                }
-            ],
-            diagnosis: [],
-            insurance: [{
-                sequence: 1,
-                focal: true,
-                // coverage: { reference: this.makeReference(priorAuthBundle, "Coverage") }
-            }]
-        }
-        var sequence = 1;
-        priorAuthBundle.entry.forEach(function (entry, index) {
-            if (entry.resource !== undefined) {
-                if (entry.resource.resourceType == "Condition") {
-                    priorAuthClaim.diagnosis.push({
-                        sequence: sequence++,
-                        diagnosisReference: { reference: "Condition/" + entry.resource.id }
-                    });
-                }
-            }
-        })
-        // console.log(priorAuthClaim, 'HEREEE', tokenUri);
-        console.log(JSON.stringify(priorAuthClaim));
-        if (sessionStorage.hasOwnProperty("docResources")) {
-            if (sessionStorage["docResources"]) {
-                JSON.parse(sessionStorage["docResources"]).forEach((doc) => {
-                    priorAuthBundle.entry.push({ "resource": doc })
-                })
-            }
-        }
-        priorAuthBundle.entry.unshift({ resource: priorAuthClaim })
-
-        /*creating token */
-        const tokenPost = new XMLHttpRequest();
-        var auth_response;
-        tokenPost.open("POST", tokenUri);
-        tokenPost.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-        var data = `client_id=app-login&grant_type=password&username=john&password=john123`
-        tokenPost.send(data);
-        tokenPost.onload = function () {
-            if (tokenPost.status === 200) {
-                try {
-                    auth_response = JSON.parse(tokenPost.responseText);
-                    console.log("auth res--1243-", auth_response);
-                } catch (e) {
-                    const errorMsg = "Failed to parse auth response";
+                    }
+                } else {
+                    const errorMsg = "Token post request failed. Returned status: " + tokenPost.status;
                     document.body.innerText = errorMsg;
                     console.error(errorMsg);
                     return;
                 }
-                /** creating cliam  */
-                const Http = new XMLHttpRequest();
-                // const priorAuthUrl = "https://davinci-prior-auth.logicahealth.org/fhir/Claim/$submit";
-                // const priorAuthUrl = "http://cmsfhir.mettles.com:8080/drfp/fhir/Claim/$submit";
-                // const priorAuthUrl = "http://cdex.mettles.com:9000/fhir/Claim/$submit";
-                const priorAuthUrl = "http://cdex.mettles.com:8180/hapi-fhir-jpaserver/fhir/Claim/$submit";
-
-                console.log("claim final--", JSON.stringify(priorAuthBundle));
-                Http.open("POST", priorAuthUrl);
-                Http.setRequestHeader("Content-Type", "application/fhir+json");
-                Http.setRequestHeader("Authorization", "Bearer " + auth_response.access_token);
-                // Http.send(JSON.stringify(pBundle));
-                Http.send(JSON.stringify(priorAuthBundle));
-                Http.onreadystatechange = function () {
-                    if (this.readyState === XMLHttpRequest.DONE) {
-                        var message = "";
-                        self.setState({ displayQuestionnaire: false })
-                        if (this.status === 200) {
-                            var claimResponseBundle = JSON.parse(this.responseText);
-                            var claimResponse = self.state.claimResponse;
-                            console.log("lllllll")
-                            if (claimResponseBundle.hasOwnProperty('entry')) {
-                                claimResponseBundle.entry.forEach((res) => {
-                                    if (res.resource.resourceType === "ClaimResponse") {
-                                        claimResponse = res.resource;
-                                    }
-                                })
-                            }
-                            self.setState({ claimResponseBundle })
-                            self.setState({ claimResponse })
-                            console.log(self.state.claimResponseBundle, self.state.claimResponse);
-                            self.setState({ claimMessage: "Prior Authorization has been submitted successfully" })
-                            message = "Prior Authorization " + claimResponse.disposition + "\n";
-                            message += "Prior Authorization Number: " + claimResponse.preAuthRef;
-                        } else {
-                            self.setState({ "claimMessage": "Prior Authorization Request Failed." })
-                            message = "Prior Authorization Request Failed."
-                        }
-                        self.setState({ loading: false });
-                        console.log(message);
-                        //alert(message);
-                        console.log(this.responseText);
-                    }
-                }
-            } else {
-                const errorMsg = "Token post request failed. Returned status: " + tokenPost.status;
-                document.body.innerText = errorMsg;
-                console.error(errorMsg);
-                return;
-            }
-        };
-        // tokenPost.send(data)
-        // const Http = new XMLHttpRequest();
-        // // const priorAuthUrl = "https://davinci-prior-auth.logicahealth.org/fhir/Claim/$submit";
-        // const priorAuthUrl = "http://54.227.218.17:9000/fhir/Claim/$submit";
-        // Http.open("POST", priorAuthUrl);
-        // Http.setRequestHeader("Content-Type", "application/fhir+json");
-        // Http.setRequestHeader("Authorization", "Bearer "+auth_response);
-        // Http.send(JSON.stringify(priorAuthBundle));
-        // Http.onreadystatechange = function() {
-        //     if (this.readyState === XMLHttpRequest.DONE) {
-        //         var message = "";
-        //         if (this.status === 200) {
-        //             var claimResponse = JSON.parse(this.responseText);
-        //             message = "Prior Authorization " + claimResponse.disposition + "\n";
-        //             message += "Prior Authorization Number: " + claimResponse.preAuthRef;
-        //         } else {
-        //             message = "Prior Authorization Request Failed."
-        //         }
-        //         console.log(message);
-        //         alert(message);
-        //         console.log(this.responseText);
-        //     }
-        // }
+            };
+        }).catch((error) => {
+            console.log("unable to generate bundle", error);
+        })
     }
 
     isEmptyAnswer(answer) {
@@ -1085,7 +1092,20 @@ export default class QuestionnaireForm extends Component {
                         <DocumentInput
                             updateCallback={this.updateDocuments}
                         /> */}
+                        {this.state.showPreview && 
+                            <div><pre style={{ background: "#dee2e6", height: "500px" }}> {JSON.stringify(this.state.priorAuthBundle, null, 2)}</pre></div>
+                        }
                         <div className="text-center" style={{ marginBottom: "50px" }}>
+                            <button type="button" style={{color:"grey"}} onClick={this.previewBundle}>Preview
+                                        <div id="fse" className={"spinner " + (this.state.previewloading ? "visible" : "invisible")}>
+                                    <Loader
+                                        type="Oval"
+                                        color="#fff"
+                                        height="15"
+                                        width="15"
+                                    />
+                                </div>
+                            </button>
                             <button type="button" onClick={this.outputResponse}>Submit Prior Authorization
                                         <div id="fse" className={"spinner " + (this.state.loading ? "visible" : "invisible")}>
                                     <Loader
@@ -1143,8 +1163,8 @@ export default class QuestionnaireForm extends Component {
                                 <div className="col-6">: {this.state.claimResponse.preAuthRef}</div>
                             </div>
                             {JSON.stringify(this.state.claimResponse).length > 0 &&
-                                <div style={{paddingTop:"10px",paddingBottom:"10px"}}>
-                                    <button style={{float:"right"}} type="button" onClick={this.handleShowBundle}>Show Claim Response Bundle</button>
+                                <div style={{ paddingTop: "10px", paddingBottom: "10px" }}>
+                                    <button style={{ float: "right" }} type="button" onClick={this.handleShowBundle}>Show Claim Response Bundle</button>
 
                                     <button type="button" onClick={this.reloadClaimResponse} >Reload Claim Response
                                 <div id="fse" className={"spinner " + (this.state.resloading ? "visible" : "invisible")}>
@@ -1158,7 +1178,7 @@ export default class QuestionnaireForm extends Component {
                                     </button></div>
                             }
                             {this.state.showBundle &&
-                                <pre style={{ background: "#dee2e6", height:"500px" }}> {JSON.stringify(this.state.claimResponseBundle, null, 2)}</pre>
+                                <pre style={{ background: "#dee2e6", height: "500px" }}> {JSON.stringify(this.state.claimResponseBundle, null, 2)}</pre>
                             }
                         </div>
 

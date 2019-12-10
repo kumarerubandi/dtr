@@ -272,8 +272,8 @@ tokenPost.onload = function () {
       fetch(launchDataURL).then(handleFetchErrors).then(r => r.json())
         .then(launchContext => {
           if (!auth_response.hasOwnProperty("patient")) {
-            // patient = launchContext[state].patientId;
-            patient = "20198"
+            patient = launchContext[state].patientId;
+            // patient = "20198"
           }
 
           console.log("launch context---", launchContext[state]);

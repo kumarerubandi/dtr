@@ -15,7 +15,8 @@ class App extends Component {
       cqlPrepoulationResults: null,
       serviceRequest: null,
       bundle: null,
-      logs: []
+      logs: [],
+      claimEndpoint: null
     }
     this.smart = props.smart;
     this.consoleLog = this.consoleLog.bind(this);
@@ -27,6 +28,8 @@ class App extends Component {
     fetchArtifacts(this.props.FHIR_URI_PREFIX, this.props.questionnaireUri, this.smart, this.props.filepath, this.consoleLog)
       .then(artifacts => {
         console.log("fetched needed artifacts:", artifacts)
+        this.setState({"claimEndpoint":artifacts.claimEndpoint})
+        sessionStorage['claim_endpoint'] = artifacts.claimEndpoint;
         this.setState({ questionnaire: artifacts.questionnaire })
         this.setState({ serviceRequest: this.props.serviceRequest })
         console.log("device request--", this.props.serviceRequest, artifacts.dataRequirement);
@@ -80,7 +83,10 @@ class App extends Component {
     if (this.state.questionnaire && this.state.cqlPrepoulationResults && this.state.bundle) {
       return (
         <div className="App">
-          <QuestionnaireForm smart={this.smart} qform={this.state.questionnaire} cqlPrepoulationResults={this.state.cqlPrepoulationResults} serviceRequest={this.state.serviceRequest} bundle={this.state.bundle} />
+          <QuestionnaireForm smart={this.smart} qform={this.state.questionnaire} 
+          cqlPrepoulationResults={this.state.cqlPrepoulationResults} 
+          serviceRequest={this.state.serviceRequest} bundle={this.state.bundle}
+          claimEndpoint={this.state.claimEndpoint} />
         </div>
       );
     } else {
