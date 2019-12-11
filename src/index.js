@@ -280,11 +280,13 @@ tokenPost.onload = function () {
           const appContext = {
             template: launchContext[state].template,
             request: launchContext[state].request,
+            payerName: launchContext[state].payerName,
             filepath: null,
             patientId: patient
           }
           console.log("launch context json", appContext);
           sessionStorage["patientId"] = patient;
+          sessionStorage["payerName"] = launchContext[state].payerName;
           var smart = FHIR.client({
             serviceUrl: serviceUri,
             patientId: appContext.patientId,

@@ -721,7 +721,7 @@ export default class QuestionnaireForm extends Component {
                         "value": "6677829"
                     }
                 ],
-                "name": "UHC",
+                "name": sessionStorage["payerName"],
                 "telecom": [
                     {
                         "id": "1",
@@ -800,15 +800,15 @@ export default class QuestionnaireForm extends Component {
                     },
                     valueReference: { reference: self.makeReference(priorAuthBundle, "QuestionnaireResponse") }
                 }],
-                // item: [
-                //     {
-                //         sequence: 1,
-                //         productOrService: self.props.deviceRequest.codeCodeableConcept,
-                //         quantity: {
-                //             value: self.props.deviceRequest.parameter[0].valueQuantity.value
-                //         }
-                //     }
-                // ],
+                item: [
+                    {
+                        sequence: 1,
+                        productOrService: self.props.serviceRequest.code,
+                        quantity: {
+                            value: self.props.serviceRequest.quantity.value
+                        }
+                    }
+                ],
                 careTeam: [
                     {
                         sequence: 1,
@@ -828,6 +828,9 @@ export default class QuestionnaireForm extends Component {
                     // coverage: { reference: self.makeReference(priorAuthBundle, "Coverage") }
                 }]
             }
+            // if(sessionStorage["payerName"] != "" && sessionStorage["payerName"] === "medicare_fee_for_service"){
+            //     priorAuthClaim["facility"] = { reference: self.makeReference(priorAuthBundle, "Location") };
+            // }
             var sequence = 1;
             priorAuthBundle.entry.forEach(function (entry, index) {
                 if (entry.resource !== undefined) {
