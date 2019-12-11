@@ -707,7 +707,29 @@ export default class QuestionnaireForm extends Component {
             console.log(response);
             const priorAuthBundle = JSON.parse(JSON.stringify(self.props.bundle));
             priorAuthBundle.entry.unshift({ resource: response })
-            priorAuthBundle.entry.unshift({ resource: self.props.serviceRequest })
+            priorAuthBundle.entry.unshift({ resource: self.props.serviceRequest });
+            const locationResource = {
+                "resourceType": "Location",
+                "id": "29955",
+                "meta": {
+                    "versionId": "1",
+                    "lastUpdated": "2019-07-11T06:20:39.485+00:00",
+                    "profile": [
+                        "http://hl7.org/fhir/us/qicore/StructureDefinition/qicore-location"
+                    ]
+                },
+                "name": "South Wing, second floor",
+                "address": {
+                    "line": [
+                        "102 Heritage Dr."
+                    ],
+                    "city": "Somerset",
+                    "state": "NJ",
+                    "postalCode": "08873",
+                    "country": "USA"
+                }
+            }
+            priorAuthBundle.entry.unshift({ resource: locationResource })
             const organizationResource = {
                 "resourceType": "Organization",
                 "id": "20114",
@@ -771,7 +793,7 @@ export default class QuestionnaireForm extends Component {
                 provider: { reference: self.makeReference(priorAuthBundle, "Practitioner") },
                 enterer: { reference: self.makeReference(priorAuthBundle, "Practitioner") },
                 insurer: { reference: self.makeReference(priorAuthBundle, "Organization") },
-                // facility: { reference: self.makeReference(priorAuthBundle, "Location") },
+                facility: { reference: self.makeReference(priorAuthBundle, "Location") },
                 priority: { coding: [{ "code": "normal" }] },
                 presciption: { reference: self.makeReference(priorAuthBundle, "ServiceRequest") },
                 supportingInfo: [{
@@ -801,13 +823,7 @@ export default class QuestionnaireForm extends Component {
                     valueReference: { reference: self.makeReference(priorAuthBundle, "QuestionnaireResponse") }
                 }],
                 item: [
-                    {
-                        sequence: 1,
-                        productOrService: self.props.serviceRequest.code,
-                        quantity: {
-                            value: self.props.serviceRequest.quantity.value
-                        }
-                    }
+                    
                 ],
                 careTeam: [
                     {
@@ -827,6 +843,16 @@ export default class QuestionnaireForm extends Component {
                     focal: true,
                     // coverage: { reference: self.makeReference(priorAuthBundle, "Coverage") }
                 }]
+            }
+            if(self.props.serviceRequest.hasOwnProperty("quantity") && self.props.serviceRequest.hasOwnProperty("code")){
+                let service = {
+                    sequence: 1,
+                    productOrService: self.props.serviceRequest.code,
+                    quantity: {
+                        value: self.props.serviceRequest.quantity.value
+                    }
+                }
+                priorAuthClaim.item.push(service);
             }
             // if(sessionStorage["payerName"] != "" && sessionStorage["payerName"] === "medicare_fee_for_service"){
             //     priorAuthClaim["facility"] = { reference: self.makeReference(priorAuthBundle, "Location") };
