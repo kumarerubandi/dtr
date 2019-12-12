@@ -708,6 +708,107 @@ export default class QuestionnaireForm extends Component {
             const priorAuthBundle = JSON.parse(JSON.stringify(self.props.bundle));
             priorAuthBundle.entry.unshift({ resource: response })
             priorAuthBundle.entry.unshift({ resource: self.props.serviceRequest });
+
+
+            const orgRes = {
+                "resource": {
+                    "resourceType": "Organization",
+                    "id": "516",
+                    "identifier": [
+                        {
+                            "system": "http://hl7.org.fhir/sid/us-npi",
+                            "value": "1568461820"
+                        }
+                    ],
+                    "name": "Rest Haven ILLIANA Christian Co",
+                    "address": [
+                        {
+                            "use": "work",
+                            "line": [
+                                "18601 North Creek Dr A"
+                            ],
+                            "city": "Tinley Park",
+                            "state": "IL",
+                            "postalCode": "604776398"
+                        }
+                    ],
+                    "contact": [
+                        {
+                            "name": [
+                                {
+                                    "use": "official",
+                                    "family": "Randall",
+                                    "given": [
+                                        "Janice"
+                                    ]
+                                }
+                            ],
+                            "telecom": [
+                                {
+                                    "system": "phone",
+                                    "value": "803-763-5900",
+                                    "use": "home"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            };
+            // const organizationResource = {
+            //     "resourceType": "Organization",
+            //     "id": "20114",
+            //     "meta": {
+            //         "versionId": "1",
+            //         "lastUpdated": "2019-09-13T18:52:12.558+00:00"
+            //     },
+            //     "identifier": [
+            //         {
+            //             "system": "urn:ietf:rfc:3986",
+            //             "value": "2.16.840.1.113883.13.34.110.1.110.11"
+            //         },
+            //         {
+            //             "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+            //             "code": "NII",
+            //             "value": "06111"
+            //         }
+            //     ],
+            //     "name": sessionStorage["payerName"],
+            //     "contact":[
+            //         {
+            //            "name":[
+            //               {
+            //                  "use":"official",
+            //                  "family":"Randall",
+            //                  "given":[
+            //                     "Janice"
+            //                  ]
+            //               }
+            //            ],
+            //            "telecom":[
+            //               {
+            //                  "system":"phone",
+            //                  "value":"803-763-5900",
+            //                  "use":"home"
+            //               }
+            //            ]
+            //         }
+            //      ],
+            //     "address": [
+            //         {
+            //             "line": [
+            //                 "123 Healthcare Ave."
+            //             ],
+            //             "city": "Chicago",
+            //             "state": "IL",
+            //             "postalCode": "60643",
+            //             "country": "US"
+            //         }
+            //     ]
+            // }
+            priorAuthBundle.entry.unshift({ resource: orgRes })
+
+            console.log(priorAuthBundle);
+
             const locationResource = {
                 "resourceType": "Location",
                 "id": "29955",
@@ -729,6 +830,9 @@ export default class QuestionnaireForm extends Component {
                         ]
                     }
                 ],
+                "managingOrganization": {
+                    "reference": "Organization/516"
+                },
                 "name": "South Wing, second floor",
                 "address": {
                     "line": [
@@ -741,60 +845,6 @@ export default class QuestionnaireForm extends Component {
                 }
             }
             priorAuthBundle.entry.unshift({ resource: locationResource })
-            const organizationResource = {
-                "resourceType": "Organization",
-                "id": "20114",
-                "meta": {
-                    "versionId": "1",
-                    "lastUpdated": "2019-09-13T18:52:12.558+00:00"
-                },
-                "identifier": [
-                    {
-                        "system": "urn:ietf:rfc:3986",
-                        "value": "2.16.840.1.113883.13.34.110.1.110.11"
-                    },
-                    {
-                        "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
-                        "code": "NII",
-                        "value": "06111"
-                    }
-                ],
-                "name": sessionStorage["payerName"],
-                "contact":[
-                    {
-                       "name":[
-                          {
-                             "use":"official",
-                             "family":"Randall",
-                             "given":[
-                                "Janice"
-                             ]
-                          }
-                       ],
-                       "telecom":[
-                          {
-                             "system":"phone",
-                             "value":"803-763-5900",
-                             "use":"home"
-                          }
-                       ]
-                    }
-                 ],
-                "address": [
-                    {
-                        "line": [
-                            "123 Healthcare Ave."
-                        ],
-                        "city": "Chicago",
-                        "state": "IL",
-                        "postalCode": "60643",
-                        "country": "US"
-                    }
-                ]
-            }
-            priorAuthBundle.entry.unshift({ resource: organizationResource })
-
-            console.log(priorAuthBundle);
 
             const priorAuthClaim = {
                 resourceType: "Claim",
@@ -818,7 +868,7 @@ export default class QuestionnaireForm extends Component {
                 use: "preauthorization",
                 patient: { reference: self.makeReference(priorAuthBundle, "Patient") },
                 created: authored,
-                provider: { reference: self.makeReference(priorAuthBundle, "Practitioner") },
+                provider: { reference: self.makeReference(priorAuthBundle, "Organization") },
                 enterer: { reference: self.makeReference(priorAuthBundle, "Practitioner") },
                 insurer: { reference: self.makeReference(priorAuthBundle, "Organization") },
                 facility: { reference: self.makeReference(priorAuthBundle, "Location") },
@@ -866,7 +916,7 @@ export default class QuestionnaireForm extends Component {
                     }
                 ],
                 diagnosis: [],
-                procedure:[],
+                procedure: [],
                 insurance: [{
                     sequence: 1,
                     focal: true,
@@ -896,7 +946,7 @@ export default class QuestionnaireForm extends Component {
                             priorAuthClaim.item[0].diagnosisSequence.push(sequence);
                             sequence++;
                         }
-                        
+
                     }
                 })
 
@@ -911,7 +961,7 @@ export default class QuestionnaireForm extends Component {
                             priorAuthClaim.item[0].procedureSequence.push(psequence);
                             psequence++;
                         }
-                        
+
                     }
                 })
             }
@@ -1173,7 +1223,7 @@ export default class QuestionnaireForm extends Component {
                             <div><pre style={{ background: "#dee2e6", height: "500px" }}> {JSON.stringify(this.state.priorAuthBundle, null, 2)}</pre></div>
                         }
                         <div className="text-center" style={{ marginBottom: "50px" }}>
-                            <button type="button" style={{ background   : "grey" }} onClick={this.previewBundle}>Preview
+                            <button type="button" style={{ background: "grey" }} onClick={this.previewBundle}>Preview
                                         <div id="fse" className={"spinner " + (this.state.previewloading ? "visible" : "invisible")}>
                                     <Loader
                                         type="Oval"
