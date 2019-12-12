@@ -73,8 +73,8 @@ function redirect(conformanceStatement) {
 
   var authUri, tokenUri;
   if (serviceUri.search('cdex.mettles.com') > 0) {
-      authUri = "https://auth.mettles.com:8443/auth/realms/ProviderCredentials/protocol/openid-connect/auth";
-      tokenUri = "https://auth.mettles.com:8443/auth/realms/ProviderCredentials/protocol/openid-connect/token"
+      authUri = "https://auth.mettles.com/auth/realms/ProviderCredentials/protocol/openid-connect/auth";
+      tokenUri = "https://auth.mettles.com/auth/realms/ProviderCredentials/protocol/openid-connect/token"
     } else {
       var smartExtension = conformanceStatement.rest[0].security.extension.filter(function(e) {
         return e.url === "http://fhir-registry.smarthealthit.org/StructureDefinition/oauth-uris";

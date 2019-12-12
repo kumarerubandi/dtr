@@ -59,9 +59,9 @@ export default class QuestionnaireForm extends Component {
             loading: false,
             resloading: false,
             showBundle: false,
-            priorAuthBundle:{},
-            showPreview:false,
-            previewloading:false
+            priorAuthBundle: {},
+            showPreview: false,
+            previewloading: false
         };
 
         this.updateQuestionValue = this.updateQuestionValue.bind(this);
@@ -580,7 +580,7 @@ export default class QuestionnaireForm extends Component {
     }
 
     generateBundle() {
-        
+
         var self = this;
         return new Promise(function (resolve, reject) {
             console.log(self.state.sectionLinks);
@@ -718,6 +718,17 @@ export default class QuestionnaireForm extends Component {
                         "http://hl7.org/fhir/us/qicore/StructureDefinition/qicore-location"
                     ]
                 },
+                "type": [
+                    {
+                        "coding": [
+                            {
+                                "system": "http://terminology.hl7.org/CodeSystem/v3-RoleCode",
+                                "code": "PTRES",
+                                "display": "Patient's Residence"
+                            }
+                        ]
+                    }
+                ],
                 "name": "South Wing, second floor",
                 "address": {
                     "line": [
@@ -739,19 +750,36 @@ export default class QuestionnaireForm extends Component {
                 },
                 "identifier": [
                     {
-                        "system": "https://www.maxmddirect.com/fhir/identifier",
-                        "value": "6677829"
+                        "system": "urn:ietf:rfc:3986",
+                        "value": "2.16.840.1.113883.13.34.110.1.110.11"
+                    },
+                    {
+                        "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                        "code": "NII",
+                        "value": "06111"
                     }
                 ],
                 "name": sessionStorage["payerName"],
-                "telecom": [
+                "contact":[
                     {
-                        "id": "1",
-                        "system": "phone",
-                        "value": "666444-5555",
-                        "use": "work"
+                       "name":[
+                          {
+                             "use":"official",
+                             "family":"Randall",
+                             "given":[
+                                "Janice"
+                             ]
+                          }
+                       ],
+                       "telecom":[
+                          {
+                             "system":"phone",
+                             "value":"803-763-5900",
+                             "use":"home"
+                          }
+                       ]
                     }
-                ],
+                 ],
                 "address": [
                     {
                         "line": [
@@ -823,7 +851,7 @@ export default class QuestionnaireForm extends Component {
                     valueReference: { reference: self.makeReference(priorAuthBundle, "QuestionnaireResponse") }
                 }],
                 item: [
-                    
+
                 ],
                 careTeam: [
                     {
@@ -838,36 +866,55 @@ export default class QuestionnaireForm extends Component {
                     }
                 ],
                 diagnosis: [],
+                procedure:[],
                 insurance: [{
                     sequence: 1,
                     focal: true,
                     // coverage: { reference: self.makeReference(priorAuthBundle, "Coverage") }
                 }]
             }
-            if(self.props.serviceRequest.hasOwnProperty("quantity") && self.props.serviceRequest.hasOwnProperty("code")){
+            if (self.props.serviceRequest.hasOwnProperty("quantity") && self.props.serviceRequest.hasOwnProperty("code")) {
                 let service = {
                     sequence: 1,
                     productOrService: self.props.serviceRequest.code,
                     quantity: {
                         value: self.props.serviceRequest.quantity.value
-                    }
+                    },
+                    procedureSequence: [],
+                    diagnosisSequence: []
                 }
                 priorAuthClaim.item.push(service);
-            }
-            // if(sessionStorage["payerName"] != "" && sessionStorage["payerName"] === "medicare_fee_for_service"){
-            //     priorAuthClaim["facility"] = { reference: self.makeReference(priorAuthBundle, "Location") };
-            // }
-            var sequence = 1;
-            priorAuthBundle.entry.forEach(function (entry, index) {
-                if (entry.resource !== undefined) {
-                    if (entry.resource.resourceType == "Condition") {
-                        priorAuthClaim.diagnosis.push({
-                            sequence: sequence++,
-                            diagnosisReference: { reference: "Condition/" + entry.resource.id }
-                        });
+
+                var sequence = 1;
+                priorAuthBundle.entry.forEach(function (entry, index) {
+                    if (entry.resource !== undefined) {
+                        if (entry.resource.resourceType == "Condition") {
+                            priorAuthClaim.diagnosis.push({
+                                sequence: sequence,
+                                diagnosisReference: { reference: "Condition/" + entry.resource.id }
+                            });
+                            priorAuthClaim.item[0].diagnosisSequence.push(sequence);
+                            sequence++;
+                        }
+                        
                     }
-                }
-            })
+                })
+
+                var psequence = 1;
+                priorAuthBundle.entry.forEach(function (entry, index) {
+                    if (entry.resource !== undefined) {
+                        if (entry.resource.resourceType == "Procedure") {
+                            priorAuthClaim.procedure.push({
+                                sequence: psequence,
+                                procedureReference: { reference: "Procedure/" + entry.resource.id }
+                            });
+                            priorAuthClaim.item[0].procedureSequence.push(psequence);
+                            psequence++;
+                        }
+                        
+                    }
+                })
+            }
             // console.log(priorAuthClaim, 'HEREEE', tokenUri);
             console.log(JSON.stringify(priorAuthClaim));
             if (sessionStorage.hasOwnProperty("docResources")) {
@@ -883,15 +930,15 @@ export default class QuestionnaireForm extends Component {
         });
 
     }
-    previewBundle(){
-        this.setState({previewloading:true});
+    previewBundle() {
+        this.setState({ previewloading: true });
         this.generateBundle().then((priorAuthBundle) => {
-            this.setState({priorAuthBundle});
-            console.log("Prior auth bundle---",this.state.priorAuthBundle)
+            this.setState({ priorAuthBundle });
+            console.log("Prior auth bundle---", this.state.priorAuthBundle)
             let showPreview = this.state.showPreview;
-            this.setState({showPreview:!showPreview});
-            console.log("Prior auth bundle-preview--",this.state.showPreview)
-            this.setState({previewloading:false});
+            this.setState({ showPreview: !showPreview });
+            console.log("Prior auth bundle-preview--", this.state.showPreview)
+            this.setState({ previewloading: false });
         });
     }
     // create the questionnaire response based on the current state
@@ -1122,11 +1169,11 @@ export default class QuestionnaireForm extends Component {
                         <DocumentInput
                             updateCallback={this.updateDocuments}
                         /> */}
-                        {this.state.showPreview && 
+                        {this.state.showPreview &&
                             <div><pre style={{ background: "#dee2e6", height: "500px" }}> {JSON.stringify(this.state.priorAuthBundle, null, 2)}</pre></div>
                         }
                         <div className="text-center" style={{ marginBottom: "50px" }}>
-                            <button type="button" style={{color:"grey"}} onClick={this.previewBundle}>Preview
+                            <button type="button" style={{ background   : "grey" }} onClick={this.previewBundle}>Preview
                                         <div id="fse" className={"spinner " + (this.state.previewloading ? "visible" : "invisible")}>
                                     <Loader
                                         type="Oval"
