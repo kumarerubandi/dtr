@@ -40,7 +40,7 @@
     "fhir-kit-client": "^1.4.2",
     "fhirclient": "^0.1.12",
     "isomorphic-fetch": "^2.2.1",
-    "node-fetch": "^2.5.0",
+    "node-fetch": "^2.6.1",
     "pdfmake": "^0.1.56",
     "rc-upload": "^2.8.0",
     "react": "^16.8.4",
